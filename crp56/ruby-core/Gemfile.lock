@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    base64 (0.3.0)
     drb (2.2.3)
     lz4-ruby (0.3.3)
     minitest (6.0.6)
@@ -14,12 +15,14 @@ PLATFORMS
   x64-mingw-ucrt
 
 DEPENDENCIES
+  base64
   lz4-ruby
   minitest
   ruby-progressbar
   zstd-ruby
 
 CHECKSUMS
+  base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
   bundler (4.0.13) sha256=19f08be7f27022cf0b89f27da0b044ae075e8270a9ef44ad248a932614e1ca3b
   drb (2.2.3) sha256=0b00d6fdb50995fe4a45dea13663493c841112e4068656854646f418fda13373
   lz4-ruby (0.3.3) sha256=011be5ee230cfddc8308d4e2e0b05300c7bc755a887de799377ca6c5b6aede89

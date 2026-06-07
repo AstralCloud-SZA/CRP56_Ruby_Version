@@ -1,42 +1,18 @@
 # frozen_string_literal: true
 
-# frozen_string_literal: true
-
 require "json"
 
 require_relative "lib/constants"
 require_relative "lib/errors"
 require_relative "lib/kdf"
-
-begin
-  require_relative "lib/header"
-rescue LoadError
-end
-
-begin
-  require_relative "lib/compression"
-rescue LoadError
-end
-
-begin
-  require_relative "lib/phrase_store"
-rescue LoadError
-end
-
-begin
-  require_relative "lib/crypto"
-rescue LoadError
-end
-
-begin
-  require_relative "lib/file_crypto"
-rescue LoadError
-end
-
-begin
-  require_relative "lib/app_crypto_service"
-rescue LoadError
-end
+require_relative "lib/header"
+require_relative "lib/payload"
+require_relative "lib/compression"
+require_relative "lib/config"
+require_relative "lib/phrase_store"
+require_relative "lib/crypto"
+require_relative "lib/file_crypto"
+require_relative "lib/app_crypto_service"
 
 module CRP56
   class Cli
@@ -47,16 +23,33 @@ module CRP56
       when nil, "help", "--help", "-h"
         print_help
         0
-
       when "version"
-        puts "CRP56 Ruby backend ready"
-        puts "Format version: #{CRP56::Constants::VERSION}"
+        run_version
         0
-
       when "kdf_test"
         run_kdf_test(argv)
         0
-
+      when "self_test"
+        run_self_test(argv)
+        0
+      when "file_self_test"
+        run_file_self_test(argv)
+        0
+      when "compression_test"
+        run_compression_test(argv)
+        0
+      when "encrypt_text"
+        run_encrypt_text(argv)
+        0
+      when "decrypt_text"
+        run_decrypt_text(argv)
+        0
+      when "encrypt_file"
+        run_encrypt_file(argv)
+        0
+      when "decrypt_file"
+        run_decrypt_file(argv)
+        0
       else
         warn "Unknown command: #{command}"
         print_help
@@ -74,13 +67,25 @@ module CRP56
       puts "  ruby main.rb help"
       puts "  ruby main.rb version"
       puts "  ruby main.rb kdf_test BASE_PHRASE USER_PASSPHRASE"
+      puts "  ruby main.rb self_test [PASSPHRASE] [TEST_TEXT]"
+      puts "  ruby main.rb file_self_test PASSPHRASE SOURCE_FILE"
+      puts "  ruby main.rb compression_test [PASSPHRASE]"
+      puts "  ruby main.rb encrypt_text PASSPHRASE PLAIN_TEXT"
+      puts "  ruby main.rb decrypt_text PASSPHRASE BASE64_CIPHER_TEXT"
+      puts "  ruby main.rb encrypt_file PASSPHRASE SOURCE_FILE OUTPUT_FILE"
+      puts "  ruby main.rb decrypt_file PASSPHRASE SOURCE_FILE OUTPUT_FILE"
       puts
-      puts "Current status:"
-      puts "  - Base project bootstrapped"
-      puts "  - constants.rb loaded"
-      puts "  - errors.rb loaded"
-      puts "  - kdf.rb loaded"
-      puts "  - header/crypto/file support will be added next"
+      puts "Defaults:"
+      puts "  - HMAC enabled"
+      puts "  - Compression enabled"
+      puts "  - Compression mode: Zstd"
+      puts "  - Requires secrets/phrase_store.json with 6 phrase slots"
+    end
+
+    def self.run_version
+      puts "CRP56 Ruby backend ready"
+      puts "Format version: #{CRP56::Constants::VERSION}"
+      puts "Default compression: Zstd"
     end
 
     def self.run_kdf_test(argv)
@@ -107,14 +112,223 @@ module CRP56
         hmac_key_length: derived.hmac_key.bytesize
       }
 
-      puts JSON.generate(result)
+      puts JSON.pretty_generate(result)
+    end
+
+    def self.run_self_test(argv)
+      user_passphrase = argv.shift || "test-passphrase"
+      plain_text = argv.empty? ? "CRP56 self test message" : argv.join(" ")
+
+      service = CRP56::AppCryptoService.new
+
+      cipher_text_base64 = service.encrypt_text_to_base64(plain_text, user_passphrase)
+      decrypted_text = service.decrypt_base64_text_to_string(cipher_text_base64, user_passphrase)
+
+      result = {
+        ok: decrypted_text == plain_text,
+        command: "self_test",
+        passphrase_length: user_passphrase.length,
+        input_text: plain_text,
+        encrypted_base64_length: cipher_text_base64.length,
+        decrypted_text: decrypted_text,
+        round_trip_match: decrypted_text == plain_text,
+        compression_default: "Zstd",
+        hmac_enabled: true
+      }
+
+      puts JSON.pretty_generate(result)
+    end
+
+    def self.run_file_self_test(argv)
+      user_passphrase = argv.shift
+      source_file = argv.shift
+
+      if blank?(user_passphrase) || blank?(source_file)
+        raise ArgumentError, "Usage: ruby main.rb file_self_test PASSPHRASE SOURCE_FILE"
+      end
+
+      unless File.exist?(source_file) && File.file?(source_file)
+        raise ArgumentError, "Source file does not exist or is not a file: #{source_file}"
+      end
+
+      service = CRP56::AppCryptoService.new
+
+      original_bytes = File.binread(source_file)
+      encrypted_path = "#{source_file}.crp56"
+      decrypted_path = "#{source_file}.dec"
+
+      service.encrypt_file_to_path(source_file, encrypted_path, user_passphrase)
+      service.decrypt_file_to_path(encrypted_path, decrypted_path, user_passphrase)
+
+      encrypted_bytes = File.binread(encrypted_path)
+      decrypted_bytes = File.binread(decrypted_path)
+
+      result = {
+        ok: original_bytes == decrypted_bytes,
+        command: "file_self_test",
+        source_file: source_file,
+        encrypted_file: encrypted_path,
+        decrypted_file: decrypted_path,
+        original_size: original_bytes.bytesize,
+        encrypted_size: encrypted_bytes.bytesize,
+        decrypted_size: decrypted_bytes.bytesize,
+        same_size: original_bytes.bytesize == decrypted_bytes.bytesize,
+        same_content: original_bytes == decrypted_bytes
+      }
+
+      puts JSON.pretty_generate(result)
+    end
+
+    def self.run_compression_test(argv)
+      user_passphrase = argv.shift || "MyTestingPassword"
+
+      test_text =
+        ("A" * 500) +
+        "The quick brown fox jumps over the lazy dog. " +
+        ("B" * 500) +
+        "CRP56 compression test payload. " +
+        ("C" * 500)
+
+      plain_data = test_text.encode("UTF-8").b
+      phrase_store = CRP56::AppCryptoService.new.get_required_phrase_store
+
+      config_none = build_test_config(
+        use_compression: false,
+        compression_mode: CRP56::Constants::COMPRESSION_NONE
+      )
+      cipher_none = CRP56::Crypto.new(config: config_none, phrase_store: phrase_store)
+      enc_none = cipher_none.encrypt(plain_data, user_passphrase)
+      dec_none = cipher_none.decrypt(enc_none, user_passphrase)
+      ok_none = (dec_none == plain_data)
+
+      config_zstd = build_test_config(
+        use_compression: true,
+        compression_mode: CRP56::Constants::COMPRESSION_ZSTD
+      )
+      cipher_zstd = CRP56::Crypto.new(config: config_zstd, phrase_store: phrase_store)
+      enc_zstd = cipher_zstd.encrypt(plain_data, user_passphrase)
+      dec_zstd = cipher_zstd.decrypt(enc_zstd, user_passphrase)
+      ok_zstd = (dec_zstd == plain_data)
+
+      lz4_result =
+        begin
+          config_lz4 = build_test_config(
+            use_compression: true,
+            compression_mode: CRP56::Constants::COMPRESSION_LZ4
+          )
+          cipher_lz4 = CRP56::Crypto.new(config: config_lz4, phrase_store: phrase_store)
+          enc_lz4 = cipher_lz4.encrypt(plain_data, user_passphrase)
+          dec_lz4 = cipher_lz4.decrypt(enc_lz4, user_passphrase)
+
+          {
+            available: true,
+            encrypted_size: enc_lz4.bytesize,
+            round_trip_ok: dec_lz4 == plain_data,
+            size_reduction_vs_none_percent: percent_reduction(enc_none.bytesize, enc_lz4.bytesize)
+          }
+        rescue StandardError => e
+          {
+            available: false,
+            error: "#{e.class}: #{e.message}"
+          }
+        end
+
+      result = {
+        ok: ok_none && ok_zstd && (!lz4_result[:available] || lz4_result[:round_trip_ok]),
+        command: "compression_test",
+        original_plaintext_size: plain_data.bytesize,
+        none: {
+          encrypted_size: enc_none.bytesize,
+          round_trip_ok: ok_none
+        },
+        zstd: {
+          encrypted_size: enc_zstd.bytesize,
+          round_trip_ok: ok_zstd,
+          size_reduction_vs_none_percent: percent_reduction(enc_none.bytesize, enc_zstd.bytesize)
+        },
+        lz4: lz4_result
+      }
+
+      puts JSON.pretty_generate(result)
+    end
+
+    def self.run_encrypt_text(argv)
+      user_passphrase = argv.shift
+      plain_text = argv.join(" ")
+
+      if blank?(user_passphrase) || blank?(plain_text)
+        raise ArgumentError, "Usage: ruby main.rb encrypt_text PASSPHRASE PLAIN_TEXT"
+      end
+
+      service = CRP56::AppCryptoService.new
+      result = service.encrypt_text_to_base64(plain_text, user_passphrase)
+      puts result
+    end
+
+    def self.run_decrypt_text(argv)
+      user_passphrase = argv.shift
+      cipher_text_base64 = argv.join(" ")
+
+      if blank?(user_passphrase) || blank?(cipher_text_base64)
+        raise ArgumentError, "Usage: ruby main.rb decrypt_text PASSPHRASE BASE64_CIPHER_TEXT"
+      end
+
+      service = CRP56::AppCryptoService.new
+      result = service.decrypt_base64_text_to_string(cipher_text_base64, user_passphrase)
+      puts result
+    end
+
+    def self.run_encrypt_file(argv)
+      user_passphrase = argv.shift
+      source_file = argv.shift
+      output_file = argv.shift
+
+      if blank?(user_passphrase) || blank?(source_file) || blank?(output_file)
+        raise ArgumentError, "Usage: ruby main.rb encrypt_file PASSPHRASE SOURCE_FILE OUTPUT_FILE"
+      end
+
+      service = CRP56::AppCryptoService.new
+      service.encrypt_file_to_path(source_file, output_file, user_passphrase)
+      puts "Encrypted file written to: #{output_file}"
+    end
+
+    def self.run_decrypt_file(argv)
+      user_passphrase = argv.shift
+      source_file = argv.shift
+      output_file = argv.shift
+
+      if blank?(user_passphrase) || blank?(source_file) || blank?(output_file)
+        raise ArgumentError, "Usage: ruby main.rb decrypt_file PASSPHRASE SOURCE_FILE OUTPUT_FILE"
+      end
+
+      service = CRP56::AppCryptoService.new
+      service.decrypt_file_to_path(source_file, output_file, user_passphrase)
+      puts "Decrypted file written to: #{output_file}"
+    end
+
+    def self.build_test_config(use_compression:, compression_mode:)
+      config = CRP56::Config.new
+      config.shard_plain_size = CRP56::Constants::DEFAULT_SHARD_PLAIN_SIZE
+      config.salt_size = CRP56::Constants::DEFAULT_SALT_SIZE
+      config.kdf_iterations = CRP56::Constants::PBKDF2_ITERATIONS
+      config.use_hmac = true
+      config.use_compression = use_compression
+      config.compression_mode = compression_mode
+      config.validate!
+      config
+    end
+
+    def self.percent_reduction(original_size, new_size)
+      return 0.0 if original_size.to_i <= 0
+
+      (((1.0 - new_size.to_f / original_size) * 1000).round / 10.0)
     end
 
     def self.blank?(value)
       value.nil? || value.strip.empty?
     end
 
-    private_class_method :blank?
+    private_class_method :blank?, :build_test_config, :percent_reduction
   end
 end
 

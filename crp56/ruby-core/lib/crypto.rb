@@ -57,8 +57,7 @@ module CRP56
     private
 
     def encrypt_internal(plain_data, header, derived_keys)
-      buffer = StringIO.new("".b, "w+b")
-      header.write_to(buffer)
+      body_buffer = StringIO.new("".b, "w+b")
 
       offset = 0
       shard_size = config.shard_plain_size
@@ -69,7 +68,7 @@ module CRP56
         offset += expected_plain_size
 
         iv = OpenSSL::Random.random_bytes(Constants::AES_BLOCK_SIZE)
-        buffer.write(iv)
+        body_buffer.write(iv)
 
         cipher = OpenSSL::Cipher.new("AES-256-CBC")
         cipher.encrypt
@@ -77,47 +76,46 @@ module CRP56
         cipher.iv = iv
 
         shard_cipher = cipher.update(shard_plain) + cipher.final
-        buffer.write(shard_cipher)
+        body_buffer.write(shard_cipher)
       end
 
-      without_hmac = buffer.string
-      return without_hmac unless header.hmac_enabled?
+      payload_without_hmac = Payload.new(
+        header: header,
+        body: body_buffer.string,
+        hmac_tag: nil
+      )
 
-      hmac_tag = OpenSSL::HMAC.digest("SHA256", derived_keys.hmac_key, without_hmac)
-      without_hmac + hmac_tag
+      return payload_without_hmac.to_bytes unless header.hmac_enabled?
+
+      hmac_tag = OpenSSL::HMAC.digest("SHA256", derived_keys.hmac_key, payload_without_hmac.to_bytes)
+
+      payload = Payload.new(
+        header: header,
+        body: body_buffer.string,
+        hmac_tag: hmac_tag
+      )
+
+      payload.to_bytes
     end
 
     def decrypt_internal(cipher_data, user_passphrase)
-      header_io = StringIO.new(cipher_data, "rb")
-      header = Header.read_from(header_io)
-
-      cipher_without_hmac, hmac_tag =
-        if header.hmac_enabled?
-          if cipher_data.bytesize < Header::HMAC_TAG_LENGTH
-            raise InvalidPayloadError, "Data too short to contain valid HMAC tag."
-          end
-
-          tag_offset = cipher_data.bytesize - Header::HMAC_TAG_LENGTH
-          [cipher_data.byteslice(0, tag_offset), cipher_data.byteslice(tag_offset, Header::HMAC_TAG_LENGTH)]
-        else
-          [cipher_data, nil]
-        end
+      payload = Payload.from_bytes(cipher_data)
+      header = payload.header
 
       base_phrase = phrase_store.get_phrase(header.key_slot_index)
       derived_keys = Kdf.derive(base_phrase, user_passphrase, header.salt, header.kdf_iterations)
 
       if header.hmac_enabled?
-        computed_tag = OpenSSL::HMAC.digest("SHA256", derived_keys.hmac_key, cipher_without_hmac)
+        computed_tag = OpenSSL::HMAC.digest("SHA256", derived_keys.hmac_key, payload.bytes_without_hmac)
 
-        unless constant_time_equals?(computed_tag, hmac_tag)
+        unless constant_time_equals?(computed_tag, payload.hmac_tag)
           raise IntegrityError, "HMAC verification failed. Data may be corrupted or password is incorrect."
         end
       end
 
-      reader = StringIO.new(cipher_without_hmac, "rb")
-      Header.read_from(reader)
-
+      reader = StringIO.new(payload.body, "rb")
       plain_parts = []
+
       shard_size = config.shard_plain_size
       block_size = Constants::AES_BLOCK_SIZE
 
@@ -144,7 +142,8 @@ module CRP56
         shard_plain = cipher.update(shard_cipher) + cipher.final
 
         if shard_plain.bytesize != expected_plain_size
-          raise DecryptionError, "Decrypted shard #{shard_index} has unexpected length. Data may be corrupted or password is incorrect."
+          raise DecryptionError,
+                "Decrypted shard #{shard_index} has unexpected length. Data may be corrupted or password is incorrect."
         end
 
         plain_parts << shard_plain
