@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const { spawn } = require('child_process');
 const path = require('path');
 const readline = require('readline');
@@ -8,126 +8,254 @@ let rubyProcess = null;
 const pendingRequests = new Map();
 let requestCounter = 0;
 
-// ── Ruby process ────────────────────────────────────────────────────────────
+process.on('uncaughtException', (err) => {
+    console.error('[uncaughtException]', err);
+    try {
+        dialog.showErrorBox('Main Process Error', `${err.name}: ${err.message}\n\n${err.stack || ''}`);
+    } catch (_) {}
+});
+
+process.on('unhandledRejection', (reason) => {
+    console.error('[unhandledRejection]', reason);
+});
+
+function log(...args) {
+    console.log('[CRP56 main]', ...args);
+}
 
 function startRubyServer() {
     const rubyCorePath = path.join(__dirname, '..', 'ruby-core');
+    const isWin = process.platform === 'win32';
 
-    rubyProcess = spawn('bundle', ['exec', 'ruby', 'main.rb', 'server'], {cwd: rubyCorePath, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true,});
+    const command = 'ruby';
+    const args = ['main.rb', 'server'];
 
-    const rl = readline.createInterface({ input: rubyProcess.stdout });
+    log('Ruby cwd:', rubyCorePath);
+    log('Spawn command:', command, args.join(' '));
 
-    rl.on('line', (line) =>
-    {
+    rubyProcess = spawn(command, args, {
+        cwd: rubyCorePath,
+        stdio: ['pipe', 'pipe', 'pipe'],
+        windowsHide: true,
+        shell: isWin
+    });
+
+    rubyProcess.on('spawn', () => {
+        log('Ruby process spawned successfully');
+    });
+
+    rubyProcess.on('error', (err) => {
+        console.error('[Ruby spawn error]', err);
+    });
+
+    const rl = readline.createInterface({
+        input: rubyProcess.stdout,
+        crlfDelay: Infinity
+    });
+
+    rl.on('line', (line) => {
+        const raw = line;
         line = line.trim();
         if (!line) return;
 
+        log('Ruby stdout line:', raw);
+
         try {
             const msg = JSON.parse(line);
-            const resolve = pendingRequests.get(msg.id);
-            if (resolve) {
+            const pending = pendingRequests.get(msg.id);
+
+            if (pending) {
+                clearTimeout(pending.timeoutId);
                 pendingRequests.delete(msg.id);
-                resolve(msg);
+                pending.resolve(msg);
+            } else {
+                log('No pending request for Ruby message id:', msg.id);
             }
         } catch (e) {
-            console.error('[Ruby stdout parse error]', e.message, line);
+            console.error('[Ruby stdout parse error]', e.message, raw);
         }
     });
 
-    rubyProcess.stderr.on('data', (data) =>
-    {
-        console.log('[Ruby]', data.toString().trim());
+    rubyProcess.stderr.on('data', (data) => {
+        console.log('[Ruby stderr]', data.toString());
     });
 
-    rubyProcess.on('exit', (code) =>
-    {
-        console.warn('[Ruby] process exited with code', code);
+    rubyProcess.on('exit', (code, signal) => {
+        console.warn('[Ruby exit]', { code, signal });
         rubyProcess = null;
+
+        for (const [id, pending] of pendingRequests.entries()) {
+            clearTimeout(pending.timeoutId);
+            pending.reject(new Error(`Ruby process exited before responding to request ${id}`));
+        }
+        pendingRequests.clear();
     });
 }
 
-function sendToRuby(command, params = {})
-{
-    return new Promise((resolve, reject) =>
-    {
-        if (!rubyProcess)
-        {
-            return reject(new Error('Ruby server is not running.'));
+function stopRubyServer() {
+    if (!rubyProcess) return;
+
+    log('Stopping Ruby process');
+    try {
+        rubyProcess.stdin.end();
+    } catch (_) {}
+
+    try {
+        rubyProcess.kill();
+    } catch (_) {}
+
+    rubyProcess = null;
+}
+
+function sendToRuby(command, params = {}) {
+    return new Promise((resolve, reject) => {
+        if (!rubyProcess) {
+            reject(new Error('Ruby server is not running.'));
+            return;
         }
 
         const id = String(++requestCounter);
-        pendingRequests.set(id, resolve);
+        const payload = { id, command, ...params };
+        const line = JSON.stringify(payload) + '\n';
 
-        const message = JSON.stringify({ id, command, ...params }) + '\n';
-        rubyProcess.stdin.write(message);
+        log('Sending to Ruby:', payload);
 
-        // Timeout after 30 seconds
-        setTimeout(() =>
-        {
+        const timeoutId = setTimeout(() => {
             if (pendingRequests.has(id)) {
                 pendingRequests.delete(id);
                 reject(new Error(`Ruby command timed out: ${command}`));
             }
         }, 30000);
+
+        pendingRequests.set(id, { resolve, reject, timeoutId });
+
+        rubyProcess.stdin.write(line, (err) => {
+            if (err) {
+                clearTimeout(timeoutId);
+                pendingRequests.delete(id);
+                reject(err);
+            }
+        });
     });
 }
 
-// ── IPC handlers (renderer → main → Ruby) ───────────────────────────────────
+async function safeInvoke(command, params = {}) {
+    try {
+        return await sendToRuby(command, params);
+    } catch (err) {
+        console.error(`[IPC ${command} failed]`, err);
+        return {
+            ok: false,
+            error: `${err.name}: ${err.message}`
+        };
+    }
+}
 
-ipcMain.handle('crp56:ping', async () =>
-{
-    return sendToRuby('ping');
-});
-
-ipcMain.handle('crp56:encrypt-text', async (_event, { passphrase, plainText }) =>
-{
-    return sendToRuby('encrypt_text', { passphrase, plain_text: plainText });
-});
-
-ipcMain.handle('crp56:decrypt-text', async (_event, { passphrase, cipherTextBase64 }) =>
-{
-    return sendToRuby('decrypt_text', { passphrase, cipher_text_base64: cipherTextBase64 });
-});
-
-ipcMain.handle('crp56:encrypt-file', async (_event, { passphrase, sourceFile, outputFile }) =>
-{
-    return sendToRuby('encrypt_file', { passphrase, source_file: sourceFile, output_file: outputFile });
-});
-
-ipcMain.handle('crp56:decrypt-file', async (_event, { passphrase, sourceFile, outputFile }) =>
-{
-    return sendToRuby('decrypt_file', { passphrase, source_file: sourceFile, output_file: outputFile });
+ipcMain.handle('crp56:ping', async () => {
+    return safeInvoke('ping');
 });
 
 ipcMain.handle('crp56:version', async () => {
-    return sendToRuby('version');
+    return safeInvoke('version');
 });
 
-// ── Window ───────────────────────────────────────────────────────────────────
+ipcMain.handle('crp56:encrypt-text', async (_event, { passphrase, plainText }) => {
+    return safeInvoke('encrypt_text', {
+        passphrase,
+        plain_text: plainText
+    });
+});
+
+ipcMain.handle('crp56:decrypt-text', async (_event, { passphrase, cipherTextBase64 }) => {
+    return safeInvoke('decrypt_text', {
+        passphrase,
+        cipher_text_base64: cipherTextBase64
+    });
+});
+
+ipcMain.handle('crp56:encrypt-file', async (_event, { passphrase, sourceFile, outputFile }) => {
+    return safeInvoke('encrypt_file', {
+        passphrase,
+        source_file: sourceFile,
+        output_file: outputFile
+    });
+});
+
+ipcMain.handle('crp56:decrypt-file', async (_event, { passphrase, sourceFile, outputFile }) => {
+    return safeInvoke('decrypt_file', {
+        passphrase,
+        source_file: sourceFile,
+        output_file: outputFile
+    });
+});
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 900,
-        height: 680,
-        minWidth: 700,
-        minHeight: 500,
-        webPreferences: {preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false,},
-        titleBarStyle: 'hiddenInset',
+        width: 1000,
+        height: 720,
+        minWidth: 760,
+        minHeight: 560,
         title: 'CRP56',
+        backgroundColor: '#161616',
+        autoHideMenuBar: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: false
+        }
     });
 
-    mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+    mainWindow.webContents.openDevTools({ mode: 'detach' });
+
+    mainWindow.webContents.on('did-start-loading', () => {
+        log('Renderer started loading');
+    });
+
+    mainWindow.webContents.on('did-finish-load', () => {
+        log('Renderer finished loading');
+    });
+
+    mainWindow.webContents.on('did-fail-load', (_event, code, description, validatedURL) => {
+        console.error('[Renderer failed to load]', { code, description, validatedURL });
+    });
+
+    mainWindow.webContents.on('render-process-gone', (_event, details) => {
+        console.error('[Renderer process gone]', details);
+    });
+
+    const rendererPath = path.join(__dirname, 'renderer', 'index.html');
+    log('Loading renderer file:', rendererPath);
+    mainWindow.loadFile(rendererPath);
+
+    mainWindow.on('closed', () => {
+        mainWindow = null;
+    });
 }
 
 app.whenReady().then(() => {
-    startRubyServer();
+    log('Electron app ready');
     createWindow();
+
+    try {
+        startRubyServer();
+    } catch (err) {
+        console.error('[startRubyServer failed]', err);
+    }
 });
 
 app.on('window-all-closed', () => {
-    if (rubyProcess) {
-        rubyProcess.stdin.end();
-        rubyProcess.kill();
+    stopRubyServer();
+    if (process.platform !== 'darwin') {
+        app.quit();
     }
-    if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('before-quit', () => {
+    stopRubyServer();
+});
+
+app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+    }
 });
