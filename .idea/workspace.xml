@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="Finished up ruby backend changes and started on Electron frontend work">
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/preload.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/package.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="29" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Ruby File" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;AstralCloud-SZA&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/AstralCloud-SZA/CRP56_Ruby_Version.git&quot;,
+    &quot;accountId&quot;: &quot;eae48600-536a-4330-aac0-f660f0665ef5&quot;
+  }
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0001519921869853" />
+      <entry key="S2" value="1.2042113879649758" />
+      <entry key="S5" value="2.190434169386725" />
+      <entry key="S10" value="3.562099529991409" />
+      <entry key="S30" value="6.728883540760712" />
+      <entry key="S60" value="8.736438121773553" />
+      <entry key="M2" value="11.425841724940684" />
+      <entry key="M5" value="18.185875087509853" />
+      <entry key="M10" value="24.514951699515333" />
+      <entry key="M15" value="28.194849206845035" />
+      <entry key="M30" value="36.37433978516456" />
+      <entry key="H1" value="49.1393889968831" />
+      <entry key="H2" value="63.1604584419894" />
+      <entry key="H4" value="74.0645138604365" />
+      <entry key="D1" value="86.16792785698209" />
+      <entry key="W1" value="88.58605158362485" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="2.5689183740414858E-141" />
+      <entry key="S5" value="7.853711908808095E-57" />
+      <entry key="S10" value="1.2239988572788292E-28" />
+      <entry key="S30" value="7.838385059654588E-10" />
+      <entry key="S60" value="3.956642484757717E-5" />
+      <entry key="M2" value="0.008894119085150714" />
+      <entry key="M5" value="0.22924799764422193" />
+      <entry key="M10" value="0.6867721485025736" />
+      <entry key="M15" value="1.039827714103861" />
+      <entry key="M30" value="1.9245798580205384" />
+      <entry key="H1" value="3.2484201762495157" />
+      <entry key="H2" value="4.612873246621648" />
+      <entry key="H4" value="5.6353712835872" />
+      <entry key="D1" value="6.743829486536807" />
+      <entry key="W1" value="6.962624319761696" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.9526379980439373" />
+      <entry key="MS500" value="0.9904935920964218" />
+      <entry key="S2" value="1.2013053199871289" />
+      <entry key="S5" value="2.188292571678127" />
+      <entry key="S10" value="3.5603392738829007" />
+      <entry key="S30" value="6.727758517017325" />
+      <entry key="S60" value="8.735749805508643" />
+      <entry key="M2" value="11.434206554562252" />
+      <entry key="M5" value="18.414027543248185" />
+      <entry key="M10" value="25.200275453474934" />
+      <entry key="M15" value="29.233241770887393" />
+      <entry key="M30" value="38.29762407928104" />
+      <entry key="H1" value="52.38674717561941" />
+      <entry key="H2" value="67.7725924677097" />
+      <entry key="H4" value="79.69943837120114" />
+      <entry key="D1" value="92.9116690237026" />
+      <entry key="W1" value="95.54866289662023" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3EoM2tCeXTTVah9RgX8iBjOpZUr" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ruby.rubocop.migration.global.runOnSaveToExternalFormatter&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP&quot;: &quot;1780932107071&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ruby.structure.view.model.defaults.configured&quot;: &quot;true&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-RM-261.24374.145" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpringUtil" SPRING_PRE_LOADER_OPTION="true" RAKE_SPRING_PRE_LOADER_OPTION="true" RAILS_SPRING_PRE_LOADER_OPTION="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="" />
+      <created>1780840264701</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1780840264701</updated>
+      <workItem from="1780840266205" duration="5031000" />
+      <workItem from="1780932048847" duration="2667000" />
+      <workItem from="1780999922667" duration="5441000" />
+    </task>
+    <task id="LOCAL-00001" summary="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work">
+      <option name="closed" value="true" />
+      <created>1780840484160</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1780840484160</updated>
+    </task>
+    <task id="LOCAL-00002" summary="File conversion work and helpful GEM additions">
+      <option name="closed" value="true" />
+      <created>1780842065202</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1780842065202</updated>
+    </task>
+    <task id="LOCAL-00003" summary="File conversion work main file work nearly done">
+      <option name="closed" value="true" />
+      <created>1780843471816</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1780843471816</updated>
+    </task>
+    <task id="LOCAL-00004" summary="File conversion work continued ruby backend file conversion work">
+      <option name="closed" value="true" />
+      <created>1780845220729</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1780845220729</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Finished up ruby backend changes and started on Electron frontend work">
+      <option name="closed" value="true" />
+      <created>1781005237066</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1781005237066</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Finished up ruby backend changes and started on Electron frontend work">
+      <option name="closed" value="true" />
+      <created>1781005418195</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1781005418195</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Finished up ruby backend changes and started on Electron frontend work">
+      <option name="closed" value="true" />
+      <created>1781005545570</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1781005545570</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work" />
+    <MESSAGE value="File conversion work and helpful GEM additions" />
+    <MESSAGE value="File conversion work main file work nearly done" />
+    <MESSAGE value="File conversion work continued ruby backend file conversion work" />
+    <MESSAGE value="Finished up ruby backend changes and started on Electron frontend work" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished up ruby backend changes and started on Electron frontend work" />
+  </component>
+</project>
