@@ -1,0 +1,45 @@
+# CRP56_MK2 / crp56 project-specific ignore rules
+
+# Electron app dependencies
+/electron-app/node_modules/
+
+# Electron build outputs
+/electron-app/dist/
+/electron-app/out/
+/electron-app/release/
+/electron-app/.electron/
+/electron-app/builder-debug.yml
+/electron-app/latest.yml
+/electron-app/latest-mac.yml
+/electron-app/latest-linux.yml
+/electron-app/*.blockmap
+
+# Ruby core private runtime data
+/ruby-core/temp/
+/ruby-core/tmp/
+/ruby-core/.cache/
+/ruby-core/data/*.json
+/ruby-core/data/*.tmp
+/ruby-core/data/*.bak
+/ruby-core/data/*.enc
+/ruby-core/data/*.dec
+/ruby-core/data/*.key
+/ruby-core/data/*.secret
+
+# Personal phrase and secret storage
+/ruby-core/secrets/*
+!/ruby-core/secrets/.gitkeep
+/ruby-core/phrase_store.json
+/ruby-core/secrets/phrase_store.json
+
+# Local logs
+/electron-app/*.log
+/ruby-core/*.log
+
+# IDE project files
+/.idea/
+/.vscode/
+
+# OS junk
+.DS_Store
+Thumbs.db

@@ -10,6 +10,7 @@ require_relative "lib/payload"
 require_relative "lib/compression"
 require_relative "lib/config"
 require_relative "lib/phrase_store"
+require_relative "lib/embedded_phrase_storage"
 require_relative "lib/crypto"
 require_relative "lib/file_crypto"
 require_relative "lib/app_crypto_service"
@@ -50,6 +51,9 @@ module CRP56
       when "decrypt_file"
         run_decrypt_file(argv)
         0
+      when "server"
+        run_server
+        0
       else
         warn "Unknown command: #{command}"
         print_help
@@ -74,18 +78,20 @@ module CRP56
       puts "  ruby main.rb decrypt_text PASSPHRASE BASE64_CIPHER_TEXT"
       puts "  ruby main.rb encrypt_file PASSPHRASE SOURCE_FILE OUTPUT_FILE"
       puts "  ruby main.rb decrypt_file PASSPHRASE SOURCE_FILE OUTPUT_FILE"
+      puts "  ruby main.rb server"
       puts
       puts "Defaults:"
+      puts "  - Embedded phrases used by default (phrase_store.json is backup)"
       puts "  - HMAC enabled"
       puts "  - Compression enabled"
       puts "  - Compression mode: Zstd"
-      puts "  - Requires secrets/phrase_store.json with 6 phrase slots"
     end
 
     def self.run_version
       puts "CRP56 Ruby backend ready"
       puts "Format version: #{CRP56::Constants::VERSION}"
       puts "Default compression: Zstd"
+      puts "Phrase source: embedded (phrase_store.json is backup)"
     end
 
     def self.run_kdf_test(argv)
@@ -133,7 +139,8 @@ module CRP56
         decrypted_text: decrypted_text,
         round_trip_match: decrypted_text == plain_text,
         compression_default: "Zstd",
-        hmac_enabled: true
+        hmac_enabled: true,
+        phrase_source: service.has_secrets? ? "embedded" : "unknown"
       }
 
       puts JSON.pretty_generate(result)
@@ -304,6 +311,105 @@ module CRP56
       service = CRP56::AppCryptoService.new
       service.decrypt_file_to_path(source_file, output_file, user_passphrase)
       puts "Decrypted file written to: #{output_file}"
+    end
+
+    def self.run_server
+      service = CRP56::AppCryptoService.new
+
+      STDERR.puts "[CRP56] JSON server ready"
+      STDERR.puts "[CRP56] Phrase source: #{service.has_secrets? ? "embedded" : "phrase_store.json"}"
+      STDERR.flush
+
+      STDIN.each_line do |line|
+        line = line.strip
+        next if line.empty?
+
+        id = nil
+        response = nil
+
+        begin
+          request = JSON.parse(line, symbolize_names: true)
+          id = request[:id]
+          command = request[:command].to_s
+
+          case command
+          when "ping"
+            response = { id: id, ok: true, result: "pong" }
+
+          when "encrypt_text"
+            passphrase = request[:passphrase].to_s
+            plain_text = request[:plain_text].to_s
+
+            raise ArgumentError, "passphrase is required" if passphrase.empty?
+            raise ArgumentError, "plain_text is required" if plain_text.empty?
+
+            result = service.encrypt_text_to_base64(plain_text, passphrase)
+            response = { id: id, ok: true, result: result }
+
+          when "decrypt_text"
+            passphrase = request[:passphrase].to_s
+            cipher_text_base64 = request[:cipher_text_base64].to_s
+
+            raise ArgumentError, "passphrase is required" if passphrase.empty?
+            raise ArgumentError, "cipher_text_base64 is required" if cipher_text_base64.empty?
+
+            result = service.decrypt_base64_text_to_string(cipher_text_base64, passphrase)
+            response = { id: id, ok: true, result: result }
+
+          when "encrypt_file"
+            passphrase = request[:passphrase].to_s
+            source_file = request[:source_file].to_s
+            output_file = request[:output_file].to_s
+
+            raise ArgumentError, "passphrase is required" if passphrase.empty?
+            raise ArgumentError, "source_file is required" if source_file.empty?
+            raise ArgumentError, "output_file is required" if output_file.empty?
+            raise ArgumentError, "source_file does not exist: #{source_file}" unless File.file?(source_file)
+
+            service.encrypt_file_to_path(source_file, output_file, passphrase)
+            response = { id: id, ok: true, result: output_file }
+
+          when "decrypt_file"
+            passphrase = request[:passphrase].to_s
+            source_file = request[:source_file].to_s
+            output_file = request[:output_file].to_s
+
+            raise ArgumentError, "passphrase is required" if passphrase.empty?
+            raise ArgumentError, "source_file is required" if source_file.empty?
+            raise ArgumentError, "output_file is required" if output_file.empty?
+            raise ArgumentError, "source_file does not exist: #{source_file}" unless File.file?(source_file)
+
+            service.decrypt_file_to_path(source_file, output_file, passphrase)
+            response = { id: id, ok: true, result: output_file }
+
+          when "has_secrets"
+            response = { id: id, ok: true, result: service.has_secrets? }
+
+          when "version"
+            response = {
+              id: id,
+              ok: true,
+              result: {
+                version: CRP56::Constants::VERSION,
+                compression: "Zstd",
+                hmac: true,
+                phrase_source: service.has_secrets? ? "embedded" : "phrase_store.json"
+              }
+            }
+
+          else
+            response = { id: id, ok: false, error: "Unknown command: #{command.inspect}" }
+          end
+
+        rescue JSON::ParserError => e
+          response = { id: id, ok: false, error: "Invalid JSON: #{e.message}" }
+        rescue StandardError => e
+          response = { id: id, ok: false, error: "#{e.class}: #{e.message}" }
+        end
+
+        STDOUT.puts(JSON.generate(response))
+        STDOUT.flush
+      end
     end
 
     def self.build_test_config(use_compression:, compression_mode:)

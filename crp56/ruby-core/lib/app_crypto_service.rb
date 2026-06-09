@@ -4,37 +4,34 @@ module CRP56
   class AppCryptoService
     DEFAULT_PHRASE_STORE_PATH = File.expand_path("../secrets/phrase_store.json", __dir__)
 
-    def initialize(phrase_store_path: DEFAULT_PHRASE_STORE_PATH)
+    def initialize(phrase_store_path: DEFAULT_PHRASE_STORE_PATH, use_embedded_phrases: true)
       @phrase_store_path = phrase_store_path
+      @use_embedded_phrases = use_embedded_phrases
       @phrase_store = nil
       @config = nil
       @cipher = nil
       @file_crypto = nil
+      @embedded_phrase_store = nil
     end
 
     def has_secrets?
-      return false unless File.exist?(@phrase_store_path)
-      return false unless File.file?(@phrase_store_path)
-
-      begin
-        PhraseStore.load(@phrase_store_path).valid?
-      rescue PhraseStoreError
-        false
-      rescue StandardError
-        false
+      if @use_embedded_phrases && embedded_phrase_store.valid?
+        true
+      else
+        file_phrase_store_valid?
       end
     end
 
     def get_required_phrase_store
       @phrase_store ||= begin
-                          store = PhraseStore.load(@phrase_store_path)
-
-                          unless store.valid?
+                          if @use_embedded_phrases && embedded_phrase_store.valid?
+                            embedded_phrase_store
+                          elsif file_phrase_store_valid?
+                            PhraseStore.load(@phrase_store_path)
+                          else
                             raise PhraseStoreError,
-                                  "CRP56 phrase store is missing or invalid. Configure all six phrases first."
+                                  "CRP56 phrase store is missing or invalid. Embedded phrases and file backup are unavailable."
                           end
-
-                          store
                         end
     rescue PhraseStoreError
       raise
@@ -86,6 +83,20 @@ module CRP56
     end
 
     private
+
+    def embedded_phrase_store
+      @embedded_phrase_store ||= EmbeddedPhraseStore.new
+    end
+
+    def file_phrase_store_valid?
+      return false unless File.exist?(@phrase_store_path) && File.file?(@phrase_store_path)
+
+      begin
+        PhraseStore.load(@phrase_store_path).valid?
+      rescue PhraseStoreError, StandardError
+        false
+      end
+    end
 
     def build_default_config
       @config ||= begin
