@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="./primordial_gold.css" id="themeStylesheet" />
     <style>
         a { text-decoration: none; }
+        .bg-slides, #particles { pointer-events: none; }
         .content-stack { display:grid; gap: var(--space-4); }
         .tab-row { display:flex; flex-wrap:wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
         .tab-pill { padding: 0.7rem 0.95rem; border-radius: var(--radius-full); border:1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--muted); text-transform: uppercase; font-size: var(--text-xs); letter-spacing: 0.08em; }
@@ -26,7 +27,7 @@
         @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
     </style>
 </head>
-<body>
+<body data-page="home">
 <div class="app">
     <div class="bg-slides" aria-hidden="true"></div>
     <canvas id="particles" aria-hidden="true"></canvas>
@@ -102,115 +103,10 @@
                 </svg>
             </div>
             <nav class="rail-nav"><a class="nav-btn active" href="./home.html">Home</a><a class="nav-btn" href="./encrypt.html">Enc</a><a class="nav-btn" href="./decrypt.html">Dec</a><a class="nav-btn" href="./settings.html">Set</a><a class="nav-btn" href="./about.html">About</a></nav>
-            <div class="rail-bottom"><div class="rail-note">Yellow primordal shell active</div></div>
+            <div class="rail-bottom"><div class="rail-note">Yellow primordial shell active</div></div>
         </aside>
     </div>
 </div>
-
-<script>
-    const html = document.documentElement;
-    const themeToggle = document.getElementById('themeToggle');
-    const themeName = document.getElementById('themeName');
-    const themeStylesheet = document.getElementById('themeStylesheet');
-    const themes = {
-        'primordial-gold': { label: 'Primordial Gold', href: './primordial_gold.css' },
-        'hellflare-gold': { label: 'Hellflare Gold', href: './hellflare_gold.css' }
-    };
-
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            const next = html.dataset.theme === 'primordial-gold' ? 'hellflare-gold' : 'primordial-gold';
-            html.dataset.theme = next;
-            themeStylesheet.setAttribute('href', themes[next].href);
-            if (themeName) themeName.textContent = themes[next].label;
-            seed();
-        });
-    }
-
-    const canvas = document.getElementById('particles');
-    const ctx = canvas ? canvas.getContext('2d') : null;
-    let particles = [];
-
-    function accentColors() {
-        const style = getComputedStyle(document.documentElement);
-        return [style.getPropertyValue('--accent').trim(), style.getPropertyValue('--accent-2').trim()];
-    }
-
-    function resize() {
-        if (!canvas || !ctx) return;
-        const ratio = Math.min(window.devicePixelRatio || 1, 1.8);
-        canvas.width = Math.floor(window.innerWidth * ratio);
-        canvas.height = Math.floor(window.innerHeight * ratio);
-        canvas.style.width = window.innerWidth + 'px';
-        canvas.style.height = window.innerHeight + 'px';
-        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-        seed();
-    }
-
-    function seed() {
-        if (!canvas || !ctx) return;
-        const count = Math.max(38, Math.floor(window.innerWidth / 32));
-        const colors = accentColors();
-        particles = Array.from({ length: count }, (_, i) => ({
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
-            r: Math.random() * 2.2 + 0.7,
-            vx: (Math.random() - 0.5) * 0.22,
-            vy: (Math.random() - 0.5) * 0.22,
-            alpha: Math.random() * 0.55 + 0.18,
-            twinkle: Math.random() * Math.PI * 2,
-            color: colors[i % colors.length]
-        }));
-    }
-
-    function draw() {
-        if (!canvas || !ctx) return;
-        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-        particles.forEach((p, i) => {
-            p.x += p.vx;
-            p.y += p.vy;
-            p.twinkle += 0.03;
-            if (p.x < -20) p.x = window.innerWidth + 20;
-            if (p.x > window.innerWidth + 20) p.x = -20;
-            if (p.y < -20) p.y = window.innerHeight + 20;
-            if (p.y > window.innerHeight + 20) p.y = -20;
-            const pulse = (Math.sin(p.twinkle) + 1) / 2;
-            ctx.beginPath();
-            ctx.fillStyle = hexToRgba(p.color, 0.16 + pulse * p.alpha * 0.4);
-            ctx.arc(p.x, p.y, p.r + pulse * 1.4, 0, Math.PI * 2);
-            ctx.fill();
-            for (let j = i + 1; j < particles.length; j++) {
-                const q = particles[j];
-                const dx = p.x - q.x;
-                const dy = p.y - q.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 128) {
-                    ctx.strokeStyle = hexToRgba(p.color, (1 - dist / 128) * 0.12);
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(p.x, p.y);
-                    ctx.lineTo(q.x, q.y);
-                    ctx.stroke();
-                }
-            }
-        });
-        requestAnimationFrame(draw);
-    }
-
-    function hexToRgba(input, alpha) {
-        const c = input.replace('#', '');
-        const normalized = c.length === 3 ? c.split('').map(ch => ch + ch).join('') : c;
-        const bigint = parseInt(normalized, 16);
-        const r = (bigint >> 16) & 255;
-        const g = (bigint >> 8) & 255;
-        const b = bigint & 255;
-        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-    }
-
-    window.addEventListener('resize', resize);
-    resize();
-    draw();
-</script>
-
+<script src="./app.js"></script>
 </body>
 </html>
