@@ -151,72 +151,51 @@ async function safeInvoke(command, params = {}) {
     }
 }
 
-ipcMain.handle('crp56:ping', async () => {
-    return safeInvoke('ping');
-});
-
-ipcMain.handle('crp56:version', async () => {
-    return safeInvoke('version');
-});
+// --- RUBY INTERFACE HANDLERS ---
+ipcMain.handle('crp56:ping', async () => safeInvoke('ping'));
+ipcMain.handle('crp56:version', async () => safeInvoke('version'));
 
 ipcMain.handle('crp56:encrypt-text', async (_event, { passphrase, plainText }) => {
-    return safeInvoke('encrypt_text', {
-        passphrase,
-        plain_text: plainText
-    });
+    return safeInvoke('encrypt_text', { passphrase, plain_text: plainText });
 });
 
 ipcMain.handle('crp56:decrypt-text', async (_event, { passphrase, cipherTextBase64 }) => {
-    return safeInvoke('decrypt_text', {
-        passphrase,
-        cipher_text_base64: cipherTextBase64
-    });
+    return safeInvoke('decrypt_text', { passphrase, cipher_text_base64: cipherTextBase64 });
 });
 
 ipcMain.handle('crp56:encrypt-file', async (_event, { passphrase, sourceFile, outputFile }) => {
-    return safeInvoke('encrypt_file', {
-        passphrase,
-        source_file: sourceFile,
-        output_file: outputFile
-    });
+    return safeInvoke('encrypt_file', { passphrase, source_file: sourceFile, output_file: outputFile });
 });
 
 ipcMain.handle('crp56:decrypt-file', async (_event, { passphrase, sourceFile, outputFile }) => {
-    return safeInvoke('decrypt_file', {
-        passphrase,
-        source_file: sourceFile,
-        output_file: outputFile
-    });
+    return safeInvoke('decrypt_file', { passphrase, source_file: sourceFile, output_file: outputFile });
 });
 
 ipcMain.handle('crp56:encrypt-folder', async (_event, { passphrase, sourceFolder, outputFolder }) => {
-    return safeInvoke('encrypt_folder', {
-        passphrase,
-        source_folder: sourceFolder,
-        output_folder: outputFolder
-    });
+    return safeInvoke('encrypt_folder', { passphrase, source_folder: sourceFolder, output_folder: outputFolder });
 });
 
 ipcMain.handle('crp56:decrypt-folder', async (_event, { passphrase, sourceFolder, outputFolder }) => {
-    return safeInvoke('decrypt_folder', {
-        passphrase,
-        source_folder: sourceFolder,
-        output_folder: outputFolder
-    });
+    return safeInvoke('decrypt_folder', { passphrase, source_folder: sourceFolder, output_folder: outputFolder });
 });
 
+// --- DIALOG HANDLERS (Updated for functionality) ---
+
 ipcMain.handle('dialog:pick-file', async (_event, options = {}) => {
-    return dialog.showOpenDialog(mainWindow, {
-        properties: ['openFile'],
+    // Defaults to allowing multiple files for the 'File Containment' field
+    const defaultOptions = {
+        properties: ['openFile', 'multiSelections'],
         ...options
-    });
+    };
+    return dialog.showOpenDialog(mainWindow, defaultOptions);
 });
 
 ipcMain.handle('dialog:pick-folder', async (_event, options = {}) => {
-    return dialog.showOpenDialog(mainWindow, {
+    const defaultOptions = {
         properties: ['openDirectory'],
         ...options
-    });
+    };
+    return dialog.showOpenDialog(mainWindow, defaultOptions);
 });
 
 ipcMain.handle('dialog:pick-save-file', async (_event, options = {}) => {
@@ -241,24 +220,7 @@ function createWindow() {
 
     mainWindow.webContents.openDevTools({ mode: 'detach' });
 
-    mainWindow.webContents.on('did-start-loading', () => {
-        log('Renderer started loading');
-    });
-
-    mainWindow.webContents.on('did-finish-load', () => {
-        log('Renderer finished loading');
-    });
-
-    mainWindow.webContents.on('did-fail-load', (_event, code, description, validatedURL) => {
-        console.error('[Renderer failed to load]', { code, description, validatedURL });
-    });
-
-    mainWindow.webContents.on('render-process-gone', (_event, details) => {
-        console.error('[Renderer process gone]', details);
-    });
-
     const rendererPath = path.join(__dirname, 'renderer', 'index.html');
-    log('Loading renderer file:', rendererPath);
     mainWindow.loadFile(rendererPath);
 
     mainWindow.on('closed', () => {
@@ -269,7 +231,6 @@ function createWindow() {
 app.whenReady().then(() => {
     log('Electron app ready');
     createWindow();
-
     try {
         startRubyServer();
     } catch (err) {

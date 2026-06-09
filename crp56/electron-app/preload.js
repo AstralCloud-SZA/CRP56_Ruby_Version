@@ -25,36 +25,33 @@ function invoke(channel, payload) {
 }
 
 contextBridge.exposeInMainWorld('crp56', {
-    ping: () =>
-        invoke('crp56:ping'),
+    // System
+    ping: () => invoke('crp56:ping'),
+    version: () => invoke('crp56:version'),
 
-    version: () =>
-        invoke('crp56:version'),
-
+    // Text Core
     encryptText: (passphrase, plainText) =>
         invoke('crp56:encrypt-text', { passphrase, plainText }),
-
     decryptText: (passphrase, cipherTextBase64) =>
         invoke('crp56:decrypt-text', { passphrase, cipherTextBase64 }),
 
+    // File Core
     encryptFile: (passphrase, sourceFile, outputFile) =>
         invoke('crp56:encrypt-file', { passphrase, sourceFile, outputFile }),
-
     decryptFile: (passphrase, sourceFile, outputFile) =>
         invoke('crp56:decrypt-file', { passphrase, sourceFile, outputFile }),
 
+    // Folder Core
     encryptFolder: (passphrase, sourceFolder, outputFolder) =>
         invoke('crp56:encrypt-folder', { passphrase, sourceFolder, outputFolder }),
-
     decryptFolder: (passphrase, sourceFolder, outputFolder) =>
         invoke('crp56:decrypt-folder', { passphrase, sourceFolder, outputFolder }),
 
+    // OS Dialogs
     pickFile: (options) =>
         invoke('dialog:pick-file', options ?? {}),
-
     pickFolder: (options) =>
         invoke('dialog:pick-folder', options ?? {}),
-
     pickSaveFile: (options) =>
         invoke('dialog:pick-save-file', options ?? {}),
 });
