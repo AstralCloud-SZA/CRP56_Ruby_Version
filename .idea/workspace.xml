@@ -4,17 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="testing electron app RUBY -&gt; ELECTRON TEST 2">
-      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/about.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/decrypt.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/encrypt.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/hellflare_gold.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/home.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/primordial_gold.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/settings.html" afterDir="false" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="base html and CSS work">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,61 +46,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0" />
-      <entry key="S30" value="1.0000000000000004" />
-      <entry key="S60" value="1.0000000594582144" />
-      <entry key="M2" value="1.0007829053181005" />
-      <entry key="M5" value="1.332231890494703" />
-      <entry key="M10" value="4.685889221506622" />
-      <entry key="M15" value="10.186584516015625" />
-      <entry key="M30" value="26.66740450078589" />
-      <entry key="H1" value="49.82734030172873" />
-      <entry key="H2" value="74.1789700839608" />
-      <entry key="H4" value="93.50973339638435" />
-      <entry key="D1" value="115.68891533832848" />
-      <entry key="W1" value="120.22076334098657" />
+      <entry key="MS100" value="1.0005475702020992" />
+      <entry key="MS500" value="1.5996578732734679" />
+      <entry key="S2" value="4.535424451010332" />
+      <entry key="S5" value="6.292962137527794" />
+      <entry key="S10" value="7.080437833197125" />
+      <entry key="S30" value="7.677390664453656" />
+      <entry key="S60" value="7.836741536063502" />
+      <entry key="M2" value="7.9456633600878686" />
+      <entry key="M5" value="8.640904622631997" />
+      <entry key="M10" value="10.647508495483214" />
+      <entry key="M15" value="13.8701280640663" />
+      <entry key="M30" value="26.893373258163628" />
+      <entry key="H1" value="50.021492103492065" />
+      <entry key="H2" value="77.20946973109365" />
+      <entry key="H4" value="100.06827009923606" />
+      <entry key="D1" value="127.33129540524139" />
+      <entry key="W1" value="133.01843894478955" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
-      <entry key="S5" value="2.650998137127252E-165" />
-      <entry key="S10" value="5.148784455701419E-83" />
-      <entry key="S30" value="3.7202166928261447E-28" />
-      <entry key="S60" value="1.9288113698062268E-14" />
-      <entry key="M2" value="1.3958835081042862E-7" />
-      <entry key="M5" value="0.0021389836447778523" />
-      <entry key="M10" value="0.06863222880935803" />
-      <entry key="M15" value="0.2394049593472048" />
-      <entry key="M30" value="0.9962284296913172" />
-      <entry key="H1" value="2.474546044326473" />
-      <entry key="H2" value="4.281387260712828" />
-      <entry key="H4" value="5.794403537650766" />
-      <entry key="D1" value="7.570752201369161" />
-      <entry key="W1" value="7.936950302959562" />
+      <entry key="S5" value="1.5967647935666849E-251" />
+      <entry key="S10" value="3.9959539456388724E-126" />
+      <entry key="S30" value="1.5868656456254765E-42" />
+      <entry key="S60" value="1.259724911926473E-21" />
+      <entry key="M2" value="3.56732072117476E-11" />
+      <entry key="M5" value="7.819962239165915E-5" />
+      <entry key="M10" value="0.013122805704621864" />
+      <entry key="M15" value="0.07945700787646381" />
+      <entry key="M30" value="0.5739293878240442" />
+      <entry key="H1" value="1.8782150025648772" />
+      <entry key="H2" value="3.730004841241524" />
+      <entry key="H4" value="5.408429573253043" />
+      <entry key="D1" value="7.484269859546904" />
+      <entry key="W1" value="7.923934226595483" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9659363289248456" />
-      <entry key="MS500" value="0.9930924954370359" />
-      <entry key="S2" value="0.9982686325973925" />
-      <entry key="S5" value="0.9993070929904525" />
-      <entry key="S10" value="0.9996534864594093" />
-      <entry key="S30" value="0.9998844821426087" />
-      <entry key="S60" value="0.9999422988548746" />
-      <entry key="M2" value="1.0007541212914055" />
-      <entry key="M5" value="1.3343430734681547" />
-      <entry key="M10" value="4.754330419088986" />
-      <entry key="M15" value="10.425585988469896" />
-      <entry key="M30" value="27.662866158099593" />
-      <entry key="H1" value="52.30099432487697" />
-      <entry key="H2" value="78.45961585959309" />
-      <entry key="H4" value="99.30364550906596" />
-      <entry key="D1" value="123.25956235793596" />
-      <entry key="W1" value="128.1576979371494" />
+      <entry key="MS100" value="0.9799529374801672" />
+      <entry key="MS500" value="1.5923026522812904" />
+      <entry key="S2" value="4.529784086114358" />
+      <entry key="S5" value="6.289808998739394" />
+      <entry key="S10" value="7.0786610624884485" />
+      <entry key="S30" value="7.676747896044966" />
+      <entry key="S60" value="7.836413414032247" />
+      <entry key="M2" value="7.945496909032479" />
+      <entry key="M5" value="8.640909012877776" />
+      <entry key="M10" value="10.66055276362083" />
+      <entry key="M15" value="13.949420765528444" />
+      <entry key="M30" value="27.466844028523543" />
+      <entry key="H1" value="51.89902106760791" />
+      <entry key="H2" value="80.93882393481627" />
+      <entry key="H4" value="105.47623861828626" />
+      <entry key="D1" value="134.81546088462886" />
+      <entry key="W1" value="140.9423574330674" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -164,7 +155,7 @@
       <updated>1780840264701</updated>
       <workItem from="1780840266205" duration="5031000" />
       <workItem from="1780932048847" duration="2667000" />
-      <workItem from="1780999922667" duration="8193000" />
+      <workItem from="1780999922667" duration="9589000" />
     </task>
     <task id="LOCAL-00001" summary="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work">
       <option name="closed" value="true" />
@@ -246,7 +237,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781006852048</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="base html and CSS work">
+      <option name="closed" value="true" />
+      <created>1781009907437</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1781009907437</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -272,6 +271,7 @@
     <MESSAGE value=".gitignore updates and starting Electron APP work" />
     <MESSAGE value="testing electron app RUBY -&gt; ELECTRON TEST" />
     <MESSAGE value="testing electron app RUBY -&gt; ELECTRON TEST 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="testing electron app RUBY -&gt; ELECTRON TEST 2" />
+    <MESSAGE value="base html and CSS work" />
+    <option name="LAST_COMMIT_MESSAGE" value="base html and CSS work" />
   </component>
 </project>
