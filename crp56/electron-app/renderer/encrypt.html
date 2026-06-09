@@ -11,21 +11,123 @@
     <style>
         a { text-decoration: none; }
         .bg-slides, #particles { pointer-events: none; }
-        .content-stack { display:grid; gap: var(--space-4); }
-        .tab-row { display:flex; flex-wrap:wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
-        .tab-pill { padding: 0.7rem 0.95rem; border-radius: var(--radius-full); border:1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--muted); text-transform: uppercase; font-size: var(--text-xs); letter-spacing: 0.08em; cursor:pointer; }
-        .tab-pill.active { color: var(--text); border-color: var(--border-strong); box-shadow: var(--glow); }
-        .input-panel, .text-panel { width:100%; min-height: 160px; padding: var(--space-5); border-radius: var(--radius-xl); border:1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); color: var(--text); }
-        .text-panel { resize: vertical; }
-        .two-col { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--space-4); }
+
+        /* CONTENT LAYOUT */
+        .content-stack { display:grid; gap: var(--space-6); }
+
+        /* COMMAND SHARDS (Tabs) */
+        .tab-row {
+            display:flex;
+            flex-wrap:wrap;
+            gap: var(--space-3);
+            margin-bottom: var(--space-6);
+        }
+        .tab-pill {
+            padding: 0.7rem 1.5rem;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.03);
+            color: var(--muted);
+            text-transform: uppercase;
+            font-size: var(--text-xs);
+            letter-spacing: 0.12em;
+            cursor:pointer;
+            transition: var(--transition);
+            font-weight: 700;
+            /* Aggressive Shard Shape */
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+        }
+        .tab-pill.active {
+            color: #000;
+            background: var(--gold-gradient);
+            border-color: var(--accent-2);
+            box-shadow: var(--glow);
+        }
+        .tab-pill:hover:not(.active) {
+            color: var(--text);
+            background: rgba(255,255,255,0.08);
+            transform: translateY(-2px);
+        }
+
+        /* CONTAINMENT FIELDS (Inputs/Textareas) */
+        .containment-field {
+            width: 100%;
+            min-height: 60px;
+            padding: var(--space-5);
+            border: 2px solid var(--border);
+            background: rgba(0,0,0,0.4);
+            color: var(--text);
+            font-family: var(--font-body);
+            transition: var(--transition);
+            position: relative;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--panel-inner-glow);
+        }
+
+        /* The "Magic Circle" focus effect */
+        .containment-field:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(255, 234, 0, 0.2), inset 0 0 10px rgba(255, 234, 0, 0.1);
+            background: rgba(255, 234, 0, 0.02);
+        }
+
+        .text-panel {
+            min-height: 180px;
+            resize: vertical;
+        }
+
+        /* FIELD WRAPPERS */
+        .field-stack {
+            display:grid;
+            gap: var(--space-3);
+            margin-bottom: var(--space-6);
+        }
+        .field-label {
+            color: var(--faint);
+            text-transform: uppercase;
+            letter-spacing: .15em;
+            font-size: var(--text-xs);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        .field-label::before {
+            content: "";
+            width: 4px;
+            height: 12px;
+            background: var(--accent);
+            display: inline-block;
+        }
+
+        /* PAGE STRUCTURE */
+        .two-col {
+            display:grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: var(--space-6);
+        }
+        .section-shell {
+            padding: var(--space-6);
+            overflow:auto;
+            height: calc(100vh - 220px); /* Prevents double scrollbars */
+        }
         .subtle { color: var(--muted); }
-        .section-shell { padding: var(--space-6); overflow:auto; }
-        .field-stack { display:grid; gap: var(--space-3); }
-        .field-label { color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-size: var(--text-xs); }
-        .control-row { display:flex; flex-wrap:wrap; gap: var(--space-3); }
-        .status-box { min-height: 160px; white-space: pre-wrap; overflow:auto; }
+        .control-row { display:flex; flex-wrap:wrap; gap: var(--space-4); }
+
+        /* OUTPUT TERMINAL */
+        .status-box {
+            min-height: 200px;
+            white-space: pre-wrap;
+            overflow:auto;
+            font-family: 'Courier New', monospace;
+            font-size: var(--text-sm);
+            border-left: 3px solid var(--accent);
+            background: rgba(0,0,0,0.6) !important;
+        }
+
         .hidden { display:none !important; }
-        @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+
+        @media (max-width: 980px) { .two-col { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body data-page="encrypt">
@@ -52,62 +154,96 @@
                     <button class="theme-button" id="themeToggle" type="button">Swap aesthetic</button>
                 </div>
             </header>
+
             <div class="progress-shell" aria-label="Operation progress preview">
                 <div class="progress-fill"><div class="progress-tip"></div></div>
             </div>
 
             <section class="section-shell">
                 <div class="content-stack">
+                    <!-- Command Shards -->
                     <div class="tab-row">
                         <button class="tab-pill active" data-tab-target="text" type="button">Text</button>
                         <button class="tab-pill" data-tab-target="file" type="button">File</button>
                         <button class="tab-pill" data-tab-target="folder" type="button">Folder</button>
                     </div>
+
                     <div class="two-col">
+                        <!-- Main Operation Area -->
                         <section class="hero-panel">
                             <div class="kicker">Encrypt workflow</div>
                             <h2>Secure input in a controlled gold chamber.</h2>
-                            <p class="subtle">This page now includes working tab switches and renderer hooks for text encryption.</p>
+                            <p class="subtle">The Primordial Yellow interface ensures maximum data containment during polymorphic encryption.</p>
 
                             <div class="field-stack">
-                                <label class="field-label" for="passphrase">Passphrase</label>
-                                <input id="passphrase" class="input-panel" type="password" placeholder="Enter passphrase" />
+                                <label class="field-label" for="passphrase">Passphrase Key</label>
+                                <input id="passphrase" class="containment-field" type="password" placeholder="Enter sovereign passphrase..." />
                             </div>
 
+                            <!-- Text Panel -->
                             <div class="field-stack tab-panel" data-tab-panel="text">
-                                <label class="field-label" for="plain-text">Plain text</label>
-                                <textarea id="plain-text" class="text-panel" placeholder="Enter text to encrypt"></textarea>
+                                <label class="field-label" for="plain-text">Plaintext Data</label>
+                                <textarea id="plain-text" class="containment-field text-panel" placeholder="Enter text to be encrypted..."></textarea>
                             </div>
 
+                            <!-- File Panel -->
                             <div class="field-stack tab-panel hidden" data-tab-panel="file">
-                                <label class="field-label">File mode</label>
-                                <div class="input-panel">File selection integration placeholder.</div>
+                                <label class="field-label">File Containment</label>
+                                <div id="file-drop-zone" class="containment-field" style="display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; border-style: dashed; min-height: 120px; gap: 10px;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                    <span class="subtle">Drop files here or click to browse</span>
+                                </div>
+                                <!-- Selection Preview -->
+                                <div id="file-list" class="status-box" style="min-height: 80px; font-size: var(--text-xs); color: var(--muted); display:none; border: 1px solid var(--border); padding: var(--space-3); border-radius: var(--radius-sm);">
+                                    <!-- Selected files will appear here as "shards" -->
+                                </div>
                             </div>
 
+                            <!-- Folder Panel -->
                             <div class="field-stack tab-panel hidden" data-tab-panel="folder">
-                                <label class="field-label">Folder mode</label>
-                                <div class="input-panel">Folder selection integration placeholder.</div>
+                                <label class="field-label">Folder Containment</label>
+                                <div id="folder-drop-zone" class="containment-field" style="display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; border-style: dashed; min-height: 120px; gap: 10px;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                                    <span class="subtle">Click to select target directory</span>
+                                </div>
+                                <!-- Selection Preview -->
+                                <div id="folder-list" class="status-box" style="min-height: 80px; font-size: var(--text-xs); color: var(--muted); display:none; border: 1px solid var(--border); padding: var(--space-3); border-radius: var(--radius-sm);">
+                                    <!-- Selected folder path will appear here -->
+                                </div>
                             </div>
+
 
                             <div class="control-row hero-actions">
-                                <button class="primary-btn" id="btn-encrypt" type="button">Encrypt</button>
-                                <button class="secondary-btn" id="btn-ping" type="button">Ping</button>
-                                <button class="secondary-btn" id="btn-version" type="button">Version</button>
+                                <button class="primary-btn" id="btn-encrypt" type="button">Execute Encryption</button>
+                                <button class="secondary-btn" id="btn-ping" type="button">System Ping</button>
+                                <button class="secondary-btn" id="btn-version" type="button">Core Version</button>
                             </div>
                         </section>
+
+                        <!-- System Controls Area -->
                         <aside class="system-stack">
                             <section class="system-panel">
                                 <h2 class="panel-title">Operation controls</h2>
                                 <div class="action-grid">
-                                    <article class="action-card"><div class="action-label">Primary action</div><div class="action-title">Encrypt</div><div class="action-copy">Starts active processing and triggers the signature progress bar.</div></article>
-                                    <article class="action-card"><div class="action-label">Output mode</div><div class="action-title">Secure export</div><div class="action-copy">Prepared for text output, file generation, or folder packaging.</div></article>
+                                    <article class="action-card">
+                                        <div class="action-label">Primary action</div>
+                                        <div class="action-title">Encrypt</div>
+                                        <div class="action-copy">Triggers the polymorphic engine and activates the shard progress bar.</div>
+                                    </article>
+                                    <article class="action-card">
+                                        <div class="action-label">Output mode</div>
+                                        <div class="action-title">Secure export</div>
+                                        <div class="action-copy">Final result is packaged into an encrypted sovereign container.</div>
+                                    </article>
                                 </div>
                             </section>
+
                             <section class="system-panel">
-                                <h2 class="panel-title">Output</h2>
-                                <pre id="output" class="input-panel status-box">{
+                                <h2 class="panel-title">Console Output</h2>
+                                <pre id="output" class="containment-field status-box">{
   "ok": true,
-  "status": "Encrypt page ready."
+  "status": "Encrypt page ready.",
+  "core": "Primordial-Yellow-v1.0"
 }</pre>
                             </section>
                         </aside>
@@ -116,10 +252,11 @@
             </section>
 
             <footer class="footer-strip">
-                <span>Right-hand tactical rail locked</span>
+                <span>Tactical Rail: Locked</span>
                 <span id="themeName">Primordial Gold</span>
             </footer>
         </main>
+
         <aside class="rail" aria-label="Primary navigation">
             <div class="rail-logo">
                 <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
@@ -127,8 +264,16 @@
                     <path d="M9.4 10.2h5.2M8.8 13.8h6.4"></path>
                 </svg>
             </div>
-            <nav class="rail-nav"><a class="nav-btn" href="./home.html">Home</a><a class="nav-btn active" href="./encrypt.html">Enc</a><a class="nav-btn" href="./decrypt.html">Dec</a><a class="nav-btn" href="./settings.html">Set</a><a class="nav-btn" href="./about.html">About</a></nav>
-            <div class="rail-bottom"><div class="rail-note">Yellow primordial shell active</div></div>
+            <nav class="rail-nav">
+                <a class="nav-btn" href="./home.html">Home</a>
+                <a class="nav-btn active" href="./encrypt.html">Enc</a>
+                <a class="nav-btn" href="./decrypt.html">Dec</a>
+                <a class="nav-btn" href="./settings.html">Set</a>
+                <a class="nav-btn" href="./about.html">About</a>
+            </nav>
+            <div class="rail-bottom">
+                <div class="rail-note">Primordial Shell Active</div>
+            </div>
         </aside>
     </div>
 </div>

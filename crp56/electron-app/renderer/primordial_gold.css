@@ -1,22 +1,48 @@
 :root {
-    --bg: #0c0904;
-    --bg-2: #181108;
-    --surface: rgba(22, 16, 8, 0.78);
-    --surface-2: rgba(31, 22, 10, 0.86);
-    --surface-3: rgba(49, 34, 14, 0.72);
-    --border: rgba(242, 193, 79, 0.24);
-    --border-strong: rgba(255, 214, 102, 0.46);
-    --text: #f6eed7;
-    --muted: #c8bc97;
-    --faint: #8d7a50;
-    --accent: #f2c14f;
-    --accent-2: #ffdf83;
-    --accent-soft: rgba(242, 193, 79, 0.18);
-    --danger: #ff6b5e;
-    --glow: 0 0 18px rgba(242, 193, 79, 0.25), 0 0 48px rgba(242, 193, 79, 0.14);
-    --panel-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+    /* BACKGROUNDS: "Black Diamond"
+       Using a near-absolute black with a tiny hint of yellow to prevent it from looking "flat" */
+    --bg: #050503;
+    --bg-2: #0a0a07;
+
+    /* SURFACES: "Polished Obsidian"
+       Deep, high-transparency blacks that allow the background particles to shimmer through */
+    --surface: rgba(8, 8, 5, 0.85);
+    --surface-2: rgba(15, 15, 10, 0.9);
+    --surface-3: rgba(25, 25, 15, 0.7);
+
+    /* BORDERS: "Pure Imperial Gold"
+       Shifting from orange-gold to a brilliant, pure yellow-gold */
+    --border: rgba(255, 234, 0, 0.3);
+    --border-strong: rgba(255, 234, 0, 0.6);
+
+    /* TEXT: "Ivory Radiance"
+       Very light, warm cream to ensure maximum contrast against the black diamond */
+    --text: #fffdf0;
+    --muted: #e2d9a1;
+    --faint: #b8ad6d;
+
+    /* ACCENTS: "Primordial Yellow"
+       The core identity. Pure, high-saturation sovereign yellow. */
+    --accent: #ffea00;       /* Vibrant, pure primordial yellow */
+    --accent-2: #fff9c4;     /* Near-white yellow for high-energy highlights */
+    --accent-soft: rgba(255, 234, 0, 0.12);
+
+    /* UTILITY */
+    --danger: #ff3131;
+
+    /* GLOW: "Sovereign Radiance"
+       Layered glow: A sharp white-yellow center, a strong yellow mid-glow, and a wide soft aura */
+    --glow:
+            0 0 15px rgba(255, 234, 0, 0.4),
+            0 0 35px rgba(255, 234, 0, 0.2),
+            0 0 10px rgba(255, 255, 255, 0.15);
+
+    --panel-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
+
+    /* VEIL: "Celestial Gold Dust"
+       Luminous yellow pools that make the screen feel like it's filled with divine energy */
     --veil:
-            radial-gradient(circle at 20% 10%, rgba(255, 213, 106, 0.14), transparent 34%),
-            radial-gradient(circle at 82% 18%, rgba(255, 185, 65, 0.12), transparent 24%),
-            linear-gradient(135deg, rgba(9, 6, 2, 0.88), rgba(14, 9, 3, 0.78));
+            radial-gradient(circle at 20% 10%, rgba(255, 234, 0, 0.12), transparent 40%),
+            radial-gradient(circle at 80% 20%, rgba(255, 234, 0, 0.08), transparent 30%),
+            linear-gradient(135deg, rgba(5, 5, 3, 0.95), rgba(10, 10, 7, 0.85));
 }
