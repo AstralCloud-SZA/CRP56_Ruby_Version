@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="Finished up ruby backend changes and started on Electron frontend work">
-      <change afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crp56/electron-app/preload.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/package.json" afterDir="false" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment=".gitignore updates and starting Electron APP work">
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/preload.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/preload.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,7 +24,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Ruby File" />
+        <option value="HTML File" />
         <option value="JavaScript File" />
+        <option value="CSS File" />
       </list>
     </option>
   </component>
@@ -48,61 +51,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0001519921869853" />
-      <entry key="S2" value="1.2042113879649758" />
-      <entry key="S5" value="2.190434169386725" />
-      <entry key="S10" value="3.562099529991409" />
-      <entry key="S30" value="6.728883540760712" />
-      <entry key="S60" value="8.736438121773553" />
-      <entry key="M2" value="11.425841724940684" />
-      <entry key="M5" value="18.185875087509853" />
-      <entry key="M10" value="24.514951699515333" />
-      <entry key="M15" value="28.194849206845035" />
-      <entry key="M30" value="36.37433978516456" />
-      <entry key="H1" value="49.1393889968831" />
-      <entry key="H2" value="63.1604584419894" />
-      <entry key="H4" value="74.0645138604365" />
-      <entry key="D1" value="86.16792785698209" />
-      <entry key="W1" value="88.58605158362485" />
+      <entry key="MS100" value="1.001469147740037" />
+      <entry key="MS500" value="1.397995081085832" />
+      <entry key="S2" value="3.1703145442473524" />
+      <entry key="S5" value="5.432593902946724" />
+      <entry key="S10" value="7.523826044217256" />
+      <entry key="S30" value="10.605883815138622" />
+      <entry key="S60" value="13.414514784685663" />
+      <entry key="M2" value="17.509927976425832" />
+      <entry key="M5" value="25.877900424874042" />
+      <entry key="M10" value="33.473187241377595" />
+      <entry key="M15" value="37.82606183230525" />
+      <entry key="M30" value="46.82548659500768" />
+      <entry key="H1" value="60.08878738579127" />
+      <entry key="H2" value="74.48437627431709" />
+      <entry key="H4" value="85.6678704187093" />
+      <entry key="D1" value="98.09097481347844" />
+      <entry key="W1" value="100.57474862423082" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="2.5689183740414858E-141" />
-      <entry key="S5" value="7.853711908808095E-57" />
-      <entry key="S10" value="1.2239988572788292E-28" />
-      <entry key="S30" value="7.838385059654588E-10" />
-      <entry key="S60" value="3.956642484757717E-5" />
-      <entry key="M2" value="0.008894119085150714" />
-      <entry key="M5" value="0.22924799764422193" />
-      <entry key="M10" value="0.6867721485025736" />
-      <entry key="M15" value="1.039827714103861" />
-      <entry key="M30" value="1.9245798580205384" />
-      <entry key="H1" value="3.2484201762495157" />
-      <entry key="H2" value="4.612873246621648" />
-      <entry key="H4" value="5.6353712835872" />
-      <entry key="D1" value="6.743829486536807" />
-      <entry key="W1" value="6.962624319761696" />
+      <entry key="MS100" value="2.8107984055032102E-42" />
+      <entry key="MS500" value="4.895149272491674E-9" />
+      <entry key="S2" value="0.008364528878975222" />
+      <entry key="S5" value="0.1475627003136651" />
+      <entry key="S10" value="0.3841389075759772" />
+      <entry key="S30" value="0.7269358696203402" />
+      <entry key="S60" value="0.8526164124992337" />
+      <entry key="M2" value="0.9280708707045027" />
+      <entry key="M5" value="1.1463051671071003" />
+      <entry key="M10" value="1.5888192599826787" />
+      <entry key="M15" value="1.9446020448702928" />
+      <entry key="M30" value="2.839276767845551" />
+      <entry key="H1" value="4.177533469637136" />
+      <entry key="H2" value="5.5628418328316585" />
+      <entry key="H4" value="6.604878562227639" />
+      <entry key="D1" value="7.737756310544706" />
+      <entry key="W1" value="7.961728754194504" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9526379980439373" />
-      <entry key="MS500" value="0.9904935920964218" />
-      <entry key="S2" value="1.2013053199871289" />
-      <entry key="S5" value="2.188292571678127" />
-      <entry key="S10" value="3.5603392738829007" />
-      <entry key="S30" value="6.727758517017325" />
-      <entry key="S60" value="8.735749805508643" />
-      <entry key="M2" value="11.434206554562252" />
-      <entry key="M5" value="18.414027543248185" />
-      <entry key="M10" value="25.200275453474934" />
-      <entry key="M15" value="29.233241770887393" />
-      <entry key="M30" value="38.29762407928104" />
-      <entry key="H1" value="52.38674717561941" />
-      <entry key="H2" value="67.7725924677097" />
-      <entry key="H4" value="79.69943837120114" />
-      <entry key="D1" value="92.9116690237026" />
-      <entry key="W1" value="95.54866289662023" />
+      <entry key="MS100" value="0.987661615680538" />
+      <entry key="MS500" value="1.3929207484059367" />
+      <entry key="S2" value="3.1703890369165597" />
+      <entry key="S5" value="5.538187714783022" />
+      <entry key="S10" value="7.851058067537514" />
+      <entry key="S30" value="11.295386894811735" />
+      <entry key="S60" value="14.244787961887042" />
+      <entry key="M2" value="18.42566364416971" />
+      <entry key="M5" value="27.018280991566296" />
+      <entry key="M10" value="35.0581499118551" />
+      <entry key="M15" value="39.767614795908216" />
+      <entry key="M30" value="49.662651331050775" />
+      <entry key="H1" value="64.26484476345048" />
+      <entry key="H2" value="80.04626817953775" />
+      <entry key="H4" value="92.27219523939148" />
+      <entry key="D1" value="105.8286246492297" />
+      <entry key="W1" value="108.53646176831431" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -114,30 +117,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ruby.rubocop.migration.global.runOnSaveToExternalFormatter&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP&quot;: &quot;1780932107071&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ruby.structure.view.model.defaults.configured&quot;: &quot;true&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.ruby.rubocop.migration.global.runOnSaveToExternalFormatter": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP": "1780932107071",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "master",
+    "junie.onboarding.icon.badge.shown": "true",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "ruby.structure.view.model.defaults.configured": "true",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -155,7 +160,7 @@
       <updated>1780840264701</updated>
       <workItem from="1780840266205" duration="5031000" />
       <workItem from="1780932048847" duration="2667000" />
-      <workItem from="1780999922667" duration="5441000" />
+      <workItem from="1780999922667" duration="6035000" />
     </task>
     <task id="LOCAL-00001" summary="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work">
       <option name="closed" value="true" />
@@ -213,7 +218,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781005545570</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary=".gitignore updates and starting Electron APP work">
+      <option name="closed" value="true" />
+      <created>1781005778438</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1781005778438</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -236,6 +249,7 @@
     <MESSAGE value="File conversion work main file work nearly done" />
     <MESSAGE value="File conversion work continued ruby backend file conversion work" />
     <MESSAGE value="Finished up ruby backend changes and started on Electron frontend work" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished up ruby backend changes and started on Electron frontend work" />
+    <MESSAGE value=".gitignore updates and starting Electron APP work" />
+    <option name="LAST_COMMIT_MESSAGE" value=".gitignore updates and starting Electron APP work" />
   </component>
 </project>

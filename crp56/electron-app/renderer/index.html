@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; script-src 'self'">
+    <title>CRP56</title>
+    <style>
+        body { font-family: system-ui; padding: 2rem; background: #1a1a1a; color: #eee; }
+        button { padding: 0.5rem 1rem; margin: 0.25rem; cursor: pointer; }
+        textarea { width: 100%; height: 80px; margin: 0.5rem 0; background: #222; color: #eee; border: 1px solid #444; padding: 0.5rem; }
+        input { padding: 0.4rem; background: #222; color: #eee; border: 1px solid #444; width: 100%; margin: 0.25rem 0; }
+        pre { background: #222; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.85rem; }
+        label { font-size: 0.85rem; color: #aaa; }
+    </style>
+</head>
+<body>
+<h2>CRP56 — Bridge Test</h2>
+
+<button id="btn-ping">Ping Ruby</button>
+<button id="btn-version">Version</button>
+
+<hr>
+<label>Passphrase</label>
+<input id="passphrase" type="password" placeholder="Enter passphrase">
+
+<label>Plain text</label>
+<textarea id="plain-text">Hello CRP56!</textarea>
+
+<button id="btn-encrypt">Encrypt</button>
+<button id="btn-decrypt">Decrypt</button>
+
+<label>Output</label>
+<pre id="output">Ready.</pre>
+
+<script src="app.js"></script>
+</body>
+</html>
