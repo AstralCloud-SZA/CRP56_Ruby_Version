@@ -2,6 +2,9 @@
 
 # Electron app dependencies
 /electron-app/node_modules/
+node_modules/
+electron-app/node_modules/
+crp56/electron-app/node_modules/
 
 # Electron build outputs
 /electron-app/dist/
