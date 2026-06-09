@@ -189,6 +189,40 @@ ipcMain.handle('crp56:decrypt-file', async (_event, { passphrase, sourceFile, ou
     });
 });
 
+ipcMain.handle('crp56:encrypt-folder', async (_event, { passphrase, sourceFolder, outputFolder }) => {
+    return safeInvoke('encrypt_folder', {
+        passphrase,
+        source_folder: sourceFolder,
+        output_folder: outputFolder
+    });
+});
+
+ipcMain.handle('crp56:decrypt-folder', async (_event, { passphrase, sourceFolder, outputFolder }) => {
+    return safeInvoke('decrypt_folder', {
+        passphrase,
+        source_folder: sourceFolder,
+        output_folder: outputFolder
+    });
+});
+
+ipcMain.handle('dialog:pick-file', async (_event, options = {}) => {
+    return dialog.showOpenDialog(mainWindow, {
+        properties: ['openFile'],
+        ...options
+    });
+});
+
+ipcMain.handle('dialog:pick-folder', async (_event, options = {}) => {
+    return dialog.showOpenDialog(mainWindow, {
+        properties: ['openDirectory'],
+        ...options
+    });
+});
+
+ipcMain.handle('dialog:pick-save-file', async (_event, options = {}) => {
+    return dialog.showSaveDialog(mainWindow, options);
+});
+
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1000,
