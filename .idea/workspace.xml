@@ -4,11 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="testing electron app RUBY -&gt; ELECTRON TEST">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="testing electron app RUBY -&gt; ELECTRON TEST 2">
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/about.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/decrypt.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/encrypt.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/hellflare_gold.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/home.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/primordial_gold.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/settings.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/preload.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/preload.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,9 +28,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Ruby File" />
-        <option value="HTML File" />
         <option value="JavaScript File" />
         <option value="CSS File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -49,61 +55,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0000000073631763" />
-      <entry key="MS500" value="1.0311563050590296" />
-      <entry key="S2" value="1.9249038208856146" />
-      <entry key="S5" value="3.753537719756622" />
-      <entry key="S10" value="5.682493961693372" />
-      <entry key="S30" value="8.137745879653343" />
-      <entry key="S60" value="9.011767988530094" />
-      <entry key="M2" value="9.976812581399626" />
-      <entry key="M5" value="16.00162043280158" />
-      <entry key="M10" value="26.29529258041458" />
-      <entry key="M15" value="33.438937815926316" />
-      <entry key="M30" value="46.880305140067215" />
-      <entry key="H1" value="63.335230615719766" />
-      <entry key="H2" value="80.17670687178732" />
-      <entry key="H4" value="93.15458168282271" />
-      <entry key="D1" value="107.60550848233142" />
-      <entry key="W1" value="110.50349208228546" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0" />
+      <entry key="S5" value="1.0" />
+      <entry key="S10" value="1.0" />
+      <entry key="S30" value="1.0000000000000004" />
+      <entry key="S60" value="1.0000000594582144" />
+      <entry key="M2" value="1.0007829053181005" />
+      <entry key="M5" value="1.332231890494703" />
+      <entry key="M10" value="4.685889221506622" />
+      <entry key="M15" value="10.186584516015625" />
+      <entry key="M30" value="26.66740450078589" />
+      <entry key="H1" value="49.82734030172873" />
+      <entry key="H2" value="74.1789700839608" />
+      <entry key="H4" value="93.50973339638435" />
+      <entry key="D1" value="115.68891533832848" />
+      <entry key="W1" value="120.22076334098657" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
-      <entry key="S2" value="9.590440684625701E-96" />
-      <entry key="S5" value="9.834118234389222E-39" />
-      <entry key="S10" value="9.916712274937305E-20" />
-      <entry key="S30" value="4.6286666461842874E-7" />
-      <entry key="S60" value="6.803518828147187E-4" />
-      <entry key="M2" value="0.026216281581277284" />
-      <entry key="M5" value="0.27523029179943276" />
-      <entry key="M10" value="0.7785248617069033" />
-      <entry key="M15" value="1.208637500309522" />
-      <entry key="M30" value="2.2384138911127" />
-      <entry key="H1" value="3.7092514042790152" />
-      <entry key="H2" value="5.241793135608567" />
-      <entry key="H4" value="6.411452365484296" />
-      <entry key="D1" value="7.699519891005495" />
-      <entry key="W1" value="7.956096359218395" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="2.650998137127252E-165" />
+      <entry key="S10" value="5.148784455701419E-83" />
+      <entry key="S30" value="3.7202166928261447E-28" />
+      <entry key="S60" value="1.9288113698062268E-14" />
+      <entry key="M2" value="1.3958835081042862E-7" />
+      <entry key="M5" value="0.0021389836447778523" />
+      <entry key="M10" value="0.06863222880935803" />
+      <entry key="M15" value="0.2394049593472048" />
+      <entry key="M30" value="0.9962284296913172" />
+      <entry key="H1" value="2.474546044326473" />
+      <entry key="H2" value="4.281387260712828" />
+      <entry key="H4" value="5.794403537650766" />
+      <entry key="D1" value="7.570752201369161" />
+      <entry key="W1" value="7.936950302959562" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9794203047984685" />
-      <entry key="MS500" value="1.026866351440916" />
-      <entry key="S2" value="1.9227226667802109" />
-      <entry key="S5" value="3.751711654050999" />
-      <entry key="S10" value="5.6810720396478045" />
-      <entry key="S30" value="8.137055827339529" />
-      <entry key="S60" value="9.012047166621956" />
-      <entry key="M2" value="10.002478125506846" />
-      <entry key="M5" value="16.27534459672658" />
-      <entry key="M10" value="27.071885431672634" />
-      <entry key="M15" value="34.645651920365935" />
-      <entry key="M30" value="49.11703976334389" />
-      <entry key="H1" value="67.04316428020974" />
-      <entry key="H2" value="85.41760134431183" />
-      <entry key="H4" value="99.5654947430979" />
-      <entry key="D1" value="115.30492212788174" />
-      <entry key="W1" value="118.45957280003154" />
+      <entry key="MS100" value="0.9659363289248456" />
+      <entry key="MS500" value="0.9930924954370359" />
+      <entry key="S2" value="0.9982686325973925" />
+      <entry key="S5" value="0.9993070929904525" />
+      <entry key="S10" value="0.9996534864594093" />
+      <entry key="S30" value="0.9998844821426087" />
+      <entry key="S60" value="0.9999422988548746" />
+      <entry key="M2" value="1.0007541212914055" />
+      <entry key="M5" value="1.3343430734681547" />
+      <entry key="M10" value="4.754330419088986" />
+      <entry key="M15" value="10.425585988469896" />
+      <entry key="M30" value="27.662866158099593" />
+      <entry key="H1" value="52.30099432487697" />
+      <entry key="H2" value="78.45961585959309" />
+      <entry key="H4" value="99.30364550906596" />
+      <entry key="D1" value="123.25956235793596" />
+      <entry key="W1" value="128.1576979371494" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -158,7 +164,7 @@
       <updated>1780840264701</updated>
       <workItem from="1780840266205" duration="5031000" />
       <workItem from="1780932048847" duration="2667000" />
-      <workItem from="1780999922667" duration="6539000" />
+      <workItem from="1780999922667" duration="8193000" />
     </task>
     <task id="LOCAL-00001" summary="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work">
       <option name="closed" value="true" />
@@ -232,7 +238,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781006392632</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="testing electron app RUBY -&gt; ELECTRON TEST 2">
+      <option name="closed" value="true" />
+      <created>1781006852048</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1781006852048</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -257,6 +271,7 @@
     <MESSAGE value="Finished up ruby backend changes and started on Electron frontend work" />
     <MESSAGE value=".gitignore updates and starting Electron APP work" />
     <MESSAGE value="testing electron app RUBY -&gt; ELECTRON TEST" />
-    <option name="LAST_COMMIT_MESSAGE" value="testing electron app RUBY -&gt; ELECTRON TEST" />
+    <MESSAGE value="testing electron app RUBY -&gt; ELECTRON TEST 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="testing electron app RUBY -&gt; ELECTRON TEST 2" />
   </component>
 </project>
