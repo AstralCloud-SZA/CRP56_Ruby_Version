@@ -10,10 +10,23 @@
     <link rel="stylesheet" href="./primordial_gold.css" id="themeStylesheet" />
     <style>
         a { text-decoration: none; }
-        .bg-slides, #particles { pointer-events: none; }
         .content-stack { display:grid; gap: var(--space-4); }
-        .section-shell { padding: var(--space-6); overflow:auto; }
+        .two-col { display:grid; grid-template-columns: 1.2fr 0.8fr; gap: var(--space-6); }
+        .subtle { color: var(--muted); }
+        .switcher { display:flex; flex-wrap:wrap; gap: var(--space-2); }
+        .section-shell { padding: var(--space-6); overflow:auto; height: calc(100vh - 220px); }
         .about-copy { max-width: 70ch; color: var(--muted); line-height: 1.7; }
+        .info-line { display:flex; align-items:center; justify-content:space-between; gap: var(--space-3); padding: var(--space-4); border:1px solid var(--border); border-radius: var(--radius-lg); background: rgba(255,255,255,0.02); }
+        .status-box {
+            min-height: 200px;
+            white-space: pre-wrap;
+            overflow:auto;
+            font-family: 'Courier New', monospace;
+            font-size: var(--text-sm);
+            border-left: 3px solid var(--accent);
+            background: rgba(0,0,0,0.6) !important;
+        }
+        @media (max-width: 980px) { .two-col { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body data-page="about">
@@ -40,25 +53,56 @@
                     <button class="theme-button" id="themeToggle" type="button">Swap aesthetic</button>
                 </div>
             </header>
+
             <div class="progress-shell" aria-label="Operation progress preview">
                 <div class="progress-fill"><div class="progress-tip"></div></div>
             </div>
 
             <section class="section-shell">
                 <div class="content-stack">
-                    <section class="hero-panel">
-                        <div class="kicker">About</div>
-                        <h2>Polymorphic encryption command chamber.</h2>
-                        <p class="about-copy">This interface combines a right-hand tactical rail, strong yellow-led identity, dual aesthetic themes, persistent particles, and a branded shard-flame progress line. These pages are now structured as self-contained renderer files that all use the same CSS filenames and shared shell behavior.</p>
-                    </section>
+                    <div class="two-col">
+                        <!-- About copy -->
+                        <section class="hero-panel">
+                            <div class="kicker">CRP56 — Polymorphic Encryption</div>
+                            <h2>A ceremonial chamber for sovereign data.</h2>
+                            <div class="about-copy">
+                                <p>CRP56 is a polymorphic encryption system that seals text, files, and entire folders behind a passphrase-derived shard cipher. Every payload is split into shards, each independently keyed, compressed with Zstd, and sealed under an HMAC integrity lock.</p>
+                                <p>Encrypted files take the <strong>.crp56</strong> extension — <code>test1.png</code> becomes <code>test1.crp56</code> — while the original filename and extension travel inside the encrypted envelope itself, restored byte-for-byte on decryption.</p>
+                                <p>The interface pairs a Ruby cryptography core with an Electron shell: the right-hand tactical rail, shard-flame progress line, and particle-backed atmosphere stay locked across every chamber.</p>
+                            </div>
+                            <div class="content-stack" style="margin-top: var(--space-4);">
+                                <div class="info-line"><span class="subtle">Cipher core</span><span>Polymorphic shard engine</span></div>
+                                <div class="info-line"><span class="subtle">Integrity</span><span>HMAC sealed</span></div>
+                                <div class="info-line"><span class="subtle">Compression</span><span>Zstd</span></div>
+                                <div class="info-line"><span class="subtle">Container</span><span>.crp56 envelope</span></div>
+                            </div>
+                        </section>
+
+                        <!-- Live core info -->
+                        <aside class="system-stack">
+                            <section class="system-panel">
+                                <h2 class="panel-title">Core link</h2>
+                                <div class="switcher" style="margin-bottom: var(--space-4);">
+                                    <button class="secondary-btn" id="btn-version" type="button">Core Version</button>
+                                    <button class="secondary-btn" id="btn-ping" type="button">System Ping</button>
+                                </div>
+                                <pre id="output" class="containment-field status-box">{
+  "ok": true,
+  "status": "About page ready.",
+  "core": "Primordial-Yellow-v1.0"
+}</pre>
+                            </section>
+                        </aside>
+                    </div>
                 </div>
             </section>
 
             <footer class="footer-strip">
-                <span>Right-hand tactical rail locked</span>
+                <span>Tactical Rail: Locked</span>
                 <span id="themeName">Primordial Gold</span>
             </footer>
         </main>
+
         <aside class="rail" aria-label="Primary navigation">
             <div class="rail-logo">
                 <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
@@ -66,8 +110,16 @@
                     <path d="M9.4 10.2h5.2M8.8 13.8h6.4"></path>
                 </svg>
             </div>
-            <nav class="rail-nav"><a class="nav-btn" href="./home.html">Home</a><a class="nav-btn" href="./encrypt.html">Enc</a><a class="nav-btn" href="./decrypt.html">Dec</a><a class="nav-btn" href="./settings.html">Set</a><a class="nav-btn active" href="./about.html">About</a></nav>
-            <div class="rail-bottom"><div class="rail-note">Yellow primordial shell active</div></div>
+            <nav class="rail-nav">
+                <a class="nav-btn" href="./home.html">Home</a>
+                <a class="nav-btn" href="./encrypt.html">Enc</a>
+                <a class="nav-btn" href="./decrypt.html">Dec</a>
+                <a class="nav-btn" href="./settings.html">Set</a>
+                <a class="nav-btn active" href="./about.html">About</a>
+            </nav>
+            <div class="rail-bottom">
+                <div class="rail-note">Primordial Shell Active</div>
+            </div>
         </aside>
     </div>
 </div>

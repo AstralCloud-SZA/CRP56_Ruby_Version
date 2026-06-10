@@ -63,20 +63,20 @@ module CRP56
       file_crypto.decrypt_file_bytes(encrypted_file_path, user_passphrase)
     end
 
-    def encrypt_file_to_path(source_file_path, output_file_path, user_passphrase)
-      file_crypto.encrypt_file_to_path(source_file_path, output_file_path, user_passphrase)
+    def encrypt_file_to_path(source_file_path, output_file_path, user_passphrase, progress: nil)
+      file_crypto.encrypt_file_to_path(source_file_path, output_file_path, user_passphrase, progress: progress)
     end
 
-    def decrypt_file_to_path(encrypted_file_path, output_file_path, user_passphrase)
-      file_crypto.decrypt_file_to_path(encrypted_file_path, output_file_path, user_passphrase)
+    def decrypt_file_to_path(encrypted_file_path, output_file_path, user_passphrase, progress: nil)
+      file_crypto.decrypt_file_to_path(encrypted_file_path, output_file_path, user_passphrase, progress: progress)
     end
 
-    def encrypt_folder_to_path(source_folder, output_folder, user_passphrase)
-      file_crypto.encrypt_folder_to_path(source_folder, output_folder, user_passphrase)
+    def encrypt_folder_to_path(source_folder, output_folder, user_passphrase, progress: nil)
+      file_crypto.encrypt_folder_to_path(source_folder, output_folder, user_passphrase, progress: progress)
     end
 
-    def decrypt_folder_to_path(source_folder, output_folder, user_passphrase)
-      file_crypto.decrypt_folder_to_path(source_folder, output_folder, user_passphrase)
+    def decrypt_folder_to_path(source_folder, output_folder, user_passphrase, progress: nil)
+      file_crypto.decrypt_folder_to_path(source_folder, output_folder, user_passphrase, progress: progress)
     end
 
     def create_cipher

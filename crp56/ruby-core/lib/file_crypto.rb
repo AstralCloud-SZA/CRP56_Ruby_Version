@@ -54,38 +54,41 @@ module CRP56
       plain_bytes
     end
 
-    def encrypt_bytes(plain_bytes, user_passphrase)
+    # progress: optional callable receiving (current, total, detail = nil).
+    def encrypt_bytes(plain_bytes, user_passphrase, progress: nil)
       raise ArgumentError, "Plain bytes cannot be nil or empty." if plain_bytes.nil? || plain_bytes.empty?
       raise ArgumentError, "User passphrase cannot be nil or empty." if blank?(user_passphrase)
 
-      cipher.encrypt(plain_bytes, user_passphrase)
+      shard_progress = progress && ->(current, total) { progress.call(current, total, nil) }
+      cipher.encrypt(plain_bytes, user_passphrase, progress: shard_progress)
     end
 
-    def decrypt_bytes(cipher_bytes, user_passphrase)
+    def decrypt_bytes(cipher_bytes, user_passphrase, progress: nil)
       raise ArgumentError, "Cipher bytes cannot be nil or empty." if cipher_bytes.nil? || cipher_bytes.empty?
       raise ArgumentError, "User passphrase cannot be nil or empty." if blank?(user_passphrase)
 
-      cipher.decrypt(cipher_bytes, user_passphrase)
+      shard_progress = progress && ->(current, total) { progress.call(current, total, nil) }
+      cipher.decrypt(cipher_bytes, user_passphrase, progress: shard_progress)
     end
 
-    def encrypt_file_bytes(source_file_path, user_passphrase)
+    def encrypt_file_bytes(source_file_path, user_passphrase, progress: nil)
       validate_source_file!(source_file_path)
 
       plain_bytes = File.binread(source_file_path)
-      encrypt_bytes(plain_bytes, user_passphrase)
+      encrypt_bytes(plain_bytes, user_passphrase, progress: progress)
     end
 
-    def decrypt_file_bytes(encrypted_file_path, user_passphrase)
+    def decrypt_file_bytes(encrypted_file_path, user_passphrase, progress: nil)
       validate_source_file!(encrypted_file_path)
 
       cipher_bytes = File.binread(encrypted_file_path)
-      decrypt_bytes(cipher_bytes, user_passphrase)
+      decrypt_bytes(cipher_bytes, user_passphrase, progress: progress)
     end
 
     # Encrypts a file. The original filename (with its extension) is embedded
     # inside the encrypted payload, and the output is named "stem.crp56":
     #   test1.png -> test1.crp56
-    def encrypt_file_to_path(source_file_path, output_file_path, user_passphrase)
+    def encrypt_file_to_path(source_file_path, output_file_path, user_passphrase, progress: nil)
       validate_source_file!(source_file_path)
       validate_output_path!(output_file_path)
 
@@ -95,7 +98,7 @@ module CRP56
         File.basename(source_file_path),
         File.binread(source_file_path)
       )
-      encrypted_bytes = encrypt_bytes(envelope, user_passphrase)
+      encrypted_bytes = encrypt_bytes(envelope, user_passphrase, progress: progress)
 
       ensure_output_directory!(output_file_path)
       File.binwrite(output_file_path, encrypted_bytes)
@@ -107,11 +110,11 @@ module CRP56
     # filename stored in the envelope is restored automatically:
     #   test1.crp56 -> <output_target>/test1.png
     # If output_target is a file path, the content is written exactly there.
-    def decrypt_file_to_path(encrypted_file_path, output_target, user_passphrase)
+    def decrypt_file_to_path(encrypted_file_path, output_target, user_passphrase, progress: nil)
       validate_source_file!(encrypted_file_path)
       validate_output_path!(output_target)
 
-      payload = decrypt_file_bytes(encrypted_file_path, user_passphrase)
+      payload = decrypt_file_bytes(encrypted_file_path, user_passphrase, progress: progress)
       fallback_name = File.basename(encrypted_file_path).sub(/#{Regexp.escape(ENCRYPTED_EXTENSION)}\z/i, "")
       original_name, content = parse_file_envelope(payload, fallback_name)
 
@@ -133,7 +136,7 @@ module CRP56
     # "stem.crp56" (docs/test1.png -> docs/test1.crp56); the original name is
     # stored inside the payload. Name clashes (test1.png + test1.txt) get a
     # " (2)" suffix. Returns the encrypted file paths that were written.
-    def encrypt_folder_to_path(source_folder, output_folder, user_passphrase)
+    def encrypt_folder_to_path(source_folder, output_folder, user_passphrase, progress: nil)
       source_root, output_root = validate_folder_pair!(source_folder, output_folder)
 
       files = Dir.glob(File.join(source_root.to_s, "**", "*")).select { |p| File.file?(p) }
@@ -141,7 +144,7 @@ module CRP56
 
       taken = Set.new
 
-      files.map do |file|
+      files.each_with_index.map do |file, index|
         relative = Pathname.new(file).relative_path_from(source_root)
         stem = File.basename(file, ".*")
         rel_dir = File.dirname(relative.to_s)
@@ -153,6 +156,8 @@ module CRP56
         ensure_output_directory!(output_path)
         File.binwrite(output_path, encrypt_bytes(envelope, user_passphrase))
 
+        progress&.call(index + 1, files.length, relative.to_s)
+
         output_path
       end
     end
@@ -160,10 +165,11 @@ module CRP56
     # Decrypts every .crp56 file inside source_folder (recursively) into
     # output_folder, restoring each file's original name and extension from
     # the envelope. Returns the decrypted file paths that were written.
-    def decrypt_folder_to_path(source_folder, output_folder, user_passphrase)
+    def decrypt_folder_to_path(source_folder, output_folder, user_passphrase, progress: nil)
       source_root, output_root = validate_folder_pair!(source_folder, output_folder)
 
-      encrypted_files = Dir.glob(File.join(source_root.to_s, "**", "*#{ENCRYPTED_EXTENSION}")).select { |p| File.file?(p) }
+      encrypted_files = Dir.glob(File.join(source_root.to_s, "**", "*#{ENCRYPTED_EXTENSION}"))
+                           .select { |p| File.file?(p) }
 
       if encrypted_files.empty?
         raise ArgumentError, "No #{ENCRYPTED_EXTENSION} files found in: #{source_folder}"
@@ -171,7 +177,7 @@ module CRP56
 
       taken = Set.new
 
-      encrypted_files.map do |file|
+      encrypted_files.each_with_index.map do |file, index|
         payload = decrypt_bytes(File.binread(file), user_passphrase)
         fallback_name = File.basename(file).sub(/#{Regexp.escape(ENCRYPTED_EXTENSION)}\z/i, "")
         original_name, content = parse_file_envelope(payload, fallback_name)
@@ -185,6 +191,8 @@ module CRP56
         ensure_output_directory!(output_path)
         File.binwrite(output_path, content)
 
+        progress&.call(index + 1, encrypted_files.length, relative.to_s)
+
         output_path
       end
     end
@@ -195,11 +203,17 @@ module CRP56
       name_bytes = original_name.encode("UTF-8").b
       raise ArgumentError, "File name is too long." if name_bytes.bytesize > 65_535
 
-      FILE_MAGIC + [FILE_FORMAT_VERSION].pack("C") + [name_bytes.bytesize].pack("n") + name_bytes + content
+      FILE_MAGIC +
+        [FILE_FORMAT_VERSION].pack("C") +
+        [name_bytes.bytesize].pack("n") +
+        name_bytes +
+        content
     end
 
     def parse_file_envelope(payload, fallback_name)
-      if payload.bytesize > FILE_HEADER_SIZE && payload.byteslice(0, 4) == FILE_MAGIC && payload.getbyte(4) == FILE_FORMAT_VERSION
+      if payload.bytesize > FILE_HEADER_SIZE &&
+         payload.byteslice(0, 4) == FILE_MAGIC &&
+         payload.getbyte(4) == FILE_FORMAT_VERSION
 
         name_length = payload.byteslice(5, 2).unpack1("n")
         data_offset = FILE_HEADER_SIZE + name_length
@@ -210,7 +224,6 @@ module CRP56
           content = payload.byteslice(data_offset, payload.bytesize - data_offset)
           return [sanitize_file_name(name, fallback_name), content]
         end
-
       end
 
       # Legacy payload (no envelope): keep all bytes, use fallback name.
