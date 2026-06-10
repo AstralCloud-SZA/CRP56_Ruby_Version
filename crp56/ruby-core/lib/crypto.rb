@@ -18,7 +18,9 @@ module CRP56
       @phrase_store.validate!
     end
 
-    def encrypt(plain_data, user_passphrase)
+    # progress: optional callable receiving (current_shard, total_shards).
+    # Invoked once per shard so callers can report real encryption progress.
+    def encrypt(plain_data, user_passphrase, progress: nil)
       raise ArgumentError, "Plaintext cannot be nil or empty." if plain_data.nil? || plain_data.empty?
       raise ArgumentError, "User passphrase cannot be nil or empty." if blank?(user_passphrase)
 
@@ -44,19 +46,20 @@ module CRP56
       header.last_shard_size = last_shard_plain_size
       header.hmac_enabled = config.use_hmac
 
-      encrypt_internal(data_to_encrypt, header, derived_keys)
+      encrypt_internal(data_to_encrypt, header, derived_keys, progress)
     end
 
-    def decrypt(cipher_data, user_passphrase)
+    # progress: optional callable receiving (current_shard, total_shards).
+    def decrypt(cipher_data, user_passphrase, progress: nil)
       raise ArgumentError, "Input data cannot be nil or empty." if cipher_data.nil? || cipher_data.empty?
       raise ArgumentError, "User passphrase cannot be nil or empty." if blank?(user_passphrase)
 
-      decrypt_internal(cipher_data, user_passphrase)
+      decrypt_internal(cipher_data, user_passphrase, progress)
     end
 
     private
 
-    def encrypt_internal(plain_data, header, derived_keys)
+    def encrypt_internal(plain_data, header, derived_keys, progress = nil)
       body_buffer = StringIO.new("".b, "w+b")
 
       offset = 0
@@ -77,6 +80,8 @@ module CRP56
 
         shard_cipher = cipher.update(shard_plain) + cipher.final
         body_buffer.write(shard_cipher)
+
+        progress&.call(shard_index + 1, header.total_shards)
       end
 
       payload_without_hmac = Payload.new(
@@ -98,7 +103,7 @@ module CRP56
       payload.to_bytes
     end
 
-    def decrypt_internal(cipher_data, user_passphrase)
+    def decrypt_internal(cipher_data, user_passphrase, progress = nil)
       payload = Payload.from_bytes(cipher_data)
       header = payload.header
 
@@ -147,6 +152,8 @@ module CRP56
         end
 
         plain_parts << shard_plain
+
+        progress&.call(shard_index + 1, header.total_shards)
       end
 
       reassembled = plain_parts.join

@@ -202,28 +202,19 @@ module CRP56
       user_passphrase = argv.shift || "MyTestingPassword"
 
       test_text =
-        ("A" * 500) +
-        "The quick brown fox jumps over the lazy dog. " +
-        ("B" * 500) +
-        "CRP56 compression test payload. " +
-        ("C" * 500)
+        ("A" * 500) + "The quick brown fox jumps over the lazy dog. " +
+        ("B" * 500) + "CRP56 compression test payload. " + ("C" * 500)
 
       plain_data = test_text.encode("UTF-8").b
       phrase_store = CRP56::AppCryptoService.new.get_required_phrase_store
 
-      config_none = build_test_config(
-        use_compression: false,
-        compression_mode: CRP56::Constants::COMPRESSION_NONE
-      )
+      config_none = build_test_config(use_compression: false, compression_mode: CRP56::Constants::COMPRESSION_NONE)
       cipher_none = CRP56::Crypto.new(config: config_none, phrase_store: phrase_store)
       enc_none = cipher_none.encrypt(plain_data, user_passphrase)
       dec_none = cipher_none.decrypt(enc_none, user_passphrase)
       ok_none = (dec_none == plain_data)
 
-      config_zstd = build_test_config(
-        use_compression: true,
-        compression_mode: CRP56::Constants::COMPRESSION_ZSTD
-      )
+      config_zstd = build_test_config(use_compression: true, compression_mode: CRP56::Constants::COMPRESSION_ZSTD)
       cipher_zstd = CRP56::Crypto.new(config: config_zstd, phrase_store: phrase_store)
       enc_zstd = cipher_zstd.encrypt(plain_data, user_passphrase)
       dec_zstd = cipher_zstd.decrypt(enc_zstd, user_passphrase)
@@ -231,10 +222,7 @@ module CRP56
 
       lz4_result =
         begin
-          config_lz4 = build_test_config(
-            use_compression: true,
-            compression_mode: CRP56::Constants::COMPRESSION_LZ4
-          )
+          config_lz4 = build_test_config(use_compression: true, compression_mode: CRP56::Constants::COMPRESSION_LZ4)
           cipher_lz4 = CRP56::Crypto.new(config: config_lz4, phrase_store: phrase_store)
           enc_lz4 = cipher_lz4.encrypt(plain_data, user_passphrase)
           dec_lz4 = cipher_lz4.decrypt(enc_lz4, user_passphrase)
@@ -256,10 +244,7 @@ module CRP56
         ok: ok_none && ok_zstd && (!lz4_result[:available] || lz4_result[:round_trip_ok]),
         command: "compression_test",
         original_plaintext_size: plain_data.bytesize,
-        none: {
-          encrypted_size: enc_none.bytesize,
-          round_trip_ok: ok_none
-        },
+        none: { encrypted_size: enc_none.bytesize, round_trip_ok: ok_none },
         zstd: {
           encrypted_size: enc_zstd.bytesize,
           round_trip_ok: ok_zstd,
@@ -355,6 +340,31 @@ module CRP56
       written.each { |path| puts "  #{path}" }
     end
 
+    # Builds a throttled progress callback for one server request.
+    # Emits JSON progress events on stdout that the Electron main process
+    # forwards to the renderer:
+    #   {"id":"7","event":"progress","stage":"encrypt_folder","current":3,"total":120,"detail":"sub/test1.png"}
+    # Progress events carry an "event" key and never an "ok" key, so they
+    # can never be mistaken for the final response.
+    def self.progress_emitter(id, stage)
+      last_emitted = 0
+      step = nil
+
+      lambda do |current, total, detail = nil|
+        total = total.to_i
+        current = current.to_i
+        next if total <= 0
+
+        # Emit at most ~100 events per operation (plus first and last).
+        step ||= [total / 100, 1].max
+        next unless current >= total || current == 1 || (current - last_emitted) >= step
+
+        last_emitted = current
+        STDOUT.puts(JSON.generate({ id: id, event: "progress", stage: stage, current: current, total: total, detail: detail }))
+        STDOUT.flush
+      end
+    end
+
     def self.run_server
       service = CRP56::AppCryptoService.new
 
@@ -408,7 +418,7 @@ module CRP56
             raise ArgumentError, "output_file is required" if output_file.empty?
             raise ArgumentError, "source_file does not exist: #{source_file}" unless File.file?(source_file)
 
-            written = service.encrypt_file_to_path(source_file, output_file, passphrase)
+            written = service.encrypt_file_to_path(source_file, output_file, passphrase, progress: progress_emitter(id, "encrypt_file"))
             response = { id: id, ok: true, result: written }
 
           when "decrypt_file"
@@ -423,7 +433,10 @@ module CRP56
 
             # output_file may be a folder: the original filename stored inside
             # the encrypted payload is then restored automatically.
-            written = service.decrypt_file_to_path(source_file, output_file, passphrase)
+            written = service.decrypt_file_to_path(
+              source_file, output_file, passphrase,
+              progress: progress_emitter(id, "decrypt_file")
+            )
             response = { id: id, ok: true, result: written }
 
           when "encrypt_folder"
@@ -436,7 +449,10 @@ module CRP56
             raise ArgumentError, "output_folder is required" if output_folder.empty?
             raise ArgumentError, "source_folder does not exist: #{source_folder}" unless File.directory?(source_folder)
 
-            written = service.encrypt_folder_to_path(source_folder, output_folder, passphrase)
+            written = service.encrypt_folder_to_path(
+              source_folder, output_folder, passphrase,
+              progress: progress_emitter(id, "encrypt_folder")
+            )
             response = {
               id: id,
               ok: true,
@@ -454,7 +470,7 @@ module CRP56
             raise ArgumentError, "output_folder is required" if output_folder.empty?
             raise ArgumentError, "source_folder does not exist: #{source_folder}" unless File.directory?(source_folder)
 
-            written = service.decrypt_folder_to_path(source_folder, output_folder, passphrase)
+            written = service.decrypt_folder_to_path(source_folder, output_folder, passphrase, progress: progress_emitter(id, "decrypt_folder"))
             response = {
               id: id,
               ok: true,
@@ -469,12 +485,7 @@ module CRP56
             response = {
               id: id,
               ok: true,
-              result: {
-                version: CRP56::Constants::VERSION,
-                compression: "Zstd",
-                hmac: true,
-                phrase_source: service.has_secrets? ? "embedded" : "phrase_store.json"
-              }
+              result: { version: CRP56::Constants::VERSION, compression: "Zstd", hmac: true, phrase_source: service.has_secrets? ? "embedded" : "phrase_store.json" }
             }
 
           else
@@ -514,7 +525,7 @@ module CRP56
       value.nil? || value.strip.empty?
     end
 
-    private_class_method :blank?, :build_test_config, :percent_reduction
+    private_class_method :blank?, :build_test_config, :percent_reduction, :progress_emitter
   end
 end
 

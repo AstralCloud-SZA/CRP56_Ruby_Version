@@ -1,5 +1,4 @@
 const { contextBridge, ipcRenderer } = require('electron');
-
 const ALLOWED_CHANNELS = new Set([
     'crp56:ping',
     'crp56:version',
@@ -14,14 +13,14 @@ const ALLOWED_CHANNELS = new Set([
     'dialog:pick-save-file',
 ]);
 
-function invoke(channel, payload) {
-    if (!ALLOWED_CHANNELS.has(channel)) {
+function invoke(channel, payload)
+{
+    if (!ALLOWED_CHANNELS.has(channel))
+    {
         return Promise.reject(new Error(`[crp56 preload] Blocked channel: "${channel}"`));
     }
 
-    return payload !== undefined
-        ? ipcRenderer.invoke(channel, payload)
-        : ipcRenderer.invoke(channel);
+    return payload !== undefined ? ipcRenderer.invoke(channel, payload) : ipcRenderer.invoke(channel);
 }
 
 contextBridge.exposeInMainWorld('crp56', {
@@ -30,28 +29,28 @@ contextBridge.exposeInMainWorld('crp56', {
     version: () => invoke('crp56:version'),
 
     // Text Core
-    encryptText: (passphrase, plainText) =>
-        invoke('crp56:encrypt-text', { passphrase, plainText }),
-    decryptText: (passphrase, cipherTextBase64) =>
-        invoke('crp56:decrypt-text', { passphrase, cipherTextBase64 }),
+    encryptText: (passphrase, plainText) => invoke('crp56:encrypt-text', { passphrase, plainText }),
+    decryptText: (passphrase, cipherTextBase64) => invoke('crp56:decrypt-text', { passphrase, cipherTextBase64 }),
 
     // File Core
-    encryptFile: (passphrase, sourceFile, outputFile) =>
-        invoke('crp56:encrypt-file', { passphrase, sourceFile, outputFile }),
-    decryptFile: (passphrase, sourceFile, outputFile) =>
-        invoke('crp56:decrypt-file', { passphrase, sourceFile, outputFile }),
+    encryptFile: (passphrase, sourceFile, outputFile) => invoke('crp56:encrypt-file', { passphrase, sourceFile, outputFile }),
+    decryptFile: (passphrase, sourceFile, outputFile) => invoke('crp56:decrypt-file', { passphrase, sourceFile, outputFile }),
 
     // Folder Core
-    encryptFolder: (passphrase, sourceFolder, outputFolder) =>
-        invoke('crp56:encrypt-folder', { passphrase, sourceFolder, outputFolder }),
-    decryptFolder: (passphrase, sourceFolder, outputFolder) =>
-        invoke('crp56:decrypt-folder', { passphrase, sourceFolder, outputFolder }),
+    encryptFolder: (passphrase, sourceFolder, outputFolder) => invoke('crp56:encrypt-folder', { passphrase, sourceFolder, outputFolder }),
+    decryptFolder: (passphrase, sourceFolder, outputFolder) => invoke('crp56:decrypt-folder', { passphrase, sourceFolder, outputFolder }),
 
     // OS Dialogs
-    pickFile: (options) =>
-        invoke('dialog:pick-file', options ?? {}),
-    pickFolder: (options) =>
-        invoke('dialog:pick-folder', options ?? {}),
-    pickSaveFile: (options) =>
-        invoke('dialog:pick-save-file', options ?? {}),
+    pickFile: (options) => invoke('dialog:pick-file', options ?? {}),
+    pickFolder: (options) => invoke('dialog:pick-folder', options ?? {}),
+    pickSaveFile: (options) => invoke('dialog:pick-save-file', options ?? {}),
+
+    // Live progress events from the Ruby core (per shard / per file).
+    // Returns an unsubscribe function.
+    onProgress: (callback) =>
+    {
+        const listener = (_event, data) => callback(data);
+        ipcRenderer.on('crp56:progress', listener);
+        return () => ipcRenderer.removeListener('crp56:progress', listener);
+    },
 });

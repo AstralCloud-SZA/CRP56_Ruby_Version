@@ -8,10 +8,18 @@ const html = document.documentElement;
 const body = document.body;
 
 const ENCRYPTED_EXTENSION = '.crp56';
+const THEME_STORAGE_KEY = 'crp56-theme';
+const PARTICLE_STORAGE_KEY = 'crp56-particles';
 
 // State for File/Folder selections
 let selectedFiles = [];
 let selectedFolder = null;
+
+// Progress bar state
+let progressResetTimer = null;
+
+// Particle state
+let particlesEnabled = true;
 
 const THEMES = {
     'primordial-gold': {
@@ -24,7 +32,8 @@ const THEMES = {
     }
 };
 
-function log(...args) {
+function log(...args)
+{
     console.log('[CRP56 renderer]', ...args);
 }
 
@@ -42,9 +51,7 @@ function baseName(fullPath)
 function ensureCrp56Extension(filePath)
 {
     if (!filePath) return filePath;
-    return filePath.toLowerCase().endsWith(ENCRYPTED_EXTENSION)
-        ? filePath
-        : filePath + ENCRYPTED_EXTENSION;
+    return filePath.toLowerCase().endsWith(ENCRYPTED_EXTENSION) ? filePath : filePath + ENCRYPTED_EXTENSION;
 }
 
 // "test1.png" -> "test1.crp56" (original extension is stored inside the payload)
@@ -62,20 +69,67 @@ function setTheme(theme)
     if (themeStylesheet) themeStylesheet.setAttribute('href', THEMES[theme].href);
     if (themeName) themeName.textContent = THEMES[theme].label;
     if (themeNameCard) themeNameCard.textContent = THEMES[theme].label;
+    try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch (_) {}
     seedParticles();
 }
 
-function setBusy(isBusy, label = '')
+function savedTheme()
 {
-    if (progressFill)
+    try
     {
-        progressFill.style.width = isBusy ? '72%' : '0%';
-        progressFill.style.opacity = isBusy ? '1' : '0.18';
-    }
-    if (isBusy)
+        const stored = localStorage.getItem(THEME_STORAGE_KEY);
+        if (stored && THEMES[stored]) return stored;
+    } catch (_) {}
+    return null;
+}
+
+/* --- REAL PROGRESS BAR --- */
+
+function setProgress(percent)
+{
+    if (!progressFill) return;
+    const clamped = Math.max(0, Math.min(100, percent));
+    progressFill.style.width = `${clamped}%`;
+}
+
+function startProgress(label = '')
+{
+    if (progressResetTimer)
     {
-        show({ ok: false, status: label ? `Running ${label}...` : 'Working...' });
+        clearTimeout(progressResetTimer);
+        progressResetTimer = null;
     }
+    if (progressFill) progressFill.style.opacity = '1';
+    setProgress(2);
+    show({ status: label ? `Running ${label}...` : 'Working...' });
+}
+
+function finishProgress()
+{
+    setProgress(100);
+    progressResetTimer = setTimeout(() =>
+    {
+        setProgress(0);
+        if (progressFill) progressFill.style.opacity = '0.18';
+        progressResetTimer = null;
+    }, 750);
+}
+
+// Live progress events streamed from the Ruby core:
+// { id, event: 'progress', stage, current, total, detail }
+// Files report per-shard progress; folders report per-file progress.
+function bindProgressEvents()
+{
+    if (!window.crp56 || typeof window.crp56.onProgress !== 'function') return;
+
+    window.crp56.onProgress((msg) => {
+        if (!msg || msg.event !== 'progress' || !msg.total) return;
+        const percent = Math.round((msg.current / msg.total) * 100);
+        setProgress(percent);
+
+        const detail = msg.detail ? ` — ${msg.detail}` : '';
+        show({ status: `${msg.stage}: ${msg.current}/${msg.total} (${percent}%)${detail}` });
+    });
 }
 
 async function runAction(label, fn)
@@ -83,7 +137,7 @@ async function runAction(label, fn)
     try
     {
         log('Running action:', label);
-        setBusy(true, label);
+        startProgress(label);
         const result = await fn();
         show(result);
         return result;
@@ -94,20 +148,22 @@ async function runAction(label, fn)
         return payload;
     } finally
     {
-        setBusy(false);
+        finishProgress();
     }
 }
 
 function bindThemeToggle()
 {
     if (!themeToggle) return;
-    themeToggle.addEventListener('click', () => {
+    themeToggle.addEventListener('click', () =>
+    {
         const next = html.dataset.theme === 'primordial-gold' ? 'hellflare-gold' : 'primordial-gold';
         setTheme(next);
     });
 }
 
-function bindTabButtons() {
+function bindTabButtons()
+{
     document.querySelectorAll('[data-tab-target]').forEach((btn) =>
     {
         btn.addEventListener('click', () =>
@@ -117,11 +173,14 @@ function bindTabButtons() {
             {
                 item.classList.toggle('active', item === btn);
             });
-            document.querySelectorAll('[data-tab-panel]').forEach((panel) => {
-                panel.classList.toggle('hidden', panel.dataset.tabPanel !== target);
 
+            document.querySelectorAll('[data-tab-panel]').forEach((panel) =>
+            {
+                panel.classList.toggle('hidden', panel.dataset.tabPanel !== target);
             });
+
         });
+
     });
 }
 
@@ -134,7 +193,8 @@ function bindSelectionZones()
     const folderList = document.getElementById('folder-list');
     const isDecryptPage = body?.dataset?.page === 'decrypt';
 
-    if (fileZone) {
+    if (fileZone)
+    {
         fileZone.addEventListener('click', async () =>
         {
             const options = { properties: ['openFile', 'multiSelections'] };
@@ -166,7 +226,8 @@ function bindSelectionZones()
             if (result.canceled) return;
 
             selectedFolder = result.filePaths[0];
-            if (folderList) {
+            if (folderList)
+            {
                 folderList.style.display = 'block';
                 folderList.innerText = `📂 ${selectedFolder}`;
             }
@@ -184,32 +245,40 @@ function bindPageActions()
     const passphraseInput = document.getElementById('passphrase');
     const plainTextInput = document.getElementById('plain-text');
 
-    if (btnPing) {
-        btnPing.addEventListener('click', async () => {
+    if (btnPing)
+    {
+        btnPing.addEventListener('click', async () =>
+        {
             await runAction('ping', () => window.crp56.ping());
         });
     }
 
-    if (btnVersion) {
-        btnVersion.addEventListener('click', async () => {
+    if (btnVersion)
+    {
+        btnVersion.addEventListener('click', async () =>
+        {
             await runAction('version', () => window.crp56.version());
         });
     }
 
     // ENCRYPT LOGIC
-    if (btnEncrypt && passphraseInput) {
-        btnEncrypt.addEventListener('click', async () => {
+    if (btnEncrypt && passphraseInput)
+    {
+        btnEncrypt.addEventListener('click', async () =>
+        {
             const passphrase = passphraseInput.value;
             if (!passphrase) return show({ ok: false, error: 'Passphrase is required' });
 
             const activeTab = document.querySelector('.tab-pill.active')?.dataset.tabTarget;
 
-            if (activeTab === 'text' && plainTextInput) {
+            if (activeTab === 'text' && plainTextInput)
+            {
                 const text = plainTextInput.value;
                 const result = await runAction('encrypt_text', () => window.crp56.encryptText(passphrase, text));
                 if (result?.ok && result.result) plainTextInput.value = result.result;
             }
-            else if (activeTab === 'file') {
+            else if (activeTab === 'file')
+            {
                 if (selectedFiles.length === 0) return show({ ok: false, error: 'No files selected' });
 
                 const sourceFile = selectedFiles[0];
@@ -224,11 +293,10 @@ function bindPageActions()
                 // Belt-and-braces: force .crp56 even if the user renames the file
                 const outputFile = ensureCrp56Extension(saveRes.filePath);
 
-                await runAction('encrypt_file', () =>
-                    window.crp56.encryptFile(passphrase, sourceFile, outputFile)
-                );
+                await runAction('encrypt_file', () => window.crp56.encryptFile(passphrase, sourceFile, outputFile));
             }
-            else if (activeTab === 'folder') {
+            else if (activeTab === 'folder')
+            {
                 if (!selectedFolder) return show({ ok: false, error: 'No folder selected' });
 
                 const saveRes = await window.crp56.pickFolder({
@@ -237,62 +305,95 @@ function bindPageActions()
                 });
                 if (saveRes.canceled) return;
 
-                await runAction('encrypt_folder', () =>
-                    window.crp56.encryptFolder(passphrase, selectedFolder, saveRes.filePaths[0])
-                );
+                await runAction('encrypt_folder', () => window.crp56.encryptFolder(passphrase, selectedFolder, saveRes.filePaths[0]));
             }
         });
     }
 
     // DECRYPT LOGIC
-    if (btnDecrypt && passphraseInput) {
-        btnDecrypt.addEventListener('click', async () => {
+    if (btnDecrypt && passphraseInput)
+    {
+        btnDecrypt.addEventListener('click', async () =>
+        {
             const passphrase = passphraseInput.value;
             if (!passphrase) return show({ ok: false, error: 'Passphrase is required' });
 
             const activeTab = document.querySelector('.tab-pill.active')?.dataset.tabTarget;
 
-            if (activeTab === 'text' && plainTextInput) {
+            if (activeTab === 'text' && plainTextInput)
+            {
                 const text = plainTextInput.value;
                 const result = await runAction('decrypt_text', () => window.crp56.decryptText(passphrase, text));
                 if (result?.ok && result.result) plainTextInput.value = result.result;
             }
-            else if (activeTab === 'file') {
+            else if (activeTab === 'file')
+            {
                 if (selectedFiles.length === 0) return show({ ok: false, error: 'No files selected' });
 
                 const sourceFile = selectedFiles[0];
 
                 // Pick a destination FOLDER: the Ruby core restores the original
                 // filename + extension stored inside the encrypted payload.
-                const destRes = await window.crp56.pickFolder({
-                    title: 'Select Destination Folder for Decrypted File',
-                    properties: ['openDirectory', 'createDirectory']
-                });
+                const destRes = await window.crp56.pickFolder({title: 'Select Destination Folder for Decrypted File', properties: ['openDirectory', 'createDirectory']});
                 if (destRes.canceled) return;
 
-                await runAction('decrypt_file', () =>
-                    window.crp56.decryptFile(passphrase, sourceFile, destRes.filePaths[0])
-                );
+                await runAction('decrypt_file', () => window.crp56.decryptFile(passphrase, sourceFile, destRes.filePaths[0]));
             }
-            else if (activeTab === 'folder') {
+            else if (activeTab === 'folder')
+            {
                 if (!selectedFolder) return show({ ok: false, error: 'No folder selected' });
 
-                const saveRes = await window.crp56.pickFolder({
-                    title: 'Select Output Folder for Decrypted Files',
-                    properties: ['openDirectory', 'createDirectory']
-                });
+                const saveRes = await window.crp56.pickFolder({title: 'Select Output Folder for Decrypted Files', properties: ['openDirectory', 'createDirectory']});
                 if (saveRes.canceled) return;
 
-                await runAction('decrypt_folder', () =>
-                    window.crp56.decryptFolder(passphrase, selectedFolder, saveRes.filePaths[0])
-                );
+                await runAction('decrypt_folder', () => window.crp56.decryptFolder(passphrase, selectedFolder, saveRes.filePaths[0]));
             }
         });
     }
 
-    document.querySelectorAll('[data-set-theme]').forEach((btn) => {
+}
+
+function bindThemeButtons()
+{
+    document.querySelectorAll('[data-set-theme]').forEach((btn) =>
+    {
         btn.addEventListener('click', () => setTheme(btn.dataset.setTheme));
     });
+}
+
+/* --- PARTICLE TOGGLE (Settings) --- */
+
+function setParticlesEnabled(enabled, { persist = true } = {})
+{
+    particlesEnabled = !!enabled;
+
+    if (persist)
+    {
+        try { localStorage.setItem(PARTICLE_STORAGE_KEY, particlesEnabled ? 'on' : 'off'); } catch (_) {}
+    }
+
+    const toggle = document.getElementById('particleToggle');
+    const status = document.getElementById('particleStatus');
+    if (toggle) toggle.textContent = particlesEnabled ? 'Disable particles' : 'Enable particles';
+    if (status) status.textContent = particlesEnabled ? 'On' : 'Off';
+}
+
+function savedParticlesEnabled()
+{
+    try
+    {
+        return localStorage.getItem(PARTICLE_STORAGE_KEY) !== 'off';
+    } catch (_)
+    {
+        return true;
+    }
+}
+
+function bindParticleToggle()
+{
+    const toggle = document.getElementById('particleToggle');
+    if (!toggle) return;
+    toggle.addEventListener('click', () => setParticlesEnabled(!particlesEnabled));
 }
 
 /* --- PARTICLE SYSTEM --- */
@@ -300,15 +401,14 @@ const canvas = document.getElementById('particles');
 const ctx = canvas ? canvas.getContext('2d') : null;
 let particles = [];
 
-function accentColors() {
+function accentColors()
+{
     const style = getComputedStyle(document.documentElement);
-    return [
-        style.getPropertyValue('--accent').trim() || '#ffea00',
-        style.getPropertyValue('--accent-2').trim() || '#fff9c4'
-    ];
+    return [style.getPropertyValue('--accent').trim() || '#ffea00', style.getPropertyValue('--accent-2').trim() || '#fff9c4'];
 }
 
-function hexToRgba(input, alpha) {
+function hexToRgba(input, alpha)
+{
     const c = String(input).replace('#', '');
     const normalized = c.length === 3 ? c.split('').map(ch => ch + ch).join('') : c;
     const bigint = parseInt(normalized, 16);
@@ -318,7 +418,8 @@ function hexToRgba(input, alpha) {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-function seedParticles() {
+function seedParticles()
+{
     if (!canvas || !ctx) return;
     const count = Math.max(38, Math.floor(window.innerWidth / 32));
     const colors = accentColors();
@@ -334,7 +435,8 @@ function seedParticles() {
     }));
 }
 
-function resizeCanvas() {
+function resizeCanvas()
+{
     if (!canvas || !ctx) return;
     const ratio = Math.min(window.devicePixelRatio || 1, 1.8);
     canvas.width = Math.floor(window.innerWidth * ratio);
@@ -345,10 +447,19 @@ function resizeCanvas() {
     seedParticles();
 }
 
-function drawParticles() {
+function drawParticles()
+{
     if (!canvas || !ctx) return;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    particles.forEach((p, i) => {
+    if (!particlesEnabled)
+    {
+        // Keep the loop alive so re-enabling resumes instantly.
+        requestAnimationFrame(drawParticles);
+        return;
+    }
+
+    particles.forEach((p, i) =>
+    {
         p.x += p.vx; p.y += p.vy; p.twinkle += 0.03;
         if (p.x < -20) p.x = window.innerWidth + 20;
         if (p.x > window.innerWidth + 20) p.x = -20;
@@ -359,12 +470,14 @@ function drawParticles() {
         ctx.fillStyle = hexToRgba(p.color, 0.16 + pulse * p.alpha * 0.4);
         ctx.arc(p.x, p.y, p.r + pulse * 1.4, 0, Math.PI * 2);
         ctx.fill();
-        for (let j = i + 1; j < particles.length; j++) {
+        for (let j = i + 1; j < particles.length; j++)
+        {
             const q = particles[j];
             const dx = p.x - q.x;
             const dy = p.y - q.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 128) {
+            if (dist < 128)
+            {
                 ctx.strokeStyle = hexToRgba(p.color, (1 - dist / 128) * 0.12);
                 ctx.lineWidth = 1;
                 ctx.beginPath();
@@ -373,24 +486,33 @@ function drawParticles() {
                 ctx.stroke();
             }
         }
+
     });
     requestAnimationFrame(drawParticles);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    if (!window.crp56) {
+window.addEventListener('DOMContentLoaded', () =>
+{
+    // Shell features work on every page, even if the bridge is missing.
+    bindThemeToggle();
+    bindThemeButtons();
+    bindTabButtons();
+    bindParticleToggle();
+
+    setParticlesEnabled(savedParticlesEnabled(), { persist: false });
+    setTheme(savedTheme() || html.dataset.theme || 'primordial-gold');
+    resizeCanvas();
+    drawParticles();
+
+    if (!window.crp56)
+    {
         show({ ok: false, error: 'window.crp56 is missing.' });
         return;
     }
 
-    bindThemeToggle();
-    bindTabButtons();
     bindSelectionZones();
     bindPageActions();
-
-    setTheme(html.dataset.theme || 'primordial-gold');
-    resizeCanvas();
-    drawParticles();
+    bindProgressEvents();
 
     const page = body?.dataset?.page;
     if (page) show({ ok: true, status: `${page.charAt(0).toUpperCase() + page.slice(1)} page ready.` });
