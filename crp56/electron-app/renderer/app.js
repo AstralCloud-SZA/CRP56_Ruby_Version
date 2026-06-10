@@ -7,6 +7,8 @@ const progressFill = document.querySelector('.progress-fill');
 const html = document.documentElement;
 const body = document.body;
 
+const ENCRYPTED_EXTENSION = '.crp56';
+
 // State for File/Folder selections
 let selectedFiles = [];
 let selectedFolder = null;
@@ -26,12 +28,35 @@ function log(...args) {
     console.log('[CRP56 renderer]', ...args);
 }
 
-function show(data) {
+function show(data)
+{
     if (!output) return;
     output.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
 }
 
-function setTheme(theme) {
+function baseName(fullPath)
+{
+    return String(fullPath).split(/[\\/]/).pop();
+}
+
+function ensureCrp56Extension(filePath)
+{
+    if (!filePath) return filePath;
+    return filePath.toLowerCase().endsWith(ENCRYPTED_EXTENSION)
+        ? filePath
+        : filePath + ENCRYPTED_EXTENSION;
+}
+
+// "test1.png" -> "test1.crp56" (original extension is stored inside the payload)
+function toCrp56Name(fileName)
+{
+    const name = String(fileName);
+    const stem = name.replace(/\.[^./\\]+$/, '');
+    return `${stem || name}${ENCRYPTED_EXTENSION}`;
+}
+
+function setTheme(theme)
+{
     if (!THEMES[theme]) return;
     html.dataset.theme = theme;
     if (themeStylesheet) themeStylesheet.setAttribute('href', THEMES[theme].href);
@@ -40,33 +65,41 @@ function setTheme(theme) {
     seedParticles();
 }
 
-function setBusy(isBusy, label = '') {
-    if (progressFill) {
+function setBusy(isBusy, label = '')
+{
+    if (progressFill)
+    {
         progressFill.style.width = isBusy ? '72%' : '0%';
         progressFill.style.opacity = isBusy ? '1' : '0.18';
     }
-    if (isBusy) {
+    if (isBusy)
+    {
         show({ ok: false, status: label ? `Running ${label}...` : 'Working...' });
     }
 }
 
-async function runAction(label, fn) {
-    try {
+async function runAction(label, fn)
+{
+    try
+    {
         log('Running action:', label);
         setBusy(true, label);
         const result = await fn();
         show(result);
         return result;
-    } catch (err) {
+    } catch (err)
+    {
         const payload = { ok: false, error: `${err.name}: ${err.message}` };
         show(payload);
         return payload;
-    } finally {
+    } finally
+    {
         setBusy(false);
     }
 }
 
-function bindThemeToggle() {
+function bindThemeToggle()
+{
     if (!themeToggle) return;
     themeToggle.addEventListener('click', () => {
         const next = html.dataset.theme === 'primordial-gold' ? 'hellflare-gold' : 'primordial-gold';
@@ -75,33 +108,49 @@ function bindThemeToggle() {
 }
 
 function bindTabButtons() {
-    document.querySelectorAll('[data-tab-target]').forEach((btn) => {
-        btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-tab-target]').forEach((btn) =>
+    {
+        btn.addEventListener('click', () =>
+        {
             const target = btn.dataset.tabTarget;
-            document.querySelectorAll('[data-tab-target]').forEach((item) => {
+            document.querySelectorAll('[data-tab-target]').forEach((item) =>
+            {
                 item.classList.toggle('active', item === btn);
             });
             document.querySelectorAll('[data-tab-panel]').forEach((panel) => {
                 panel.classList.toggle('hidden', panel.dataset.tabPanel !== target);
+
             });
         });
     });
 }
 
-// NEW: Logic for File and Folder selection
-function bindSelectionZones() {
+// Logic for File and Folder selection
+function bindSelectionZones()
+{
     const fileZone = document.getElementById('file-drop-zone');
     const fileList = document.getElementById('file-list');
     const folderZone = document.getElementById('folder-drop-zone');
     const folderList = document.getElementById('folder-list');
+    const isDecryptPage = body?.dataset?.page === 'decrypt';
 
     if (fileZone) {
-        fileZone.addEventListener('click', async () => {
-            const result = await window.crp56.pickFile({ properties: ['openFile', 'multiSelections'] });
+        fileZone.addEventListener('click', async () =>
+        {
+            const options = { properties: ['openFile', 'multiSelections'] };
+
+            // On the decrypt page, surface .crp56 containers first
+            if (isDecryptPage)
+            {
+                options.filters = [{ name: 'CRP56 Encrypted', extensions: ['crp56'] }, { name: 'All Files', extensions: ['*'] }];
+            }
+
+            const result = await window.crp56.pickFile(options);
             if (result.canceled) return;
 
             selectedFiles = result.filePaths;
-            if (fileList) {
+            if (fileList)
+            {
                 fileList.style.display = 'block';
                 fileList.innerHTML = selectedFiles.map(f => `<div>📄 ${f}</div>`).join('');
             }
@@ -109,8 +158,10 @@ function bindSelectionZones() {
         });
     }
 
-    if (folderZone) {
-        folderZone.addEventListener('click', async () => {
+    if (folderZone)
+    {
+        folderZone.addEventListener('click', async () =>
+        {
             const result = await window.crp56.pickFolder();
             if (result.canceled) return;
 
@@ -124,7 +175,8 @@ function bindSelectionZones() {
     }
 }
 
-function bindPageActions() {
+function bindPageActions()
+{
     const btnPing = document.getElementById('btn-ping');
     const btnVersion = document.getElementById('btn-version');
     const btnEncrypt = document.getElementById('btn-encrypt');
@@ -160,18 +212,29 @@ function bindPageActions() {
             else if (activeTab === 'file') {
                 if (selectedFiles.length === 0) return show({ ok: false, error: 'No files selected' });
 
-                const saveRes = await window.crp56.pickSaveFile({ title: 'Save Encrypted File' });
-                if (saveRes.canceled) return;
+                const sourceFile = selectedFiles[0];
+                const saveRes = await window.crp56.pickSaveFile({
+                    title: 'Save Encrypted File',
+                    // test1.png -> test1.crp56 (original name is stored inside the payload)
+                    defaultPath: toCrp56Name(baseName(sourceFile)),
+                    filters: [{ name: 'CRP56 Encrypted', extensions: ['crp56'] }]
+                });
+                if (saveRes.canceled || !saveRes.filePath) return;
 
-                // Encrypts the first selected file as a primary target
+                // Belt-and-braces: force .crp56 even if the user renames the file
+                const outputFile = ensureCrp56Extension(saveRes.filePath);
+
                 await runAction('encrypt_file', () =>
-                    window.crp56.encryptFile(passphrase, selectedFiles[0], saveRes.filePath)
+                    window.crp56.encryptFile(passphrase, sourceFile, outputFile)
                 );
             }
             else if (activeTab === 'folder') {
                 if (!selectedFolder) return show({ ok: false, error: 'No folder selected' });
 
-                const saveRes = await window.crp56.pickFolder({ properties: ['openDirectory'] });
+                const saveRes = await window.crp56.pickFolder({
+                    title: 'Select Output Folder for Encrypted Files',
+                    properties: ['openDirectory', 'createDirectory']
+                });
                 if (saveRes.canceled) return;
 
                 await runAction('encrypt_folder', () =>
@@ -196,16 +259,30 @@ function bindPageActions() {
             }
             else if (activeTab === 'file') {
                 if (selectedFiles.length === 0) return show({ ok: false, error: 'No files selected' });
-                const saveRes = await window.crp56.pickSaveFile({ title: 'Save Decrypted File' });
-                if (saveRes.canceled) return;
+
+                const sourceFile = selectedFiles[0];
+
+                // Pick a destination FOLDER: the Ruby core restores the original
+                // filename + extension stored inside the encrypted payload.
+                const destRes = await window.crp56.pickFolder({
+                    title: 'Select Destination Folder for Decrypted File',
+                    properties: ['openDirectory', 'createDirectory']
+                });
+                if (destRes.canceled) return;
+
                 await runAction('decrypt_file', () =>
-                    window.crp56.decryptFile(passphrase, selectedFiles[0], saveRes.filePath)
+                    window.crp56.decryptFile(passphrase, sourceFile, destRes.filePaths[0])
                 );
             }
             else if (activeTab === 'folder') {
                 if (!selectedFolder) return show({ ok: false, error: 'No folder selected' });
-                const saveRes = await window.crp56.pickFolder({ properties: ['openDirectory'] });
+
+                const saveRes = await window.crp56.pickFolder({
+                    title: 'Select Output Folder for Decrypted Files',
+                    properties: ['openDirectory', 'createDirectory']
+                });
                 if (saveRes.canceled) return;
+
                 await runAction('decrypt_folder', () =>
                     window.crp56.decryptFolder(passphrase, selectedFolder, saveRes.filePaths[0])
                 );

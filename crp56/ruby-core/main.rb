@@ -51,6 +51,12 @@ module CRP56
       when "decrypt_file"
         run_decrypt_file(argv)
         0
+      when "encrypt_folder"
+        run_encrypt_folder(argv)
+        0
+      when "decrypt_folder"
+        run_decrypt_folder(argv)
+        0
       when "server"
         run_server
         0
@@ -77,7 +83,9 @@ module CRP56
       puts "  ruby main.rb encrypt_text PASSPHRASE PLAIN_TEXT"
       puts "  ruby main.rb decrypt_text PASSPHRASE BASE64_CIPHER_TEXT"
       puts "  ruby main.rb encrypt_file PASSPHRASE SOURCE_FILE OUTPUT_FILE"
-      puts "  ruby main.rb decrypt_file PASSPHRASE SOURCE_FILE OUTPUT_FILE"
+      puts "  ruby main.rb decrypt_file PASSPHRASE SOURCE_FILE OUTPUT_FILE_OR_FOLDER"
+      puts "  ruby main.rb encrypt_folder PASSPHRASE SOURCE_FOLDER OUTPUT_FOLDER"
+      puts "  ruby main.rb decrypt_folder PASSPHRASE SOURCE_FOLDER OUTPUT_FOLDER"
       puts "  ruby main.rb server"
       puts
       puts "Defaults:"
@@ -85,6 +93,10 @@ module CRP56
       puts "  - HMAC enabled"
       puts "  - Compression enabled"
       puts "  - Compression mode: Zstd"
+      puts
+      puts "File naming:"
+      puts "  - Encrypt: test1.png -> test1.crp56 (original name stored inside payload)"
+      puts "  - Decrypt to a folder: original name and extension are restored"
     end
 
     def self.run_version
@@ -161,10 +173,10 @@ module CRP56
       service = CRP56::AppCryptoService.new
 
       original_bytes = File.binread(source_file)
-      encrypted_path = "#{source_file}.crp56"
       decrypted_path = "#{source_file}.dec"
 
-      service.encrypt_file_to_path(source_file, encrypted_path, user_passphrase)
+      # encrypt_file_to_path swaps the extension: test1.png -> test1.crp56
+      encrypted_path = service.encrypt_file_to_path(source_file, source_file, user_passphrase)
       service.decrypt_file_to_path(encrypted_path, decrypted_path, user_passphrase)
 
       encrypted_bytes = File.binread(encrypted_path)
@@ -295,22 +307,52 @@ module CRP56
       end
 
       service = CRP56::AppCryptoService.new
-      service.encrypt_file_to_path(source_file, output_file, user_passphrase)
-      puts "Encrypted file written to: #{output_file}"
+      written = service.encrypt_file_to_path(source_file, output_file, user_passphrase)
+      puts "Encrypted file written to: #{written}"
     end
 
     def self.run_decrypt_file(argv)
       user_passphrase = argv.shift
       source_file = argv.shift
-      output_file = argv.shift
+      output_target = argv.shift
 
-      if blank?(user_passphrase) || blank?(source_file) || blank?(output_file)
-        raise ArgumentError, "Usage: ruby main.rb decrypt_file PASSPHRASE SOURCE_FILE OUTPUT_FILE"
+      if blank?(user_passphrase) || blank?(source_file) || blank?(output_target)
+        raise ArgumentError, "Usage: ruby main.rb decrypt_file PASSPHRASE SOURCE_FILE OUTPUT_FILE_OR_FOLDER"
       end
 
       service = CRP56::AppCryptoService.new
-      service.decrypt_file_to_path(source_file, output_file, user_passphrase)
-      puts "Decrypted file written to: #{output_file}"
+      written = service.decrypt_file_to_path(source_file, output_target, user_passphrase)
+      puts "Decrypted file written to: #{written}"
+    end
+
+    def self.run_encrypt_folder(argv)
+      user_passphrase = argv.shift
+      source_folder = argv.shift
+      output_folder = argv.shift
+
+      if blank?(user_passphrase) || blank?(source_folder) || blank?(output_folder)
+        raise ArgumentError, "Usage: ruby main.rb encrypt_folder PASSPHRASE SOURCE_FOLDER OUTPUT_FOLDER"
+      end
+
+      service = CRP56::AppCryptoService.new
+      written = service.encrypt_folder_to_path(source_folder, output_folder, user_passphrase)
+      puts "Encrypted #{written.length} file(s) into: #{output_folder}"
+      written.each { |path| puts "  #{path}" }
+    end
+
+    def self.run_decrypt_folder(argv)
+      user_passphrase = argv.shift
+      source_folder = argv.shift
+      output_folder = argv.shift
+
+      if blank?(user_passphrase) || blank?(source_folder) || blank?(output_folder)
+        raise ArgumentError, "Usage: ruby main.rb decrypt_folder PASSPHRASE SOURCE_FOLDER OUTPUT_FOLDER"
+      end
+
+      service = CRP56::AppCryptoService.new
+      written = service.decrypt_folder_to_path(source_folder, output_folder, user_passphrase)
+      puts "Decrypted #{written.length} file(s) into: #{output_folder}"
+      written.each { |path| puts "  #{path}" }
     end
 
     def self.run_server
@@ -366,8 +408,8 @@ module CRP56
             raise ArgumentError, "output_file is required" if output_file.empty?
             raise ArgumentError, "source_file does not exist: #{source_file}" unless File.file?(source_file)
 
-            service.encrypt_file_to_path(source_file, output_file, passphrase)
-            response = { id: id, ok: true, result: output_file }
+            written = service.encrypt_file_to_path(source_file, output_file, passphrase)
+            response = { id: id, ok: true, result: written }
 
           when "decrypt_file"
             passphrase = request[:passphrase].to_s
@@ -379,8 +421,46 @@ module CRP56
             raise ArgumentError, "output_file is required" if output_file.empty?
             raise ArgumentError, "source_file does not exist: #{source_file}" unless File.file?(source_file)
 
-            service.decrypt_file_to_path(source_file, output_file, passphrase)
-            response = { id: id, ok: true, result: output_file }
+            # output_file may be a folder: the original filename stored inside
+            # the encrypted payload is then restored automatically.
+            written = service.decrypt_file_to_path(source_file, output_file, passphrase)
+            response = { id: id, ok: true, result: written }
+
+          when "encrypt_folder"
+            passphrase = request[:passphrase].to_s
+            source_folder = request[:source_folder].to_s
+            output_folder = request[:output_folder].to_s
+
+            raise ArgumentError, "passphrase is required" if passphrase.empty?
+            raise ArgumentError, "source_folder is required" if source_folder.empty?
+            raise ArgumentError, "output_folder is required" if output_folder.empty?
+            raise ArgumentError, "source_folder does not exist: #{source_folder}" unless File.directory?(source_folder)
+
+            written = service.encrypt_folder_to_path(source_folder, output_folder, passphrase)
+            response = {
+              id: id,
+              ok: true,
+              result: "Encrypted #{written.length} file(s) into #{output_folder}",
+              files: written
+            }
+
+          when "decrypt_folder"
+            passphrase = request[:passphrase].to_s
+            source_folder = request[:source_folder].to_s
+            output_folder = request[:output_folder].to_s
+
+            raise ArgumentError, "passphrase is required" if passphrase.empty?
+            raise ArgumentError, "source_folder is required" if source_folder.empty?
+            raise ArgumentError, "output_folder is required" if output_folder.empty?
+            raise ArgumentError, "source_folder does not exist: #{source_folder}" unless File.directory?(source_folder)
+
+            written = service.decrypt_folder_to_path(source_folder, output_folder, passphrase)
+            response = {
+              id: id,
+              ok: true,
+              result: "Decrypted #{written.length} file(s) into #{output_folder}",
+              files: written
+            }
 
           when "has_secrets"
             response = { id: id, ok: true, result: service.has_secrets? }
