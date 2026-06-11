@@ -32,6 +32,85 @@ const THEMES = {
     }
 };
 
+/* --- BACKGROUND SLIDE SYSTEM --- */
+
+const BG_IMAGES = {
+    'primordial-gold': [
+        '../BG_images/bg1.jpg',
+        '../BG_images/bg3.jpg',
+        '../BG_images/bg5.jpg',
+        '../BG_images/bg7.jpg'
+    ],
+    'hellflare-gold': [
+        '../BG_images/bg2.jpg',
+        '../BG_images/bg4.png',
+        '../BG_images/bg6.jpg'
+    ]
+};
+
+const BG_INTERVAL_MS = 12000;
+
+let bgSlidesHost = null;
+let bgCurrentIndex = -1;
+let bgTimerId = null;
+
+function initBackgroundHost()
+{
+    bgSlidesHost = document.querySelector('.bg-slides');
+}
+
+function showNextSlide(theme)
+{
+    if (!bgSlidesHost) return;
+
+    const list = BG_IMAGES[theme] || [];
+    if (!list.length) return;
+
+    bgCurrentIndex = (bgCurrentIndex + 1) % list.length;
+    const url = list[bgCurrentIndex];
+
+    const slide = document.createElement('div');
+    slide.className = 'bg-slide';
+    slide.style.backgroundImage = `url("${url}")`;
+    bgSlidesHost.appendChild(slide);
+
+    // Trigger fade-in on next paint
+    requestAnimationFrame(() =>
+    {
+        requestAnimationFrame(() => slide.classList.add('visible'));
+    });
+
+    // Fade out and remove all older slides
+    bgSlidesHost.querySelectorAll('.bg-slide').forEach((el) =>
+    {
+        if (el === slide) return;
+        el.classList.remove('visible');
+        el.addEventListener('transitionend', () =>
+        {
+            if (el.parentNode === bgSlidesHost) el.remove();
+        }, { once: true });
+    });
+}
+
+function startBackgroundLoop(theme)
+{
+    if (bgTimerId)
+    {
+        clearInterval(bgTimerId);
+        bgTimerId = null;
+    }
+
+    bgCurrentIndex = -1;
+    showNextSlide(theme);
+
+    bgTimerId = setInterval(() =>
+    {
+        showNextSlide(html.dataset.theme || theme);
+    }, BG_INTERVAL_MS);
+}
+
+/* --- END BACKGROUND SLIDE SYSTEM --- */
+
 function log(...args)
 {
     console.log('[CRP56 renderer]', ...args);
@@ -54,7 +133,6 @@ function ensureCrp56Extension(filePath)
     return filePath.toLowerCase().endsWith(ENCRYPTED_EXTENSION) ? filePath : filePath + ENCRYPTED_EXTENSION;
 }
 
-// "test1.png" -> "test1.crp56" (original extension is stored inside the payload)
 function toCrp56Name(fileName)
 {
     const name = String(fileName);
@@ -71,6 +149,7 @@ function setTheme(theme)
     if (themeNameCard) themeNameCard.textContent = THEMES[theme].label;
     try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch (_) {}
     seedParticles();
+    startBackgroundLoop(theme); // restarts the slideshow with the correct image set
 }
 
 function savedTheme()
@@ -99,6 +178,7 @@ function startProgress(label = '')
         clearTimeout(progressResetTimer);
         progressResetTimer = null;
     }
+
     if (progressFill) progressFill.style.opacity = '1';
     setProgress(2);
     show({ status: label ? `Running ${label}...` : 'Working...' });
@@ -115,14 +195,12 @@ function finishProgress()
     }, 750);
 }
 
-// Live progress events streamed from the Ruby core:
-// { id, event: 'progress', stage, current, total, detail }
-// Files report per-shard progress; folders report per-file progress.
 function bindProgressEvents()
 {
     if (!window.crp56 || typeof window.crp56.onProgress !== 'function') return;
 
-    window.crp56.onProgress((msg) => {
+    window.crp56.onProgress((msg) =>
+    {
         if (!msg || msg.event !== 'progress' || !msg.total) return;
         const percent = Math.round((msg.current / msg.total) * 100);
         setProgress(percent);
@@ -178,13 +256,10 @@ function bindTabButtons()
             {
                 panel.classList.toggle('hidden', panel.dataset.tabPanel !== target);
             });
-
         });
-
     });
 }
 
-// Logic for File and Folder selection
 function bindSelectionZones()
 {
     const fileZone = document.getElementById('file-drop-zone');
@@ -199,7 +274,6 @@ function bindSelectionZones()
         {
             const options = { properties: ['openFile', 'multiSelections'] };
 
-            // On the decrypt page, surface .crp56 containers first
             if (isDecryptPage)
             {
                 options.filters = [{ name: 'CRP56 Encrypted', extensions: ['crp56'] }, { name: 'All Files', extensions: ['*'] }];
@@ -261,7 +335,6 @@ function bindPageActions()
         });
     }
 
-    // ENCRYPT LOGIC
     if (btnEncrypt && passphraseInput)
     {
         btnEncrypt.addEventListener('click', async () =>
@@ -284,15 +357,12 @@ function bindPageActions()
                 const sourceFile = selectedFiles[0];
                 const saveRes = await window.crp56.pickSaveFile({
                     title: 'Save Encrypted File',
-                    // test1.png -> test1.crp56 (original name is stored inside the payload)
                     defaultPath: toCrp56Name(baseName(sourceFile)),
                     filters: [{ name: 'CRP56 Encrypted', extensions: ['crp56'] }]
                 });
                 if (saveRes.canceled || !saveRes.filePath) return;
 
-                // Belt-and-braces: force .crp56 even if the user renames the file
                 const outputFile = ensureCrp56Extension(saveRes.filePath);
-
                 await runAction('encrypt_file', () => window.crp56.encryptFile(passphrase, sourceFile, outputFile));
             }
             else if (activeTab === 'folder')
@@ -310,7 +380,6 @@ function bindPageActions()
         });
     }
 
-    // DECRYPT LOGIC
     if (btnDecrypt && passphraseInput)
     {
         btnDecrypt.addEventListener('click', async () =>
@@ -331,10 +400,7 @@ function bindPageActions()
                 if (selectedFiles.length === 0) return show({ ok: false, error: 'No files selected' });
 
                 const sourceFile = selectedFiles[0];
-
-                // Pick a destination FOLDER: the Ruby core restores the original
-                // filename + extension stored inside the encrypted payload.
-                const destRes = await window.crp56.pickFolder({title: 'Select Destination Folder for Decrypted File', properties: ['openDirectory', 'createDirectory']});
+                const destRes = await window.crp56.pickFolder({ title: 'Select Destination Folder for Decrypted File', properties: ['openDirectory', 'createDirectory'] });
                 if (destRes.canceled) return;
 
                 await runAction('decrypt_file', () => window.crp56.decryptFile(passphrase, sourceFile, destRes.filePaths[0]));
@@ -343,14 +409,13 @@ function bindPageActions()
             {
                 if (!selectedFolder) return show({ ok: false, error: 'No folder selected' });
 
-                const saveRes = await window.crp56.pickFolder({title: 'Select Output Folder for Decrypted Files', properties: ['openDirectory', 'createDirectory']});
+                const saveRes = await window.crp56.pickFolder({ title: 'Select Output Folder for Decrypted Files', properties: ['openDirectory', 'createDirectory'] });
                 if (saveRes.canceled) return;
 
                 await runAction('decrypt_folder', () => window.crp56.decryptFolder(passphrase, selectedFolder, saveRes.filePaths[0]));
             }
         });
     }
-
 }
 
 function bindThemeButtons()
@@ -453,7 +518,6 @@ function drawParticles()
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
     if (!particlesEnabled)
     {
-        // Keep the loop alive so re-enabling resumes instantly.
         requestAnimationFrame(drawParticles);
         return;
     }
@@ -486,21 +550,21 @@ function drawParticles()
                 ctx.stroke();
             }
         }
-
     });
     requestAnimationFrame(drawParticles);
 }
 
 window.addEventListener('DOMContentLoaded', () =>
 {
-    // Shell features work on every page, even if the bridge is missing.
     bindThemeToggle();
     bindThemeButtons();
     bindTabButtons();
     bindParticleToggle();
 
+    initBackgroundHost(); // init before setTheme so the host is ready
+
     setParticlesEnabled(savedParticlesEnabled(), { persist: false });
-    setTheme(savedTheme() || html.dataset.theme || 'primordial-gold');
+    setTheme(savedTheme() || html.dataset.theme || 'primordial-gold'); // also starts bg loop
     resizeCanvas();
     drawParticles();
 

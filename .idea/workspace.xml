@@ -4,8 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="Updated and fixes made by the claude flame model 2">
-      <change beforePath="$PROJECT_DIR$/crp56/ruby-core/lib/app_crypto_service.rb" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/ruby-core/lib/app_crypto_service.rb" afterDir="false" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="Updated and fixes made by the claude fable 5 model 3">
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/BG_images/bg1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/BG_images/bg2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/BG_images/bg3.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/BG_images/bg4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/BG_images/bg5.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/BG_images/bg6.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/BG_images/bg7.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,61 +55,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0" />
-      <entry key="S30" value="1.000000000594894" />
-      <entry key="S60" value="1.0001295849311358" />
-      <entry key="M2" value="1.0610951067144374" />
-      <entry key="M5" value="3.4735759618232693" />
-      <entry key="M10" value="10.115519422011728" />
-      <entry key="M15" value="16.631918983827653" />
-      <entry key="M30" value="34.93658013970035" />
-      <entry key="H1" value="65.89866336639788" />
-      <entry key="H2" value="107.0171898364625" />
-      <entry key="H4" value="146.2309255581851" />
-      <entry key="D1" value="198.3880922258898" />
-      <entry key="W1" value="209.97598815915129" />
+      <entry key="MS100" value="1.4395441913846296" />
+      <entry key="MS500" value="4.111844563024599" />
+      <entry key="S2" value="6.594757577678456" />
+      <entry key="S5" value="7.423104092585121" />
+      <entry key="S10" value="7.9462124799877785" />
+      <entry key="S30" value="9.035290621697904" />
+      <entry key="S60" value="9.734565092844372" />
+      <entry key="M2" value="10.307275411804744" />
+      <entry key="M5" value="11.640258101026806" />
+      <entry key="M10" value="16.16368045518943" />
+      <entry key="M15" value="21.73913531095268" />
+      <entry key="M30" value="39.163739072860565" />
+      <entry key="H1" value="70.19863268424685" />
+      <entry key="H2" value="112.44132677560215" />
+      <entry key="H4" value="153.37337592017457" />
+      <entry key="D1" value="208.50657190077976" />
+      <entry key="W1" value="220.84245721901178" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
-      <entry key="S5" value="1.9782237784938444E-228" />
-      <entry key="S10" value="1.4064934335054122E-114" />
-      <entry key="S30" value="1.1204158302614222E-38" />
-      <entry key="S60" value="1.0584969675258489E-19" />
-      <entry key="M2" value="3.2534550366124044E-10" />
-      <entry key="M5" value="1.6030204976436304E-4" />
-      <entry key="M10" value="0.01269162867814716" />
-      <entry key="M15" value="0.05571968319636128" />
-      <entry key="M30" value="0.30917928495397506" />
-      <entry key="H1" value="1.1667337565757898" />
-      <entry key="H2" value="2.9456967352361874" />
-      <entry key="H4" value="5.034942195434082" />
-      <entry key="D1" value="8.145902326283368" />
-      <entry key="W1" value="8.872105609184077" />
+      <entry key="S5" value="8.35222664068095E-262" />
+      <entry key="S10" value="2.890021910069359E-131" />
+      <entry key="S30" value="3.0687891153003606E-44" />
+      <entry key="S60" value="1.751795968513556E-22" />
+      <entry key="M2" value="1.3235542937535949E-11" />
+      <entry key="M5" value="4.453463082615392E-5" />
+      <entry key="M10" value="0.006689547591696076" />
+      <entry key="M15" value="0.03635757417315241" />
+      <entry key="M30" value="0.24974886233548416" />
+      <entry key="H1" value="1.0486204629811642" />
+      <entry key="H2" value="2.792616604524493" />
+      <entry key="H4" value="4.902370499226809" />
+      <entry key="D1" value="8.109756327565517" />
+      <entry key="W1" value="8.866470827651113" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9659363289248456" />
-      <entry key="MS500" value="0.9930924954370359" />
-      <entry key="S2" value="0.9982686325973925" />
-      <entry key="S5" value="0.9993070929904525" />
-      <entry key="S10" value="0.9996534864594093" />
-      <entry key="S30" value="0.9998844827374004" />
-      <entry key="S60" value="1.0000718128513977" />
-      <entry key="M2" value="1.0610634822341722" />
-      <entry key="M5" value="3.473678137715359" />
-      <entry key="M10" value="10.128044350362313" />
-      <entry key="M15" value="16.68730792217507" />
-      <entry key="M30" value="35.24509312363874" />
-      <entry key="H1" value="67.06453669199576" />
-      <entry key="H2" value="109.96205722235969" />
-      <entry key="H4" value="151.26524807631617" />
-      <entry key="D1" value="206.53384378779296" />
-      <entry key="W1" value="218.8480706932992" />
+      <entry key="MS100" value="1.4185054545597533" />
+      <entry key="MS500" value="4.076888558975865" />
+      <entry key="S2" value="6.576385389913563" />
+      <entry key="S5" value="7.414426358731664" />
+      <entry key="S10" value="7.941584463477546" />
+      <entry key="S30" value="9.03362444607456" />
+      <entry key="S60" value="9.73369349486224" />
+      <entry key="M2" value="10.306822922603768" />
+      <entry key="M5" value="11.640101043083632" />
+      <entry key="M10" value="16.170188451620056" />
+      <entry key="M15" value="21.775214387983354" />
+      <entry key="M30" value="39.41291825292167" />
+      <entry key="H1" value="71.24646406286803" />
+      <entry key="H2" value="115.23314924323992" />
+      <entry key="H4" value="158.2751391132019" />
+      <entry key="D1" value="216.6161774751596" />
+      <entry key="W1" value="229.70890489230464" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -112,32 +121,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ruby.rubocop.migration.global.runOnSaveToExternalFormatter&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP&quot;: &quot;1781025668220&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ruby.structure.view.model.defaults.configured&quot;: &quot;true&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.ruby.rubocop.migration.global.runOnSaveToExternalFormatter": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP": "1781202801892",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "master",
+    "junie.onboarding.icon.badge.shown": "true",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "ruby.structure.view.model.defaults.configured": "true",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "S:\\JetBrains\\RubyMine 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\BG_images" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -157,7 +172,8 @@
       <workItem from="1780932048847" duration="2667000" />
       <workItem from="1780999922667" duration="10137000" />
       <workItem from="1781025610071" duration="4394000" />
-      <workItem from="1781110876938" duration="3862000" />
+      <workItem from="1781110876938" duration="7147000" />
+      <workItem from="1781202743013" duration="1301000" />
     </task>
     <task id="LOCAL-00001" summary="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work">
       <option name="closed" value="true" />
@@ -295,7 +311,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781114427483</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Updated and fixes made by the claude flame model 3">
+      <option name="closed" value="true" />
+      <created>1781114896925</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1781114896925</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -327,6 +351,7 @@
     <MESSAGE value="css rework and then page by page adjustments" />
     <MESSAGE value="Updated and fixes made by the claude flame model" />
     <MESSAGE value="Updated and fixes made by the claude flame model 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated and fixes made by the claude flame model 2" />
+    <MESSAGE value="Updated and fixes made by the claude flame model 3" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated and fixes made by the claude flame model 3" />
   </component>
 </project>
