@@ -151,7 +151,7 @@
                 </div>
                 <div class="top-controls">
                     <div class="chip">Command hub</div>
-                    <button class="theme-button" id="themeToggle" type="button">Swap aesthetic</button>
+                    <button class="theme-button" id="themeToggle" type="button" data-sfx="cursor">Swap aesthetic</button>
                 </div>
             </header>
 
@@ -163,9 +163,9 @@
                 <div class="content-stack">
                     <!-- Command Shards -->
                     <div class="tab-row">
-                        <button class="tab-pill active" data-tab-target="text" type="button">Text</button>
-                        <button class="tab-pill" data-tab-target="file" type="button">File</button>
-                        <button class="tab-pill" data-tab-target="folder" type="button">Folder</button>
+                        <button class="tab-pill active" data-tab-target="text" type="button" data-sfx="cursor">Text</button>
+                        <button class="tab-pill" data-tab-target="file" type="button" data-sfx="cursor">File</button>
+                        <button class="tab-pill" data-tab-target="folder" type="button" data-sfx="cursor">Folder</button>
                     </div>
 
                     <div class="two-col">
@@ -189,7 +189,7 @@
                             <!-- File Panel -->
                             <div class="field-stack tab-panel hidden" data-tab-panel="file">
                                 <label class="field-label">File Containment</label>
-                                <div id="file-drop-zone" class="containment-field" style="display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; border-style: dashed; min-height: 120px; gap: 10px;">
+                                <div id="file-drop-zone" class="containment-field" style="display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; border-style: dashed; min-height: 120px; gap: 10px;" data-sfx="cursor">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
                                     <span class="subtle">Drop .crp56 files here or click to browse</span>
                                 </div>
@@ -202,7 +202,7 @@
                             <!-- Folder Panel -->
                             <div class="field-stack tab-panel hidden" data-tab-panel="folder">
                                 <label class="field-label">Folder Containment</label>
-                                <div id="folder-drop-zone" class="containment-field" style="display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; border-style: dashed; min-height: 120px; gap: 10px;">
+                                <div id="folder-drop-zone" class="containment-field" style="display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; border-style: dashed; min-height: 120px; gap: 10px;" data-sfx="cursor">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
                                     <span class="subtle">Click to select encrypted directory</span>
                                 </div>
@@ -214,9 +214,10 @@
 
 
                             <div class="control-row hero-actions">
+                                <!-- NO data-sfx here: runAction() in app.js already fires confirm/error on result -->
                                 <button class="primary-btn" id="btn-decrypt" type="button">Execute Decryption</button>
-                                <button class="secondary-btn" id="btn-ping" type="button">System Ping</button>
-                                <button class="secondary-btn" id="btn-version" type="button">Core Version</button>
+                                <button class="secondary-btn" id="btn-ping" type="button" data-sfx="confirm">System Ping</button>
+                                <button class="secondary-btn" id="btn-version" type="button" data-sfx="confirm">Core Version</button>
                             </div>
                         </section>
 
@@ -265,11 +266,11 @@
                 </svg>
             </div>
             <nav class="rail-nav">
-                <a class="nav-btn" href="./home.html">Home</a>
-                <a class="nav-btn" href="./encrypt.html">Enc</a>
-                <a class="nav-btn active" href="./decrypt.html">Dec</a>
-                <a class="nav-btn" href="./settings.html">Set</a>
-                <a class="nav-btn" href="./about.html">About</a>
+                <a class="nav-btn" href="./home.html" data-sfx="cursor">Home</a>
+                <a class="nav-btn" href="./encrypt.html" data-sfx="cursor">Enc</a>
+                <a class="nav-btn active" href="./decrypt.html" data-sfx="cursor">Dec</a>
+                <a class="nav-btn" href="./settings.html" data-sfx="cursor">Set</a>
+                <a class="nav-btn" href="./about.html" data-sfx="cursor">About</a>
             </nav>
             <div class="rail-bottom">
                 <div class="rail-note">Primordial Shell Active</div>

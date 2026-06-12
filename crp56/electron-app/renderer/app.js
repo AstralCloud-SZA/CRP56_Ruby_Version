@@ -511,6 +511,17 @@ function bindRailAudio()
     });
 }
 
+// ---- Per-button data-sfx wiring  ----
+function bindDataSfx()
+{
+    document.addEventListener('click', (e) => {
+        const el = e.target.closest('[data-sfx]');
+        if (!el) return;
+        const cat = el.getAttribute('data-sfx');
+        if (cat) sfx(cat);   // uses your existing throttled sfx() helper
+    });
+}
+
 /* --- PARTICLE TOGGLE (Settings) --- */
 
 function setParticlesEnabled(enabled, { persist = true } = {})
@@ -702,6 +713,7 @@ window.addEventListener('DOMContentLoaded', () =>
     bindParticleToggle();
     bindVolumeSliders();
     bindRailAudio();
+    bindDataSfx();
 
     initBackgroundHost(); // init before setTheme so the host is ready
 

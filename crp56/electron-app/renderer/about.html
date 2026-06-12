@@ -50,7 +50,7 @@
                 </div>
                 <div class="top-controls">
                     <div class="chip">Command hub</div>
-                    <button class="theme-button" id="themeToggle" type="button">Swap aesthetic</button>
+                    <button class="theme-button" id="themeToggle" type="button" data-sfx="cursor">Swap aesthetic</button>
                 </div>
             </header>
 
@@ -83,8 +83,8 @@
                             <section class="system-panel">
                                 <h2 class="panel-title">Core link</h2>
                                 <div class="switcher" style="margin-bottom: var(--space-4);">
-                                    <button class="secondary-btn" id="btn-version" type="button">Core Version</button>
-                                    <button class="secondary-btn" id="btn-ping" type="button">System Ping</button>
+                                    <button class="secondary-btn" id="btn-version" type="button" data-sfx="confirm">Core Version</button>
+                                    <button class="secondary-btn" id="btn-ping" type="button" data-sfx="confirm">System Ping</button>
                                 </div>
                                 <pre id="output" class="containment-field status-box">{
   "ok": true,
@@ -111,11 +111,11 @@
                 </svg>
             </div>
             <nav class="rail-nav">
-                <a class="nav-btn" href="./home.html">Home</a>
-                <a class="nav-btn" href="./encrypt.html">Enc</a>
-                <a class="nav-btn" href="./decrypt.html">Dec</a>
-                <a class="nav-btn" href="./settings.html">Set</a>
-                <a class="nav-btn active" href="./about.html">About</a>
+                <a class="nav-btn" href="./home.html" data-sfx="cursor">Home</a>
+                <a class="nav-btn" href="./encrypt.html" data-sfx="cursor">Enc</a>
+                <a class="nav-btn" href="./decrypt.html" data-sfx="cursor">Dec</a>
+                <a class="nav-btn" href="./settings.html" data-sfx="cursor">Set</a>
+                <a class="nav-btn active" href="./about.html" data-sfx="cursor">About</a>
             </nav>
             <div class="rail-bottom">
                 <div class="rail-note">Primordial Shell Active</div>

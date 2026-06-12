@@ -91,7 +91,7 @@
                 </div>
                 <div class="top-controls">
                     <div class="chip">Command hub</div>
-                    <button class="theme-button" id="themeToggle" type="button">Swap aesthetic</button>
+                    <button class="theme-button" id="themeToggle" type="button" data-sfx="cursor">Swap aesthetic</button>
                 </div>
             </header>
 
@@ -117,8 +117,8 @@
                                         <span class="subtle">Pick the active visual identity for every chamber.</span>
                                     </div>
                                     <div class="switcher">
-                                        <button class="secondary-btn" data-set-theme="primordial-gold" type="button">Primordial Gold</button>
-                                        <button class="secondary-btn" data-set-theme="hellflare-gold" type="button">Hellflare Gold</button>
+                                        <button class="secondary-btn" data-set-theme="primordial-gold" type="button" data-sfx="cursor">Primordial Gold</button>
+                                        <button class="secondary-btn" data-set-theme="hellflare-gold" type="button" data-sfx="cursor">Hellflare Gold</button>
                                     </div>
                                 </div>
 
@@ -129,7 +129,7 @@
                                     </div>
                                     <div class="switcher" style="align-items:center; gap: var(--space-3);">
                                         <span class="setting-value" id="particleStatus">On</span>
-                                        <button class="secondary-btn" id="particleToggle" type="button">Disable particles</button>
+                                        <button class="secondary-btn" id="particleToggle" type="button" data-sfx="cursor">Disable particles</button>
                                     </div>
                                 </div>
                             </div>
@@ -137,7 +137,7 @@
                             <!-- ========== AUDIO ========== -->
                             <div class="group-label">Audio</div>
                             <div class="settings-group">
-                                <!-- Master volume (placeholder for future master bus) -->
+                                <!-- Master volume (LIVE) -->
                                 <div class="setting-row">
                                     <div class="setting-copy">
                                         <strong>Master volume</strong>
@@ -161,7 +161,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Music volume (LIVE bus, music system coming) -->
+                                <!-- Music volume (LIVE) -->
                                 <div class="setting-row">
                                     <div class="setting-copy">
                                         <strong>Music volume</strong>
@@ -240,8 +240,8 @@
                             <section class="system-panel">
                                 <h2 class="panel-title">Core diagnostics</h2>
                                 <div class="switcher" style="margin-bottom: var(--space-4);">
-                                    <button class="secondary-btn" id="btn-ping" type="button">System Ping</button>
-                                    <button class="secondary-btn" id="btn-version" type="button">Core Version</button>
+                                    <button class="secondary-btn" id="btn-ping" type="button" data-sfx="confirm">System Ping</button>
+                                    <button class="secondary-btn" id="btn-version" type="button" data-sfx="confirm">Core Version</button>
                                 </div>
                                 <pre id="output" class="containment-field status-box">{
   "ok": true,
@@ -268,11 +268,11 @@
                 </svg>
             </div>
             <nav class="rail-nav">
-                <a class="nav-btn" href="./home.html">Home</a>
-                <a class="nav-btn" href="./encrypt.html">Enc</a>
-                <a class="nav-btn" href="./decrypt.html">Dec</a>
-                <a class="nav-btn active" href="./settings.html">Set</a>
-                <a class="nav-btn" href="./about.html">About</a>
+                <a class="nav-btn" href="./home.html" data-sfx="cursor">Home</a>
+                <a class="nav-btn" href="./encrypt.html" data-sfx="cursor">Enc</a>
+                <a class="nav-btn" href="./decrypt.html" data-sfx="cursor">Dec</a>
+                <a class="nav-btn active" href="./settings.html" data-sfx="cursor">Set</a>
+                <a class="nav-btn" href="./about.html" data-sfx="cursor">About</a>
             </nav>
             <div class="rail-bottom">
                 <div class="rail-note">Primordial Shell Active</div>
