@@ -62,15 +62,16 @@ contextBridge.exposeInMainWorld('crp56', {
 const ALLOWED_SFX = new Set(['confirm', 'cursor', 'back', 'error']);
 
 contextBridge.exposeInMainWorld('sfx', {
-    // Play a random sound from a category, e.g. window.sfx.play('confirm')
-    play: (category) =>
-    {
-        if (!ALLOWED_SFX.has(category)) return;
-        ipcRenderer.send('sfx:play', category);
-    },
-    // Play any random sound across all categories
+    play: (category) => { if (!ALLOWED_SFX.has(category)) return; ipcRenderer.send('sfx:play', category); },
     any: () => ipcRenderer.send('sfx:any'),
-    // Volume setters (expects 0..1)
+    // volumes (0..1)
     setVolume: (v) => ipcRenderer.send('sfx:volume', v),
     setMusicVolume: (v) => ipcRenderer.send('music:volume', v),
+    setMasterVolume: (v) => ipcRenderer.send('master:volume', v),
+    // mute
+    setMuteAll: (muted) => ipcRenderer.send('audio:mute', muted),
+    // music transport
+    playMusic: (name) => ipcRenderer.send('music:play', name),
+    stopMusic: () => ipcRenderer.send('music:stop'),
+    listMusic: () => ipcRenderer.invoke('music:list'),
 });

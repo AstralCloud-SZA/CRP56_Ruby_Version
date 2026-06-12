@@ -247,6 +247,15 @@ ipcMain.on('sfx:any', () => fmod.playAny());
 ipcMain.on('sfx:volume', (_event, v) => fmod.setSfxVolume(v));
 ipcMain.on('music:volume', (_event, v) => fmod.setMusicVolume(v));
 
+// Master + mute
+ipcMain.on('master:volume', (_e, v) => fmod.setMasterVolume(v));
+ipcMain.on('audio:mute', (_e, muted) => fmod.setMuteAll(muted));
+
+// Music
+ipcMain.on('music:play', (_e, name) => fmod.playMusic(name));
+ipcMain.on('music:stop', () => fmod.stopMusic());
+ipcMain.handle('music:list', () => fmod.listMusic());
+
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1348,

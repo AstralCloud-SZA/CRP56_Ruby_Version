@@ -12,6 +12,8 @@ const THEME_STORAGE_KEY = 'crp56-theme';
 const PARTICLE_STORAGE_KEY = 'crp56-particles';
 const SFX_VOL_STORAGE_KEY = 'crp56-sfx-volume';
 const MUSIC_VOL_STORAGE_KEY = 'crp56-music-volume';
+const MASTER_VOL_STORAGE_KEY = 'crp56-master-volume';
+const MUTE_STORAGE_KEY = 'crp56-muted';
 
 // State for File/Folder selections
 let selectedFiles = [];
@@ -36,6 +38,47 @@ function sfx(category)
     lastSfxAt[category] = now;
     window.sfx.play(category);
 }
+
+function bindMasterAndMusic()
+{
+    // Master volume
+    const masterSlider = document.getElementById('masterVolume');
+    const masterLabel = document.getElementById('masterVolumeLabel');
+    if (masterSlider)
+    {
+        masterSlider.disabled = false; // it was a placeholder; now live
+        const savedMaster = Number(localStorage.getItem(MASTER_VOL_STORAGE_KEY) ?? 100);
+        masterSlider.value = savedMaster;
+        if (masterLabel) masterLabel.textContent = `${savedMaster}%`;
+        masterSlider.addEventListener('input', () =>
+        {
+            const pct = Number(masterSlider.value);
+            if (masterLabel) masterLabel.textContent = `${pct}%`;
+            if (window.sfx) window.sfx.setMasterVolume(pct / 100);
+            try { localStorage.setItem(MASTER_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
+        });
+        masterSlider.addEventListener('change', () => sfx('cursor'));
+    }
+
+    // Mute toggle (if you wire a real button later with id="muteToggle")
+    const muteBtn = document.getElementById('muteToggle');
+    if (muteBtn)
+    {
+        let muted = localStorage.getItem(MUTE_STORAGE_KEY) === 'on';
+        const render = () => { muteBtn.textContent = muted ? 'Unmute' : 'Mute all'; };
+        render();
+        if (window.sfx) window.sfx.setMuteAll(muted);
+        muteBtn.addEventListener('click', () =>
+        {
+            muted = !muted;
+            if (window.sfx) window.sfx.setMuteAll(muted);
+            try { localStorage.setItem(MUTE_STORAGE_KEY, muted ? 'on' : 'off'); } catch (_) {}
+            render();
+            if (!muted) sfx('confirm');
+        });
+    }
+}
+
 
 const THEMES = {
     'primordial-gold': {
@@ -547,10 +590,15 @@ function bindVolumeSliders()
 function applySavedVolumes()
 {
     if (!window.sfx) return;
+    const master = Number(localStorage.getItem(MASTER_VOL_STORAGE_KEY) ?? 100) / 100;
     const sfxVol = Number(localStorage.getItem(SFX_VOL_STORAGE_KEY) ?? 80) / 100;
     const musicVol = Number(localStorage.getItem(MUSIC_VOL_STORAGE_KEY) ?? 60) / 100;
+    window.sfx.setMasterVolume(master);
     window.sfx.setVolume(sfxVol);
     window.sfx.setMusicVolume(musicVol);
+
+    const muted = localStorage.getItem(MUTE_STORAGE_KEY) === 'on';
+    window.sfx.setMuteAll(muted);
 }
 
 /* --- PARTICLE SYSTEM --- */

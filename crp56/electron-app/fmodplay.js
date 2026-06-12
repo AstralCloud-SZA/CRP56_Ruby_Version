@@ -12,9 +12,11 @@ fmod.playOnce(file);
 // So we pump Update() for ~1.5s, then shut down cleanly.
 const fmodLib = fmod; // keep ref
 let elapsed = 0;
-const timer = setInterval(() => {
+const timer = setInterval(() =>
+{
     elapsed += 50;
-    if (elapsed >= 1500) {
+    if (elapsed >= 1500)
+    {
         clearInterval(timer);
         fmod.shutdown();
         console.log('✅ Done');
