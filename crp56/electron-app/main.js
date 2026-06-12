@@ -248,10 +248,12 @@ ipcMain.handle('dialog:pick-save-file', async (_event, options = {}) =>
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 1000,
-        height: 720,
-        minWidth: 760,
-        minHeight: 560,
+        width: 1348,
+        height: 928,
+        minWidth: 900,
+        minHeight: 650,
+        maxWidth: 1935,
+        maxHeight: 1245,
         title: 'CRP56',
         backgroundColor: '#161616',
         autoHideMenuBar: true,

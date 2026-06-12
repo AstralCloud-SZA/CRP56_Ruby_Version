@@ -1,0 +1,1 @@
+console.log('arch:', process.arch, '| version:', process.versions.electron);
