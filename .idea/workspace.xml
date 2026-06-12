@@ -4,14 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="Fmod sound engine work 2" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="audio file additions">
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/fmodplay.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/fmod.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/fmod.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/preload.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/preload.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="52" />
+    <option name="cachedIndexableFilesCount" value="57" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -44,61 +51,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0000036340255665" />
-      <entry key="MS500" value="1.0824518764540745" />
-      <entry key="S2" value="1.7016553884972092" />
-      <entry key="S5" value="2.2672372368108906" />
-      <entry key="S10" value="2.5814374494808154" />
-      <entry key="S30" value="2.846658800791674" />
-      <entry key="S60" value="2.921439720529353" />
-      <entry key="M2" value="2.9602342966965134" />
-      <entry key="M5" value="2.987830427829254" />
-      <entry key="M10" value="3.3572353068973446" />
-      <entry key="M15" value="4.741721614635832" />
-      <entry key="M30" value="13.930923512333125" />
-      <entry key="H1" value="43.549181862196505" />
-      <entry key="H2" value="103.35307728893716" />
-      <entry key="H4" value="179.03401640303142" />
-      <entry key="D1" value="306.06583137083265" />
-      <entry key="W1" value="338.23650947608934" />
+      <entry key="MS100" value="1.0000000238737654" />
+      <entry key="MS500" value="1.0323980342987116" />
+      <entry key="S2" value="2.091842447056915" />
+      <entry key="S5" value="4.414328018250732" />
+      <entry key="S10" value="6.762536401242902" />
+      <entry key="S30" value="10.860437064575125" />
+      <entry key="S60" value="13.85300933691074" />
+      <entry key="M2" value="16.791442408927324" />
+      <entry key="M5" value="19.536078785683834" />
+      <entry key="M10" value="21.005745478522016" />
+      <entry key="M15" value="22.693496830148188" />
+      <entry key="M30" value="31.958394302674108" />
+      <entry key="H1" value="61.34414155203362" />
+      <entry key="H2" value="121.02251323656235" />
+      <entry key="H4" value="196.90693063698285" />
+      <entry key="D1" value="324.748552147656" />
+      <entry key="W1" value="357.18649670492" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
       <entry key="S5" value="0.0" />
-      <entry key="S10" value="1.382267816817612E-256" />
-      <entry key="S30" value="8.004596106999737E-86" />
-      <entry key="S60" value="3.988031629638487E-43" />
-      <entry key="M2" value="8.923509813969503E-22" />
-      <entry key="M5" value="5.764295695213169E-9" />
-      <entry key="M10" value="1.0741416698409938E-4" />
-      <entry key="M15" value="0.0028593728269033667" />
-      <entry key="M30" value="0.08021195845190553" />
-      <entry key="H1" value="0.5332942986539221" />
-      <entry key="H2" value="1.9193124204632657" />
-      <entry key="H4" value="4.316381183677803" />
-      <entry key="D1" value="9.33568585082077" />
-      <entry key="W1" value="10.743194868079748" />
+      <entry key="S10" value="2.1353159417304882E-260" />
+      <entry key="S30" value="4.294995752083795E-87" />
+      <entry key="S60" value="9.237836081610836E-44" />
+      <entry key="M2" value="4.294786056329509E-22" />
+      <entry key="M5" value="4.302378182456527E-9" />
+      <entry key="M10" value="9.279887910838913E-5" />
+      <entry key="M15" value="0.0025937307819532845" />
+      <entry key="M30" value="0.07639521816050103" />
+      <entry key="H1" value="0.5204517442512975" />
+      <entry key="H2" value="1.89606157737369" />
+      <entry key="H4" value="4.290156870695184" />
+      <entry key="D1" value="9.326208621012173" />
+      <entry key="W1" value="10.741636178536636" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9726584576496003" />
-      <entry key="MS500" value="1.0763460999239716" />
-      <entry key="S2" value="1.6987087867755553" />
-      <entry key="S5" value="2.2653986498568957" />
-      <entry key="S10" value="2.58032162717637" />
-      <entry key="S30" value="2.846230045580322" />
-      <entry key="S60" value="2.9212172330143416" />
-      <entry key="M2" value="2.9601209415983503" />
-      <entry key="M5" value="2.9877844772788147" />
-      <entry key="M10" value="3.3573145930168087" />
-      <entry key="M15" value="4.744543778485647" />
-      <entry key="M30" value="14.010984083843024" />
-      <entry key="H1" value="44.08206597759763" />
-      <entry key="H2" value="105.27176594083733" />
-      <entry key="H4" value="183.34978265226036" />
-      <entry key="D1" value="315.4013213871661" />
-      <entry key="W1" value="348.9796728320052" />
+      <entry key="MS100" value="0.8827030173640987" />
+      <entry key="MS500" value="1.0069487015862544" />
+      <entry key="S2" value="2.0787179561181373" />
+      <entry key="S5" value="4.402676618143189" />
+      <entry key="S10" value="6.751820547233746" />
+      <entry key="S30" value="10.852983411033717" />
+      <entry key="S60" value="13.848076465019608" />
+      <entry key="M2" value="16.78848690880276" />
+      <entry key="M5" value="19.53473312689678" />
+      <entry key="M10" value="21.005128330919234" />
+      <entry key="M15" value="22.69559262807903" />
+      <entry key="M30" value="32.03440959126898" />
+      <entry key="H1" value="61.86407418174174" />
+      <entry key="H2" value="122.91789896036829" />
+      <entry key="H4" value="201.19644642899218" />
+      <entry key="D1" value="334.07456014463116" />
+      <entry key="W1" value="367.928100663039" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -121,7 +128,7 @@
     "RunOnceActivity.ruby.rubocop.migration.global.runOnSaveToExternalFormatter": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP": "1781202801892",
+    "com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP": "1781289850941",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "git-widget-placeholder": "master",
     "junie.onboarding.icon.badge.shown": "true",
@@ -143,6 +150,7 @@
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\soundengine" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\audiofiles" />
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\BG_images" />
     </key>
   </component>
@@ -168,6 +176,7 @@
       <workItem from="1781110876938" duration="7147000" />
       <workItem from="1781202743013" duration="1884000" />
       <workItem from="1781259060203" duration="6264000" />
+      <workItem from="1781289788961" duration="1224000" />
     </task>
     <task id="LOCAL-00001" summary="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work">
       <option name="closed" value="true" />
@@ -345,7 +354,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781268966022</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="audio file additions">
+      <option name="closed" value="true" />
+      <created>1781289961296</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1781289961296</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -382,6 +399,7 @@
     <MESSAGE value="BG system work 2" />
     <MESSAGE value="Fmod sound engine installation work and npm koffi installation and base fmod set up" />
     <MESSAGE value="Fmod sound engine work 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fmod sound engine work 2" />
+    <MESSAGE value="audio file additions" />
+    <option name="LAST_COMMIT_MESSAGE" value="audio file additions" />
   </component>
 </project>

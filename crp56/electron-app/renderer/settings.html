@@ -27,6 +27,46 @@
             border-left: 3px solid var(--accent);
             background: rgba(0,0,0,0.6) !important;
         }
+
+        /* --- Settings section grouping --- */
+        .settings-group { display:grid; gap: var(--space-3); }
+        .group-label {
+            display:flex; align-items:center; gap: var(--space-3);
+            font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.14em;
+            color: var(--accent); margin-top: var(--space-4);
+        }
+        .group-label::after { content:""; flex:1; height:1px; background: var(--border); }
+
+        /* --- Audio controls --- */
+        .audio-control { align-items:center; gap: var(--space-3); min-width: 180px; justify-content:flex-end; }
+        input[type="range"] {
+            -webkit-appearance: none; appearance: none;
+            width: 130px; height: 4px; border-radius: var(--radius-full);
+            background: var(--border); accent-color: var(--accent); cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 14px; height: 14px; border-radius: 50%;
+            background: var(--accent); border: 2px solid var(--bg, #161616);
+            box-shadow: 0 0 6px var(--accent);
+        }
+        .volume-readout { min-width: 42px; text-align:right; font-variant-numeric: tabular-nums; }
+
+        /* --- Placeholder (coming soon) rows --- */
+        .setting-row.is-placeholder { opacity: 0.55; }
+        .setting-row.is-placeholder .switcher { pointer-events: none; }
+        .soon-tag {
+            font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--bg, #161616); background: var(--accent);
+            padding: 0.3rem 0.65rem; border-radius: var(--radius-full); font-weight: 700;
+            white-space: nowrap;
+        }
+        .pill-static {
+            font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--muted); padding: 0.35rem 0.7rem; border:1px solid var(--border);
+            border-radius: var(--radius-full); white-space: nowrap;
+        }
+
         @media (max-width: 980px) { .two-col { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -66,9 +106,11 @@
                         <section class="hero-panel">
                             <div class="kicker">System configuration</div>
                             <h2>Tune the chamber to your liking.</h2>
-                            <p class="subtle">Aesthetic and atmosphere choices persist across pages and restarts.</p>
+                            <p class="subtle">Aesthetic, atmosphere, and audio choices persist across pages and restarts.</p>
 
-                            <div class="content-stack">
+                            <!-- ========== APPEARANCE ========== -->
+                            <div class="group-label">Appearance</div>
+                            <div class="settings-group">
                                 <div class="setting-row">
                                     <div class="setting-copy">
                                         <strong>Aesthetic theme</strong>
@@ -90,13 +132,105 @@
                                         <button class="secondary-btn" id="particleToggle" type="button">Disable particles</button>
                                     </div>
                                 </div>
+                            </div>
 
+                            <!-- ========== AUDIO ========== -->
+                            <div class="group-label">Audio</div>
+                            <div class="settings-group">
+                                <!-- Master volume (placeholder for future master bus) -->
+                                <div class="setting-row is-placeholder">
+                                    <div class="setting-copy">
+                                        <strong>Master volume</strong>
+                                        <span class="subtle">Global level for all audio buses.</span>
+                                    </div>
+                                    <div class="switcher audio-control">
+                                        <input type="range" id="masterVolume" min="0" max="100" value="100" disabled aria-label="Master volume">
+                                        <span class="soon-tag">Soon</span>
+                                    </div>
+                                </div>
+
+                                <!-- SFX volume (LIVE) -->
                                 <div class="setting-row">
                                     <div class="setting-copy">
-                                        <strong>Sound effects</strong>
-                                        <span class="subtle">Interface and operation SFX for the chamber.</span>
+                                        <strong>SFX volume</strong>
+                                        <span class="subtle">Interface and operation sound effects.</span>
                                     </div>
-                                    <span class="setting-value">Later</span>
+                                    <div class="switcher audio-control">
+                                        <input type="range" id="sfxVolume" min="0" max="100" value="80" aria-label="SFX volume">
+                                        <span class="setting-value volume-readout" id="sfxVolumeLabel">80%</span>
+                                    </div>
+                                </div>
+
+                                <!-- Music volume (LIVE bus, music system coming) -->
+                                <div class="setting-row">
+                                    <div class="setting-copy">
+                                        <strong>Music volume</strong>
+                                        <span class="subtle">Background music bus. Wired and ready for the music system.</span>
+                                    </div>
+                                    <div class="switcher audio-control">
+                                        <input type="range" id="musicVolume" min="0" max="100" value="60" aria-label="Music volume">
+                                        <span class="setting-value volume-readout" id="musicVolumeLabel">60%</span>
+                                    </div>
+                                </div>
+
+                                <!-- UI sounds toggle (placeholder) -->
+                                <div class="setting-row is-placeholder">
+                                    <div class="setting-copy">
+                                        <strong>UI sounds</strong>
+                                        <span class="subtle">Toggle hover blips and button clicks independently of SFX.</span>
+                                    </div>
+                                    <div class="switcher" style="align-items:center; gap: var(--space-3);">
+                                        <span class="pill-static">On</span>
+                                        <span class="soon-tag">Soon</span>
+                                    </div>
+                                </div>
+
+                                <!-- Background music track selection (placeholder) -->
+                                <div class="setting-row is-placeholder">
+                                    <div class="setting-copy">
+                                        <strong>Music track</strong>
+                                        <span class="subtle">Choose the ambient loop for the chamber.</span>
+                                    </div>
+                                    <div class="switcher" style="align-items:center; gap: var(--space-3);">
+                                        <span class="pill-static">Auto</span>
+                                        <span class="soon-tag">Soon</span>
+                                    </div>
+                                </div>
+
+                                <!-- Ambience / atmosphere (placeholder) -->
+                                <div class="setting-row is-placeholder">
+                                    <div class="setting-copy">
+                                        <strong>Ambience layer</strong>
+                                        <span class="subtle">Subtle atmospheric drone under the music bus.</span>
+                                    </div>
+                                    <div class="switcher" style="align-items:center; gap: var(--space-3);">
+                                        <span class="pill-static">Off</span>
+                                        <span class="soon-tag">Soon</span>
+                                    </div>
+                                </div>
+
+                                <!-- Mute all (placeholder) -->
+                                <div class="setting-row is-placeholder">
+                                    <div class="setting-copy">
+                                        <strong>Mute all audio</strong>
+                                        <span class="subtle">Silence every bus instantly without losing your levels.</span>
+                                    </div>
+                                    <div class="switcher" style="align-items:center; gap: var(--space-3);">
+                                        <span class="pill-static">Unmuted</span>
+                                        <span class="soon-tag">Soon</span>
+                                    </div>
+                                </div>
+
+                                <!-- Audio output device (placeholder) -->
+                                <div class="setting-row is-placeholder">
+                                    <div class="setting-copy">
+                                        <strong>Output device</strong>
+                                        <span class="subtle">Route FMOD to a specific speaker or headset.</span>
+                                    </div>
+                                    <div class="switcher" style="align-items:center; gap: var(--space-3);">
+                                        <span class="pill-static">System default</span>
+                                        <span class="soon-tag">Soon</span>
+                                    </div>
                                 </div>
                             </div>
                         </section>

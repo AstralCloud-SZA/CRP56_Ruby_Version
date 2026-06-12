@@ -54,3 +54,23 @@ contextBridge.exposeInMainWorld('crp56', {
         return () => ipcRenderer.removeListener('crp56:progress', listener);
     },
 });
+
+// ---------------------------------------------------------------------------
+// FMOD sound effects bridge (fire-and-forget; no response needed).
+// Kept separate from the crp56 invoke() allowlist on purpose.
+// ---------------------------------------------------------------------------
+const ALLOWED_SFX = new Set(['confirm', 'cursor', 'back', 'error']);
+
+contextBridge.exposeInMainWorld('sfx', {
+    // Play a random sound from a category, e.g. window.sfx.play('confirm')
+    play: (category) =>
+    {
+        if (!ALLOWED_SFX.has(category)) return;
+        ipcRenderer.send('sfx:play', category);
+    },
+    // Play any random sound across all categories
+    any: () => ipcRenderer.send('sfx:any'),
+    // Volume setters (expects 0..1)
+    setVolume: (v) => ipcRenderer.send('sfx:volume', v),
+    setMusicVolume: (v) => ipcRenderer.send('music:volume', v),
+});

@@ -10,6 +10,8 @@ const body = document.body;
 const ENCRYPTED_EXTENSION = '.crp56';
 const THEME_STORAGE_KEY = 'crp56-theme';
 const PARTICLE_STORAGE_KEY = 'crp56-particles';
+const SFX_VOL_STORAGE_KEY = 'crp56-sfx-volume';
+const MUSIC_VOL_STORAGE_KEY = 'crp56-music-volume';
 
 // State for File/Folder selections
 let selectedFiles = [];
@@ -20,6 +22,20 @@ let progressResetTimer = null;
 
 // Particle state
 let particlesEnabled = true;
+
+/* --- SOUND EFFECTS HELPER --- */
+// Safe trigger: no-op if the FMOD bridge isn't present, plus a small per-category
+// throttle so machine-gun clicks don't stack a wall of overlapping sounds.
+const SFX_THROTTLE_MS = 60;
+const lastSfxAt = {};
+function sfx(category)
+{
+    if (!window.sfx || typeof window.sfx.play !== 'function') return;
+    const now = Date.now();
+    if (now - (lastSfxAt[category] || 0) < SFX_THROTTLE_MS) return;
+    lastSfxAt[category] = now;
+    window.sfx.play(category);
+}
 
 const THEMES = {
     'primordial-gold': {
@@ -218,11 +234,15 @@ async function runAction(label, fn)
         startProgress(label);
         const result = await fn();
         show(result);
+        // Audio feedback for EVERY operation flowing through here:
+        // failure -> error tone, otherwise -> confirm tone.
+        sfx(result && result.ok === false ? 'error' : 'confirm');
         return result;
     } catch (err)
     {
         const payload = { ok: false, error: `${err.name}: ${err.message}` };
         show(payload);
+        sfx('error');
         return payload;
     } finally
     {
@@ -235,6 +255,7 @@ function bindThemeToggle()
     if (!themeToggle) return;
     themeToggle.addEventListener('click', () =>
     {
+        sfx('confirm');
         const next = html.dataset.theme === 'primordial-gold' ? 'hellflare-gold' : 'primordial-gold';
         setTheme(next);
     });
@@ -246,6 +267,7 @@ function bindTabButtons()
     {
         btn.addEventListener('click', () =>
         {
+            sfx('cursor');
             const target = btn.dataset.tabTarget;
             document.querySelectorAll('[data-tab-target]').forEach((item) =>
             {
@@ -288,6 +310,7 @@ function bindSelectionZones()
                 fileList.style.display = 'block';
                 fileList.innerHTML = selectedFiles.map(f => `<div>📄 ${f}</div>`).join('');
             }
+            sfx('cursor');
             log('Files selected:', selectedFiles);
         });
     }
@@ -305,6 +328,7 @@ function bindSelectionZones()
                 folderList.style.display = 'block';
                 folderList.innerText = `📂 ${selectedFolder}`;
             }
+            sfx('cursor');
             log('Folder selected:', selectedFolder);
         });
     }
@@ -340,7 +364,7 @@ function bindPageActions()
         btnEncrypt.addEventListener('click', async () =>
         {
             const passphrase = passphraseInput.value;
-            if (!passphrase) return show({ ok: false, error: 'Passphrase is required' });
+            if (!passphrase) { sfx('error'); return show({ ok: false, error: 'Passphrase is required' }); }
 
             const activeTab = document.querySelector('.tab-pill.active')?.dataset.tabTarget;
 
@@ -352,7 +376,7 @@ function bindPageActions()
             }
             else if (activeTab === 'file')
             {
-                if (selectedFiles.length === 0) return show({ ok: false, error: 'No files selected' });
+                if (selectedFiles.length === 0) { sfx('error'); return show({ ok: false, error: 'No files selected' }); }
 
                 const sourceFile = selectedFiles[0];
                 const saveRes = await window.crp56.pickSaveFile({
@@ -367,7 +391,7 @@ function bindPageActions()
             }
             else if (activeTab === 'folder')
             {
-                if (!selectedFolder) return show({ ok: false, error: 'No folder selected' });
+                if (!selectedFolder) { sfx('error'); return show({ ok: false, error: 'No folder selected' }); }
 
                 const saveRes = await window.crp56.pickFolder({
                     title: 'Select Output Folder for Encrypted Files',
@@ -385,7 +409,7 @@ function bindPageActions()
         btnDecrypt.addEventListener('click', async () =>
         {
             const passphrase = passphraseInput.value;
-            if (!passphrase) return show({ ok: false, error: 'Passphrase is required' });
+            if (!passphrase) { sfx('error'); return show({ ok: false, error: 'Passphrase is required' }); }
 
             const activeTab = document.querySelector('.tab-pill.active')?.dataset.tabTarget;
 
@@ -397,7 +421,7 @@ function bindPageActions()
             }
             else if (activeTab === 'file')
             {
-                if (selectedFiles.length === 0) return show({ ok: false, error: 'No files selected' });
+                if (selectedFiles.length === 0) { sfx('error'); return show({ ok: false, error: 'No files selected' }); }
 
                 const sourceFile = selectedFiles[0];
                 const destRes = await window.crp56.pickFolder({ title: 'Select Destination Folder for Decrypted File', properties: ['openDirectory', 'createDirectory'] });
@@ -407,7 +431,7 @@ function bindPageActions()
             }
             else if (activeTab === 'folder')
             {
-                if (!selectedFolder) return show({ ok: false, error: 'No folder selected' });
+                if (!selectedFolder) { sfx('error'); return show({ ok: false, error: 'No folder selected' }); }
 
                 const saveRes = await window.crp56.pickFolder({ title: 'Select Output Folder for Decrypted Files', properties: ['openDirectory', 'createDirectory'] });
                 if (saveRes.canceled) return;
@@ -422,7 +446,25 @@ function bindThemeButtons()
 {
     document.querySelectorAll('[data-set-theme]').forEach((btn) =>
     {
-        btn.addEventListener('click', () => setTheme(btn.dataset.setTheme));
+        btn.addEventListener('click', () => { sfx('confirm'); setTheme(btn.dataset.setTheme); });
+    });
+}
+
+/* --- NAV RAIL AUDIO --- */
+function bindRailAudio()
+{
+    document.querySelectorAll('.nav-btn').forEach((el) =>
+    {
+        // Hover blip (skip the already-active page)
+        el.addEventListener('mouseenter', () =>
+        {
+            if (!el.classList.contains('active')) sfx('cursor');
+        });
+        // Confirm tone when navigating away
+        el.addEventListener('click', () =>
+        {
+            if (!el.classList.contains('active')) sfx('confirm');
+        });
     });
 }
 
@@ -458,7 +500,57 @@ function bindParticleToggle()
 {
     const toggle = document.getElementById('particleToggle');
     if (!toggle) return;
-    toggle.addEventListener('click', () => setParticlesEnabled(!particlesEnabled));
+    toggle.addEventListener('click', () => { sfx('cursor'); setParticlesEnabled(!particlesEnabled); });
+}
+
+/* --- VOLUME SLIDERS (Settings) --- */
+
+function bindVolumeSliders()
+{
+    const sfxSlider = document.getElementById('sfxVolume');
+    const sfxLabel = document.getElementById('sfxVolumeLabel');
+    const musicSlider = document.getElementById('musicVolume');
+    const musicLabel = document.getElementById('musicVolumeLabel');
+
+    const savedSfx = Number(localStorage.getItem(SFX_VOL_STORAGE_KEY) ?? 80);
+    const savedMusic = Number(localStorage.getItem(MUSIC_VOL_STORAGE_KEY) ?? 60);
+
+    if (sfxSlider)
+    {
+        sfxSlider.value = savedSfx;
+        if (sfxLabel) sfxLabel.textContent = `${savedSfx}%`;
+        sfxSlider.addEventListener('input', () =>
+        {
+            const pct = Number(sfxSlider.value);
+            if (sfxLabel) sfxLabel.textContent = `${pct}%`;
+            if (window.sfx) window.sfx.setVolume(pct / 100); // FMOD wants 0..1
+            try { localStorage.setItem(SFX_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
+        });
+        // Play a sample when released so you hear the new level
+        sfxSlider.addEventListener('change', () => sfx('cursor'));
+    }
+
+    if (musicSlider)
+    {
+        musicSlider.value = savedMusic;
+        if (musicLabel) musicLabel.textContent = `${savedMusic}%`;
+        musicSlider.addEventListener('input', () =>
+        {
+            const pct = Number(musicSlider.value);
+            if (musicLabel) musicLabel.textContent = `${pct}%`;
+            if (window.sfx) window.sfx.setMusicVolume(pct / 100);
+            try { localStorage.setItem(MUSIC_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
+        });
+    }
+}
+
+function applySavedVolumes()
+{
+    if (!window.sfx) return;
+    const sfxVol = Number(localStorage.getItem(SFX_VOL_STORAGE_KEY) ?? 80) / 100;
+    const musicVol = Number(localStorage.getItem(MUSIC_VOL_STORAGE_KEY) ?? 60) / 100;
+    window.sfx.setVolume(sfxVol);
+    window.sfx.setMusicVolume(musicVol);
 }
 
 /* --- PARTICLE SYSTEM --- */
@@ -560,6 +652,8 @@ window.addEventListener('DOMContentLoaded', () =>
     bindThemeButtons();
     bindTabButtons();
     bindParticleToggle();
+    bindVolumeSliders();
+    bindRailAudio();
 
     initBackgroundHost(); // init before setTheme so the host is ready
 
@@ -567,6 +661,9 @@ window.addEventListener('DOMContentLoaded', () =>
     setTheme(savedTheme() || html.dataset.theme || 'primordial-gold'); // also starts bg loop
     resizeCanvas();
     drawParticles();
+
+    // Push saved volumes to FMOD on every page load (not just Settings).
+    applySavedVolumes();
 
     if (!window.crp56)
     {

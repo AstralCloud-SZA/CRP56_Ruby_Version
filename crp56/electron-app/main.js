@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const { spawn } = require('child_process');
 const path = require('path');
 const readline = require('readline');
+const fmod = require('./fmod'); // FMOD sound engine bridge
 
 let mainWindow = null;
 let rubyProcess = null;
@@ -23,15 +24,9 @@ process.on('uncaughtException', (err) =>
     } catch (_) {}
 });
 
-process.on('unhandledRejection', (reason) =>
-{
-    console.error('[unhandledRejection]', reason);
-});
+process.on('unhandledRejection', (reason) => {console.error('[unhandledRejection]', reason);});
 
-function log(...args)
-{
-    console.log('[CRP56 main]', ...args);
-}
+function log(...args) {console.log('[CRP56 main]', ...args);}
 
 function armTimeout(id)
 {
@@ -246,6 +241,12 @@ ipcMain.handle('dialog:pick-save-file', async (_event, options = {}) =>
     return dialog.showSaveDialog(mainWindow, options);
 });
 
+// --- FMOD SOUND HANDLERS (fire-and-forget) ---
+ipcMain.on('sfx:play', (_event, category) => fmod.play(category));
+ipcMain.on('sfx:any', () => fmod.playAny());
+ipcMain.on('sfx:volume', (_event, v) => fmod.setSfxVolume(v));
+ipcMain.on('music:volume', (_event, v) => fmod.setMusicVolume(v));
+
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1348,
@@ -271,6 +272,17 @@ function createWindow() {
 app.whenReady().then(() =>
 {
     log('Electron app ready');
+
+    // Boot the FMOD engine once at startup. Wrapped so audio failure never
+    // blocks the encryption app from launching.
+    try
+    {
+        fmod.init();
+    } catch (err)
+    {
+        console.error('[FMOD init failed]', err);
+    }
+
     createWindow();
     try
     {
@@ -293,6 +305,7 @@ app.on('window-all-closed', () =>
 app.on('before-quit', () =>
 {
     stopRubyServer();
+    try { fmod.shutdown(); } catch (_) {}
 });
 
 app.on('activate', () =>
