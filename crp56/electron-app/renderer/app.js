@@ -514,12 +514,14 @@ function bindRailAudio()
 // ---- Per-button data-sfx wiring  ----
 function bindDataSfx()
 {
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', (e) =>
+    {
         const el = e.target.closest('[data-sfx]');
         if (!el) return;
         const cat = el.getAttribute('data-sfx');
         if (cat) sfx(cat);   // uses your existing throttled sfx() helper
     });
+
 }
 
 /* --- PARTICLE TOGGLE (Settings) --- */
@@ -573,6 +575,7 @@ function bindVolumeSliders()
     {
         sfxSlider.value = savedSfx;
         if (sfxLabel) sfxLabel.textContent = `${savedSfx}%`;
+
         sfxSlider.addEventListener('input', () =>
         {
             const pct = Number(sfxSlider.value);
@@ -588,6 +591,7 @@ function bindVolumeSliders()
     {
         musicSlider.value = savedMusic;
         if (musicLabel) musicLabel.textContent = `${savedMusic}%`;
+
         musicSlider.addEventListener('input', () =>
         {
             const pct = Number(musicSlider.value);
@@ -639,6 +643,7 @@ function seedParticles()
     if (!canvas || !ctx) return;
     const count = Math.max(38, Math.floor(window.innerWidth / 32));
     const colors = accentColors();
+
     particles = Array.from({ length: count }, (_, i) => ({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
@@ -667,6 +672,7 @@ function drawParticles()
 {
     if (!canvas || !ctx) return;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
     if (!particlesEnabled)
     {
         requestAnimationFrame(drawParticles);
@@ -685,6 +691,7 @@ function drawParticles()
         ctx.fillStyle = hexToRgba(p.color, 0.16 + pulse * p.alpha * 0.4);
         ctx.arc(p.x, p.y, p.r + pulse * 1.4, 0, Math.PI * 2);
         ctx.fill();
+
         for (let j = i + 1; j < particles.length; j++)
         {
             const q = particles[j];
