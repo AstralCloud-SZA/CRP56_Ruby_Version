@@ -15,22 +15,14 @@ const MUSIC_VOL_STORAGE_KEY = 'crp56-music-volume';
 const MASTER_VOL_STORAGE_KEY = 'crp56-master-volume';
 const MUTE_STORAGE_KEY = 'crp56-muted';
 
-// State for File/Folder selections
 let selectedFiles = [];
 let selectedFolder = null;
-
-// Progress bar state
 let progressResetTimer = null;
-
-// Particle state
 let particlesEnabled = true;
 
-/* --- SOUND EFFECTS HELPER --- */
-// Safe trigger: no-op if the FMOD bridge isn't present, plus a small per-category
-// throttle so machine-gun clicks don't stack a wall of overlapping sounds.
 const SFX_THROTTLE_MS = 60;
 const lastSfxAt = {};
-function sfx(category)
+function playSfx(category)
 {
     if (!window.sfx || typeof window.sfx.play !== 'function')
     {
@@ -45,12 +37,11 @@ function sfx(category)
 
 function bindMasterAndMusic()
 {
-    // Master volume
     const masterSlider = document.getElementById('masterVolume');
     const masterLabel = document.getElementById('masterVolumeLabel');
     if (masterSlider)
     {
-        masterSlider.disabled = false; // it was a placeholder; now live
+        masterSlider.disabled = false;
         const savedMaster = Number(localStorage.getItem(MASTER_VOL_STORAGE_KEY) ?? 100);
         masterSlider.value = savedMaster;
         if (masterLabel) masterLabel.textContent = `${savedMaster}%`;
@@ -61,10 +52,9 @@ function bindMasterAndMusic()
             if (window.sfx) window.sfx.setMasterVolume(pct / 100);
             try { localStorage.setItem(MASTER_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
         });
-        masterSlider.addEventListener('change', () => sfx('cursor'));
+        masterSlider.addEventListener('change', () => playSfx('cursor'));
     }
 
-    // Mute toggle (if you wire a real button later with id="muteToggle")
     const muteBtn = document.getElementById('muteToggle');
     if (muteBtn)
     {
@@ -78,41 +68,22 @@ function bindMasterAndMusic()
             if (window.sfx) window.sfx.setMuteAll(muted);
             try { localStorage.setItem(MUTE_STORAGE_KEY, muted ? 'on' : 'off'); } catch (_) {}
             render();
-            if (!muted) sfx('confirm');
+            if (!muted) playSfx('confirm');
         });
     }
 }
 
-
 const THEMES = {
-    'primordial-gold': {
-        label: 'Primordial Gold',
-        href: './primordial_gold.css'
-    },
-    'hellflare-gold': {
-        label: 'Hellflare Gold',
-        href: './hellflare_gold.css'
-    }
+    'primordial-gold': { label: 'Primordial Gold', href: './primordial_gold.css' },
+    'hellflare-gold': { label: 'Hellflare Gold', href: './hellflare_gold.css' }
 };
 
-/* --- BACKGROUND SLIDE SYSTEM --- */
-
 const BG_IMAGES = {
-    'primordial-gold': [
-        '../BG_images/bg1.jpg',
-        '../BG_images/bg3.jpg',
-        '../BG_images/bg5.jpg',
-        '../BG_images/bg7.jpg'
-    ],
-    'hellflare-gold': [
-        '../BG_images/bg2.jpg',
-        '../BG_images/bg4.png',
-        '../BG_images/bg6.jpg'
-    ]
+    'primordial-gold': ['../BG_images/bg1.jpg', '../BG_images/bg3.jpg', '../BG_images/bg5.jpg', '../BG_images/bg7.jpg'],
+    'hellflare-gold': ['../BG_images/bg2.jpg', '../BG_images/bg4.png', '../BG_images/bg6.jpg']
 };
 
 const BG_INTERVAL_MS = 12000;
-
 let bgSlidesHost = null;
 let bgCurrentIndex = -1;
 let bgTimerId = null;
@@ -125,25 +96,15 @@ function initBackgroundHost()
 function showNextSlide(theme)
 {
     if (!bgSlidesHost) return;
-
     const list = BG_IMAGES[theme] || [];
     if (!list.length) return;
-
     bgCurrentIndex = (bgCurrentIndex + 1) % list.length;
     const url = list[bgCurrentIndex];
-
     const slide = document.createElement('div');
     slide.className = 'bg-slide';
     slide.style.backgroundImage = `url("${url}")`;
     bgSlidesHost.appendChild(slide);
-
-    // Trigger fade-in on next paint
-    requestAnimationFrame(() =>
-    {
-        requestAnimationFrame(() => slide.classList.add('visible'));
-    });
-
-    // Fade out and remove all older slides
+    requestAnimationFrame(() => { requestAnimationFrame(() => slide.classList.add('visible')); });
     bgSlidesHost.querySelectorAll('.bg-slide').forEach((el) =>
     {
         if (el === slide) return;
@@ -162,17 +123,10 @@ function startBackgroundLoop(theme)
         clearInterval(bgTimerId);
         bgTimerId = null;
     }
-
     bgCurrentIndex = -1;
     showNextSlide(theme);
-
-    bgTimerId = setInterval(() =>
-    {
-        showNextSlide(html.dataset.theme || theme);
-    }, BG_INTERVAL_MS);
+    bgTimerId = setInterval(() => { showNextSlide(html.dataset.theme || theme); }, BG_INTERVAL_MS);
 }
-
-/* --- END BACKGROUND SLIDE SYSTEM --- */
 
 function log(...args)
 {
@@ -187,7 +141,7 @@ function show(data)
 
 function baseName(fullPath)
 {
-    return String(fullPath).split(/[\\/]/).pop();
+    return String(fullPath).split(/[\/]/).pop();
 }
 
 function ensureCrp56Extension(filePath)
@@ -212,7 +166,7 @@ function setTheme(theme)
     if (themeNameCard) themeNameCard.textContent = THEMES[theme].label;
     try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch (_) {}
     seedParticles();
-    startBackgroundLoop(theme); // restarts the slideshow with the correct image set
+    startBackgroundLoop(theme);
 }
 
 function savedTheme()
@@ -224,8 +178,6 @@ function savedTheme()
     } catch (_) {}
     return null;
 }
-
-/* --- REAL PROGRESS BAR --- */
 
 function setProgress(percent)
 {
@@ -241,7 +193,6 @@ function startProgress(label = '')
         clearTimeout(progressResetTimer);
         progressResetTimer = null;
     }
-
     if (progressFill) progressFill.style.opacity = '1';
     setProgress(2);
     show({ status: label ? `Running ${label}...` : 'Working...' });
@@ -261,13 +212,11 @@ function finishProgress()
 function bindProgressEvents()
 {
     if (!window.crp56 || typeof window.crp56.onProgress !== 'function') return;
-
     window.crp56.onProgress((msg) =>
     {
         if (!msg || msg.event !== 'progress' || !msg.total) return;
         const percent = Math.round((msg.current / msg.total) * 100);
         setProgress(percent);
-
         const detail = msg.detail ? ` — ${msg.detail}` : '';
         show({ status: `${msg.stage}: ${msg.current}/${msg.total} (${percent}%)${detail}` });
     });
@@ -281,15 +230,13 @@ async function runAction(label, fn)
         startProgress(label);
         const result = await fn();
         show(result);
-        // Audio feedback for EVERY operation flowing through here:
-        // failure -> error tone, otherwise -> confirm tone.
-        sfx(result && result.ok === false ? 'error' : 'confirm');
+        playSfx(result && result.ok === false ? 'error' : 'confirm');
         return result;
     } catch (err)
     {
         const payload = { ok: false, error: `${err.name}: ${err.message}` };
         show(payload);
-        sfx('error');
+        playSfx('error');
         return payload;
     } finally
     {
@@ -302,7 +249,7 @@ function bindThemeToggle()
     if (!themeToggle) return;
     themeToggle.addEventListener('click', () =>
     {
-        sfx('confirm');
+        playSfx('confirm');
         const next = html.dataset.theme === 'primordial-gold' ? 'hellflare-gold' : 'primordial-gold';
         setTheme(next);
     });
@@ -314,17 +261,10 @@ function bindTabButtons()
     {
         btn.addEventListener('click', () =>
         {
-            sfx('cursor');
+            playSfx('cursor');
             const target = btn.dataset.tabTarget;
-            document.querySelectorAll('[data-tab-target]').forEach((item) =>
-            {
-                item.classList.toggle('active', item === btn);
-            });
-
-            document.querySelectorAll('[data-tab-panel]').forEach((panel) =>
-            {
-                panel.classList.toggle('hidden', panel.dataset.tabPanel !== target);
-            });
+            document.querySelectorAll('[data-tab-target]').forEach((item) => { item.classList.toggle('active', item === btn); });
+            document.querySelectorAll('[data-tab-panel]').forEach((panel) => { panel.classList.toggle('hidden', panel.dataset.tabPanel !== target); });
         });
     });
 }
@@ -342,22 +282,19 @@ function bindSelectionZones()
         fileZone.addEventListener('click', async () =>
         {
             const options = { properties: ['openFile', 'multiSelections'] };
-
             if (isDecryptPage)
             {
                 options.filters = [{ name: 'CRP56 Encrypted', extensions: ['crp56'] }, { name: 'All Files', extensions: ['*'] }];
             }
-
             const result = await window.crp56.pickFile(options);
             if (result.canceled) return;
-
             selectedFiles = result.filePaths;
             if (fileList)
             {
                 fileList.style.display = 'block';
                 fileList.innerHTML = selectedFiles.map(f => `<div>📄 ${f}</div>`).join('');
             }
-            sfx('cursor');
+            playSfx('cursor');
             log('Files selected:', selectedFiles);
         });
     }
@@ -368,14 +305,13 @@ function bindSelectionZones()
         {
             const result = await window.crp56.pickFolder();
             if (result.canceled) return;
-
             selectedFolder = result.filePaths[0];
             if (folderList)
             {
                 folderList.style.display = 'block';
                 folderList.innerText = `📂 ${selectedFolder}`;
             }
-            sfx('cursor');
+            playSfx('cursor');
             log('Folder selected:', selectedFolder);
         });
     }
@@ -392,18 +328,12 @@ function bindPageActions()
 
     if (btnPing)
     {
-        btnPing.addEventListener('click', async () =>
-        {
-            await runAction('ping', () => window.crp56.ping());
-        });
+        btnPing.addEventListener('click', async () => { await runAction('ping', () => window.crp56.ping()); });
     }
 
     if (btnVersion)
     {
-        btnVersion.addEventListener('click', async () =>
-        {
-            await runAction('version', () => window.crp56.version());
-        });
+        btnVersion.addEventListener('click', async () => { await runAction('version', () => window.crp56.version()); });
     }
 
     if (btnEncrypt && passphraseInput)
@@ -411,10 +341,8 @@ function bindPageActions()
         btnEncrypt.addEventListener('click', async () =>
         {
             const passphrase = passphraseInput.value;
-            if (!passphrase) { sfx('error'); return show({ ok: false, error: 'Passphrase is required' }); }
-
+            if (!passphrase) { playSfx('error'); return show({ ok: false, error: 'Passphrase is required' }); }
             const activeTab = document.querySelector('.tab-pill.active')?.dataset.tabTarget;
-
             if (activeTab === 'text' && plainTextInput)
             {
                 const text = plainTextInput.value;
@@ -423,29 +351,18 @@ function bindPageActions()
             }
             else if (activeTab === 'file')
             {
-                if (selectedFiles.length === 0) { sfx('error'); return show({ ok: false, error: 'No files selected' }); }
-
+                if (selectedFiles.length === 0) { playSfx('error'); return show({ ok: false, error: 'No files selected' }); }
                 const sourceFile = selectedFiles[0];
-                const saveRes = await window.crp56.pickSaveFile({
-                    title: 'Save Encrypted File',
-                    defaultPath: toCrp56Name(baseName(sourceFile)),
-                    filters: [{ name: 'CRP56 Encrypted', extensions: ['crp56'] }]
-                });
+                const saveRes = await window.crp56.pickSaveFile({ title: 'Save Encrypted File', defaultPath: toCrp56Name(baseName(sourceFile)), filters: [{ name: 'CRP56 Encrypted', extensions: ['crp56'] }] });
                 if (saveRes.canceled || !saveRes.filePath) return;
-
                 const outputFile = ensureCrp56Extension(saveRes.filePath);
                 await runAction('encrypt_file', () => window.crp56.encryptFile(passphrase, sourceFile, outputFile));
             }
             else if (activeTab === 'folder')
             {
-                if (!selectedFolder) { sfx('error'); return show({ ok: false, error: 'No folder selected' }); }
-
-                const saveRes = await window.crp56.pickFolder({
-                    title: 'Select Output Folder for Encrypted Files',
-                    properties: ['openDirectory', 'createDirectory']
-                });
+                if (!selectedFolder) { playSfx('error'); return show({ ok: false, error: 'No folder selected' }); }
+                const saveRes = await window.crp56.pickFolder({ title: 'Select Output Folder for Encrypted Files', properties: ['openDirectory', 'createDirectory'] });
                 if (saveRes.canceled) return;
-
                 await runAction('encrypt_folder', () => window.crp56.encryptFolder(passphrase, selectedFolder, saveRes.filePaths[0]));
             }
         });
@@ -456,10 +373,8 @@ function bindPageActions()
         btnDecrypt.addEventListener('click', async () =>
         {
             const passphrase = passphraseInput.value;
-            if (!passphrase) { sfx('error'); return show({ ok: false, error: 'Passphrase is required' }); }
-
+            if (!passphrase) { playSfx('error'); return show({ ok: false, error: 'Passphrase is required' }); }
             const activeTab = document.querySelector('.tab-pill.active')?.dataset.tabTarget;
-
             if (activeTab === 'text' && plainTextInput)
             {
                 const text = plainTextInput.value;
@@ -468,21 +383,17 @@ function bindPageActions()
             }
             else if (activeTab === 'file')
             {
-                if (selectedFiles.length === 0) { sfx('error'); return show({ ok: false, error: 'No files selected' }); }
-
+                if (selectedFiles.length === 0) { playSfx('error'); return show({ ok: false, error: 'No files selected' }); }
                 const sourceFile = selectedFiles[0];
                 const destRes = await window.crp56.pickFolder({ title: 'Select Destination Folder for Decrypted File', properties: ['openDirectory', 'createDirectory'] });
                 if (destRes.canceled) return;
-
                 await runAction('decrypt_file', () => window.crp56.decryptFile(passphrase, sourceFile, destRes.filePaths[0]));
             }
             else if (activeTab === 'folder')
             {
-                if (!selectedFolder) { sfx('error'); return show({ ok: false, error: 'No folder selected' }); }
-
+                if (!selectedFolder) { playSfx('error'); return show({ ok: false, error: 'No folder selected' }); }
                 const saveRes = await window.crp56.pickFolder({ title: 'Select Output Folder for Decrypted Files', properties: ['openDirectory', 'createDirectory'] });
                 if (saveRes.canceled) return;
-
                 await runAction('decrypt_folder', () => window.crp56.decryptFolder(passphrase, selectedFolder, saveRes.filePaths[0]));
             }
         });
@@ -493,29 +404,19 @@ function bindThemeButtons()
 {
     document.querySelectorAll('[data-set-theme]').forEach((btn) =>
     {
-        btn.addEventListener('click', () => { sfx('confirm'); setTheme(btn.dataset.setTheme); });
+        btn.addEventListener('click', () => { playSfx('confirm'); setTheme(btn.dataset.setTheme); });
     });
 }
 
-/* --- NAV RAIL AUDIO --- */
 function bindRailAudio()
 {
     document.querySelectorAll('.nav-btn').forEach((el) =>
     {
-        // Hover blip (skip the already-active page)
-        el.addEventListener('mouseenter', () =>
-        {
-            if (!el.classList.contains('active')) sfx('cursor');
-        });
-        // Confirm tone when navigating away
-        el.addEventListener('click', () =>
-        {
-            if (!el.classList.contains('active')) sfx('confirm');
-        });
+        el.addEventListener('mouseenter', () => { if (!el.classList.contains('active')) playSfx('cursor'); });
+        el.addEventListener('click', () => { if (!el.classList.contains('active')) playSfx('confirm'); });
     });
 }
 
-// ---- Per-button data-sfx wiring  ----
 function bindDataSfx()
 {
     document.addEventListener('click', (e) =>
@@ -523,22 +424,17 @@ function bindDataSfx()
         const el = e.target.closest('[data-sfx]');
         if (!el) return;
         const cat = el.getAttribute('data-sfx');
-        if (cat) sfx(cat);   // uses your existing throttled sfx() helper
+        if (cat) playSfx(cat);
     });
-
 }
-
-/* --- PARTICLE TOGGLE (Settings) --- */
 
 function setParticlesEnabled(enabled, { persist = true } = {})
 {
     particlesEnabled = !!enabled;
-
     if (persist)
     {
         try { localStorage.setItem(PARTICLE_STORAGE_KEY, particlesEnabled ? 'on' : 'off'); } catch (_) {}
     }
-
     const toggle = document.getElementById('particleToggle');
     const status = document.getElementById('particleStatus');
     if (toggle) toggle.textContent = particlesEnabled ? 'Disable particles' : 'Enable particles';
@@ -560,10 +456,8 @@ function bindParticleToggle()
 {
     const toggle = document.getElementById('particleToggle');
     if (!toggle) return;
-    toggle.addEventListener('click', () => { sfx('cursor'); setParticlesEnabled(!particlesEnabled); });
+    toggle.addEventListener('click', () => { playSfx('cursor'); setParticlesEnabled(!particlesEnabled); });
 }
-
-/* --- VOLUME SLIDERS (Settings) --- */
 
 function bindVolumeSliders()
 {
@@ -571,7 +465,6 @@ function bindVolumeSliders()
     const sfxLabel = document.getElementById('sfxVolumeLabel');
     const musicSlider = document.getElementById('musicVolume');
     const musicLabel = document.getElementById('musicVolumeLabel');
-
     const savedSfx = Number(localStorage.getItem(SFX_VOL_STORAGE_KEY) ?? 80);
     const savedMusic = Number(localStorage.getItem(MUSIC_VOL_STORAGE_KEY) ?? 60);
 
@@ -579,23 +472,20 @@ function bindVolumeSliders()
     {
         sfxSlider.value = savedSfx;
         if (sfxLabel) sfxLabel.textContent = `${savedSfx}%`;
-
         sfxSlider.addEventListener('input', () =>
         {
             const pct = Number(sfxSlider.value);
             if (sfxLabel) sfxLabel.textContent = `${pct}%`;
-            if (window.sfx) window.sfx.setVolume(pct / 100); // FMOD wants 0..1
+            if (window.sfx) window.sfx.setVolume(pct / 100);
             try { localStorage.setItem(SFX_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
         });
-        // Play a sample when released so you hear the new level
-        sfxSlider.addEventListener('change', () => sfx('cursor'));
+        sfxSlider.addEventListener('change', () => playSfx('cursor'));
     }
 
     if (musicSlider)
     {
         musicSlider.value = savedMusic;
         if (musicLabel) musicLabel.textContent = `${savedMusic}%`;
-
         musicSlider.addEventListener('input', () =>
         {
             const pct = Number(musicSlider.value);
@@ -616,12 +506,10 @@ function applySavedVolumes()
     window.sfx.setMasterVolume(master);
     window.sfx.setVolume(sfxVol);
     window.sfx.setMusicVolume(musicVol);
-
     const muted = localStorage.getItem(MUTE_STORAGE_KEY) === 'on';
     window.sfx.setMuteAll(muted);
 }
 
-/* --- PARTICLE SYSTEM --- */
 const canvas = document.getElementById('particles');
 const ctx = canvas ? canvas.getContext('2d') : null;
 let particles = [];
@@ -648,7 +536,6 @@ function seedParticles()
     if (!canvas || !ctx) return;
     const count = Math.max(38, Math.floor(window.innerWidth / 32));
     const colors = accentColors();
-
     particles = Array.from({ length: count }, (_, i) => ({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
@@ -677,13 +564,11 @@ function drawParticles()
 {
     if (!canvas || !ctx) return;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-
     if (!particlesEnabled)
     {
         requestAnimationFrame(drawParticles);
         return;
     }
-
     particles.forEach((p, i) =>
     {
         p.x += p.vx; p.y += p.vy; p.twinkle += 0.03;
@@ -696,7 +581,6 @@ function drawParticles()
         ctx.fillStyle = hexToRgba(p.color, 0.16 + pulse * p.alpha * 0.4);
         ctx.arc(p.x, p.y, p.r + pulse * 1.4, 0, Math.PI * 2);
         ctx.fill();
-
         for (let j = i + 1; j < particles.length; j++)
         {
             const q = particles[j];
@@ -727,27 +611,20 @@ window.addEventListener('DOMContentLoaded', () =>
     bindMasterAndMusic();
     bindRailAudio();
     bindDataSfx();
-
-    initBackgroundHost(); // init before setTheme so the host is ready
-
+    initBackgroundHost();
     setParticlesEnabled(savedParticlesEnabled(), { persist: false });
-    setTheme(savedTheme() || html.dataset.theme || 'primordial-gold'); // also starts bg loop
+    setTheme(savedTheme() || html.dataset.theme || 'primordial-gold');
     resizeCanvas();
     drawParticles();
-
-    // Push saved volumes to FMOD on every page load (not just Settings).
     applySavedVolumes();
-
     if (!window.crp56)
     {
         show({ ok: false, error: 'window.crp56 is missing.' });
         return;
     }
-
     bindSelectionZones();
     bindPageActions();
     bindProgressEvents();
-
     const page = body?.dataset?.page;
     if (page) show({ ok: true, status: `${page.charAt(0).toUpperCase() + page.slice(1)} page ready.` });
 });

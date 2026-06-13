@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="fmod debugging work">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="index.html debugging">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" afterDir="false" />
     </list>
@@ -47,61 +47,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.7156597252969752" />
-      <entry key="MS500" value="4.256240252184233" />
-      <entry key="S2" value="6.589170473349802" />
-      <entry key="S5" value="7.3779225222612075" />
-      <entry key="S10" value="7.688894997059169" />
-      <entry key="S30" value="8.76944551718183" />
-      <entry key="S60" value="10.62451647394973" />
-      <entry key="M2" value="13.282455146520219" />
-      <entry key="M5" value="22.270824211541154" />
-      <entry key="M10" value="38.46232497751241" />
-      <entry key="M15" value="51.725469295134836" />
-      <entry key="M30" value="78.73803388651642" />
-      <entry key="H1" value="117.03282287771171" />
-      <entry key="H2" value="181.7309379504071" />
-      <entry key="H4" value="266.6804704790006" />
-      <entry key="D1" value="419.3704660951779" />
-      <entry key="W1" value="459.71054237062503" />
+      <entry key="MS100" value="1.5412962550305518" />
+      <entry key="MS500" value="4.0167688453275305" />
+      <entry key="S2" value="6.471757308206092" />
+      <entry key="S5" value="7.322702242118481" />
+      <entry key="S10" value="7.649139836115098" />
+      <entry key="S30" value="7.994560503442171" />
+      <entry key="S60" value="8.700223326696442" />
+      <entry key="M2" value="10.183936438861197" />
+      <entry key="M5" value="16.101703760283513" />
+      <entry key="M10" value="29.77810635167918" />
+      <entry key="M15" value="43.171862023289" />
+      <entry key="M30" value="73.41943983658685" />
+      <entry key="H1" value="115.62314044616416" />
+      <entry key="H2" value="183.22643406993717" />
+      <entry key="H4" value="271.1214804046333" />
+      <entry key="D1" value="430.10064249586753" />
+      <entry key="W1" value="472.35435825255036" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="1.2784625795755223E-189" />
-      <entry key="S2" value="5.9795982373992E-48" />
-      <entry key="S5" value="1.2902349504623095E-19" />
-      <entry key="S10" value="3.5919840624121795E-10" />
-      <entry key="S30" value="7.108502715849616E-4" />
-      <entry key="S60" value="0.026661775476981325" />
-      <entry key="M2" value="0.1632843393500469" />
-      <entry key="M5" value="0.4843706430647384" />
-      <entry key="M10" value="0.6959695037690548" />
-      <entry key="M15" value="0.7855495643529581" />
-      <entry key="M30" value="0.9077648310961554" />
-      <entry key="H1" value="1.217923372819693" />
-      <entry key="H2" value="2.352361922406083" />
-      <entry key="H4" value="4.64786012265892" />
-      <entry key="D1" value="10.081185731453552" />
-      <entry key="W1" value="11.70092265330606" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="1.7854480262693295E-149" />
+      <entry key="S5" value="3.1673706277613596E-60" />
+      <entry key="S10" value="1.779710827005714E-30" />
+      <entry key="S30" value="1.2118526424551502E-10" />
+      <entry key="S60" value="1.1008417881126932E-5" />
+      <entry key="M2" value="0.0033178935909891545" />
+      <entry key="M5" value="0.10194008266246235" />
+      <entry key="M10" value="0.3192815285760119" />
+      <entry key="M15" value="0.4672643504252099" />
+      <entry key="M30" value="0.7001125796960903" />
+      <entry key="H1" value="1.0695897416179323" />
+      <entry key="H2" value="2.204462791445418" />
+      <entry key="H4" value="4.499376808685953" />
+      <entry key="D1" value="10.026780369083516" />
+      <entry key="W1" value="11.691880771361149" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.6920374947563037" />
-      <entry key="MS500" value="4.242750224288664" />
-      <entry key="S2" value="6.58270587646816" />
-      <entry key="S5" value="7.374854100316227" />
-      <entry key="S10" value="7.687263875281088" />
-      <entry key="S30" value="8.769431720889992" />
-      <entry key="S60" value="10.648703923003419" />
-      <entry key="M2" value="13.438905397455777" />
-      <entry key="M5" value="22.747014039217863" />
-      <entry key="M10" value="39.15228005882207" />
-      <entry key="M15" value="52.506411360484734" />
-      <entry key="M30" value="79.64306989491024" />
-      <entry key="H1" value="118.24906244268544" />
-      <entry key="H2" value="184.08207698706715" />
-      <entry key="H4" value="271.32741131625636" />
-      <entry key="D1" value="429.45139345536353" />
-      <entry key="W1" value="471.41142390553324" />
+      <entry key="MS100" value="1.5102546565288446" />
+      <entry key="MS500" value="3.9996025812991" />
+      <entry key="S2" value="6.464926596930747" />
+      <entry key="S5" value="7.319636102158098" />
+      <entry key="S10" value="7.647542265155398" />
+      <entry key="S30" value="7.993097422663552" />
+      <entry key="S60" value="8.696899166376799" />
+      <entry key="M2" value="10.183025268462556" />
+      <entry key="M5" value="16.19907249957258" />
+      <entry key="M10" value="30.092911754315182" />
+      <entry key="M15" value="43.63516749287189" />
+      <entry key="M30" value="74.11679950552652" />
+      <entry key="H1" value="116.6909170258657" />
+      <entry key="H2" value="185.4295810171054" />
+      <entry key="H4" value="275.6198817083038" />
+      <entry key="D1" value="440.12715153034634" />
+      <entry key="W1" value="484.0461958839001" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -174,7 +174,7 @@
       <workItem from="1781259060203" duration="6264000" />
       <workItem from="1781289788961" duration="2674000" />
       <workItem from="1781356918690" duration="706000" />
-      <workItem from="1781370031836" duration="1617000" />
+      <workItem from="1781370031836" duration="2485000" />
     </task>
     <task id="LOCAL-00001" summary="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work">
       <option name="closed" value="true" />
@@ -400,7 +400,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781370738129</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="index.html debugging">
+      <option name="closed" value="true" />
+      <created>1781371791746</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1781371791746</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -418,7 +426,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work" />
     <MESSAGE value="File conversion work and helpful GEM additions" />
     <MESSAGE value="File conversion work main file work nearly done" />
     <MESSAGE value="File conversion work continued ruby backend file conversion work" />
@@ -443,6 +450,7 @@
     <MESSAGE value="audio system integration to the apps html pages" />
     <MESSAGE value="audio system integration to the apps html pages slight adjustemnts" />
     <MESSAGE value="fmod debugging work" />
-    <option name="LAST_COMMIT_MESSAGE" value="fmod debugging work" />
+    <MESSAGE value="index.html debugging" />
+    <option name="LAST_COMMIT_MESSAGE" value="index.html debugging" />
   </component>
 </project>
