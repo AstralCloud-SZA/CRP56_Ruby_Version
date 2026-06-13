@@ -609,9 +609,10 @@ function bindVolumeSliders()
 function applySavedVolumes()
 {
     if (!window.sfx) return;
-    const master = Number(localStorage.getItem(MASTER_VOL_STORAGE_KEY) ?? 100) / 100;
-    const sfxVol = Number(localStorage.getItem(SFX_VOL_STORAGE_KEY) ?? 80) / 100;
-    const musicVol = Number(localStorage.getItem(MUSIC_VOL_STORAGE_KEY) ?? 60) / 100;
+    const readVol = (key, fb) => isNaN(localStorage.getItem(key)) ? fb : +localStorage.getItem(key);
+    const master = readVol(MASTER_VOL_STORAGE_KEY, 100) / 100;
+    const sfxVol = readVol(SFX_VOL_STORAGE_KEY, 80) / 100;
+    const musicVol = readVol(MUSIC_VOL_STORAGE_KEY, 60) / 100;
     window.sfx.setMasterVolume(master);
     window.sfx.setVolume(sfxVol);
     window.sfx.setMusicVolume(musicVol);
@@ -723,6 +724,7 @@ window.addEventListener('DOMContentLoaded', () =>
     bindTabButtons();
     bindParticleToggle();
     bindVolumeSliders();
+    bindMasterAndMusic();
     bindRailAudio();
     bindDataSfx();
 
