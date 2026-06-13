@@ -166,14 +166,19 @@ function init()
 // ---------------------------------------------------------------------------
 function play(category)
 {
-    if (!system) return;
+    if (!system) { console.warn('[fmod] play() called but system is null'); return; }
     const cat = (category || '').toLowerCase();
     const file = nextFile(cat);
-    if (!file) { console.warn(`No sounds for category "${cat}"`); return; }
+    if (!file) { console.warn(`[fmod] No sounds for category "${cat}"`); return; }
 
     const soundOut = [null];
-    check(FMOD_System_CreateSound(system, file, FMOD_2D | FMOD_LOOP_OFF, null, soundOut), 'CreateSound');
-    check(FMOD_System_PlaySound(system, soundOut[0], sfxGroup, 0, [null]), 'PlaySound(sfx)');
+    let rc = FMOD_System_CreateSound(system, file, FMOD_2D | FMOD_LOOP_OFF, null, soundOut);
+    if (rc !== 0) { console.error(`[fmod] CreateSound failed (code ${rc}) for: ${file}`); return; }
+
+    rc = FMOD_System_PlaySound(system, soundOut[0], sfxGroup, 0, [null]);
+    if (rc !== 0) { console.error(`[fmod] PlaySound failed (code ${rc}) for: ${file}`); return; }
+
+    console.log(`[fmod] playing sfx/${cat}: ${file}`);
 }
 
 function playAny()

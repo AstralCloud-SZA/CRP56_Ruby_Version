@@ -32,7 +32,11 @@ const SFX_THROTTLE_MS = 60;
 const lastSfxAt = {};
 function sfx(category)
 {
-    if (!window.sfx || typeof window.sfx.play !== 'function') return;
+    if (!window.sfx || typeof window.sfx.play !== 'function')
+    {
+        console.warn('[CRP56 sfx] window.sfx bridge missing. Requested:', category);
+        return;
+    }
     const now = Date.now();
     if (now - (lastSfxAt[category] || 0) < SFX_THROTTLE_MS) return;
     lastSfxAt[category] = now;

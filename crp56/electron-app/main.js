@@ -242,7 +242,11 @@ ipcMain.handle('dialog:pick-save-file', async (_event, options = {}) =>
 });
 
 // --- FMOD SOUND HANDLERS (fire-and-forget) ---
-ipcMain.on('sfx:play', (_event, category) => fmod.play(category));
+ipcMain.on('sfx:play', (_event, category) => {
+    console.log('[CRP56 main] sfx:play ->', category);
+    try { fmod.play(category); }
+    catch (e) { console.error('[CRP56 main] fmod.play FAILED:', e.message); }
+});
 ipcMain.on('sfx:any', () => fmod.playAny());
 ipcMain.on('sfx:volume', (_event, v) => fmod.setSfxVolume(v));
 ipcMain.on('music:volume', (_event, v) => fmod.setMusicVolume(v));
