@@ -9,46 +9,41 @@ const koffi = require('koffi');
 const dllPath = path.join(__dirname, 'soundengine', 'fmod.dll');
 const lib = koffi.load(dllPath);
 
-const FMOD_SYSTEM       = 'void *';
-const FMOD_SOUND        = 'void *';
-const FMOD_CHANNEL      = 'void *';
+const FMOD_SYSTEM = 'void *';
+const FMOD_SOUND = 'void *';
+const FMOD_CHANNEL = 'void *';
 const FMOD_CHANNELGROUP = 'void *';
-const FMOD_BOOL         = 'int';
+const FMOD_BOOL = 'int';
 
-const FMOD_System_Create                  = lib.func('FMOD_System_Create', 'int', ['_Out_ void **', 'uint']);
-const FMOD_System_Init                    = lib.func('FMOD_System_Init', 'int', [FMOD_SYSTEM, 'int', 'uint', 'void *']);
-const FMOD_System_CreateSound             = lib.func('FMOD_System_CreateSound', 'int', [FMOD_SYSTEM, 'str', 'uint', 'void *', '_Out_ void **']);
-const FMOD_System_PlaySound               = lib.func('FMOD_System_PlaySound', 'int', [FMOD_SYSTEM, FMOD_SOUND, FMOD_CHANNELGROUP, FMOD_BOOL, '_Out_ void **']);
-const FMOD_System_CreateChannelGroup      = lib.func('FMOD_System_CreateChannelGroup', 'int', [FMOD_SYSTEM, 'str', '_Out_ void **']);
-const FMOD_System_GetMasterChannelGroup   = lib.func('FMOD_System_GetMasterChannelGroup', 'int', [FMOD_SYSTEM, '_Out_ void **']);
-const FMOD_System_Update                  = lib.func('FMOD_System_Update', 'int', [FMOD_SYSTEM]);
-const FMOD_System_Release                 = lib.func('FMOD_System_Release', 'int', [FMOD_SYSTEM]);
-const FMOD_System_GetVersion              = lib.func('FMOD_System_GetVersion', 'int', [FMOD_SYSTEM, '_Out_ uint *']);
-const FMOD_System_GetNumDrivers           = lib.func('FMOD_System_GetNumDrivers', 'int', [FMOD_SYSTEM, '_Out_ int *']);
-const FMOD_System_GetDriver               = lib.func('FMOD_System_GetDriver', 'int', [FMOD_SYSTEM, '_Out_ int *']);
-const FMOD_System_SetDriver               = lib.func('FMOD_System_SetDriver', 'int', [FMOD_SYSTEM, 'int']);
-const FMOD_System_GetDriverInfo           = lib.func('FMOD_System_GetDriverInfo', 'int', [FMOD_SYSTEM, 'int', 'char *', 'int', 'void *', '_Out_ int *', '_Out_ int *', '_Out_ int *']);
-const FMOD_System_GetOutput               = lib.func('FMOD_System_GetOutput', 'int', [FMOD_SYSTEM, '_Out_ int *']);
+const FMOD_System_Create = lib.func('FMOD_System_Create', 'int', ['_Out_ void **', 'uint']);
+const FMOD_System_Init = lib.func('FMOD_System_Init', 'int', [FMOD_SYSTEM, 'int', 'uint', 'void *']);
+const FMOD_System_CreateSound = lib.func('FMOD_System_CreateSound', 'int', [FMOD_SYSTEM, 'str', 'uint', 'void *', '_Out_ void **']);
+const FMOD_System_PlaySound = lib.func('FMOD_System_PlaySound', 'int', [FMOD_SYSTEM, FMOD_SOUND, FMOD_CHANNELGROUP, FMOD_BOOL, '_Out_ void **']);
+const FMOD_System_CreateChannelGroup = lib.func('FMOD_System_CreateChannelGroup', 'int', [FMOD_SYSTEM, 'str', '_Out_ void **']);
+const FMOD_System_GetMasterChannelGroup = lib.func('FMOD_System_GetMasterChannelGroup', 'int', [FMOD_SYSTEM, '_Out_ void **']);
+const FMOD_System_Update = lib.func('FMOD_System_Update', 'int', [FMOD_SYSTEM]);
+const FMOD_System_Release = lib.func('FMOD_System_Release', 'int', [FMOD_SYSTEM]);
+const FMOD_System_GetVersion = lib.func('FMOD_System_GetVersion', 'int', [FMOD_SYSTEM, '_Out_ uint *']);
 
-const FMOD_ChannelGroup_SetVolume         = lib.func('FMOD_ChannelGroup_SetVolume', 'int', [FMOD_CHANNELGROUP, 'float']);
-const FMOD_ChannelGroup_GetVolume         = lib.func('FMOD_ChannelGroup_GetVolume', 'int', [FMOD_CHANNELGROUP, '_Out_ float *']);
-const FMOD_ChannelGroup_SetMute           = lib.func('FMOD_ChannelGroup_SetMute', 'int', [FMOD_CHANNELGROUP, FMOD_BOOL]);
-const FMOD_ChannelGroup_GetMute           = lib.func('FMOD_ChannelGroup_GetMute', 'int', [FMOD_CHANNELGROUP, '_Out_ int *']);
-const FMOD_ChannelGroup_AddGroup          = lib.func('FMOD_ChannelGroup_AddGroup', 'int', [FMOD_CHANNELGROUP, FMOD_CHANNELGROUP, FMOD_BOOL, '_Out_ void **']);
+const FMOD_ChannelGroup_SetVolume = lib.func('FMOD_ChannelGroup_SetVolume', 'int', [FMOD_CHANNELGROUP, 'float']);
+const FMOD_ChannelGroup_GetVolume = lib.func('FMOD_ChannelGroup_GetVolume', 'int', [FMOD_CHANNELGROUP, '_Out_ float *']);
+const FMOD_ChannelGroup_SetMute = lib.func('FMOD_ChannelGroup_SetMute', 'int', [FMOD_CHANNELGROUP, FMOD_BOOL]);
+const FMOD_ChannelGroup_GetMute = lib.func('FMOD_ChannelGroup_GetMute', 'int', [FMOD_CHANNELGROUP, '_Out_ int *']);
+const FMOD_ChannelGroup_AddGroup = lib.func('FMOD_ChannelGroup_AddGroup', 'int', [FMOD_CHANNELGROUP, FMOD_CHANNELGROUP, FMOD_BOOL, '_Out_ void **']);
 
-const FMOD_Channel_SetVolume              = lib.func('FMOD_Channel_SetVolume', 'int', [FMOD_CHANNEL, 'float']);
-const FMOD_Channel_GetVolume              = lib.func('FMOD_Channel_GetVolume', 'int', [FMOD_CHANNEL, '_Out_ float *']);
-const FMOD_Channel_SetPaused              = lib.func('FMOD_Channel_SetPaused', 'int', [FMOD_CHANNEL, FMOD_BOOL]);
-const FMOD_Channel_GetPaused              = lib.func('FMOD_Channel_GetPaused', 'int', [FMOD_CHANNEL, '_Out_ int *']);
-const FMOD_Channel_Stop                   = lib.func('FMOD_Channel_Stop', 'int', [FMOD_CHANNEL]);
-const FMOD_Channel_IsPlaying              = lib.func('FMOD_Channel_IsPlaying', 'int', [FMOD_CHANNEL, '_Out_ int *']);
-const FMOD_Sound_Release                  = lib.func('FMOD_Sound_Release', 'int', [FMOD_SOUND]);
+const FMOD_Channel_SetVolume = lib.func('FMOD_Channel_SetVolume', 'int', [FMOD_CHANNEL, 'float']);
+const FMOD_Channel_GetVolume = lib.func('FMOD_Channel_GetVolume', 'int', [FMOD_CHANNEL, '_Out_ float *']);
+const FMOD_Channel_SetPaused = lib.func('FMOD_Channel_SetPaused', 'int', [FMOD_CHANNEL, FMOD_BOOL]);
+const FMOD_Channel_GetPaused = lib.func('FMOD_Channel_GetPaused', 'int', [FMOD_CHANNEL, '_Out_ int *']);
+const FMOD_Channel_Stop = lib.func('FMOD_Channel_Stop', 'int', [FMOD_CHANNEL]);
+const FMOD_Channel_IsPlaying = lib.func('FMOD_Channel_IsPlaying', 'int', [FMOD_CHANNEL, '_Out_ int *']);
+const FMOD_Sound_Release = lib.func('FMOD_Sound_Release', 'int', [FMOD_SOUND]);
 
-const FMOD_VERSION     = 0x00020314;
+const FMOD_VERSION = 0x00020314;
 const FMOD_INIT_NORMAL = 0x00000000;
-const FMOD_LOOP_OFF    = 0x00000001;
+const FMOD_LOOP_OFF = 0x00000001;
 const FMOD_LOOP_NORMAL = 0x00000002;
-const FMOD_2D          = 0x00000008;
+const FMOD_2D = 0x00000008;
 
 function log(...args) { console.log('[fmod]', ...args); }
 function warn(...args) { console.warn('[fmod]', ...args); }
@@ -178,58 +173,7 @@ function getSystemVersion()
         const out = [0];
         check(FMOD_System_GetVersion(system, out), 'GetVersion');
         return out[0];
-    });
-}
-
-function getOutputType()
-{
-    if (!system) return null;
-    return safeCall('GetOutput', () =>
-    {
-        const out = [0];
-        check(FMOD_System_GetOutput(system, out), 'GetOutput');
-        return out[0];
-    });
-}
-
-function listDrivers()
-{
-    if (!system) return [];
-    return safeCall('GetNumDrivers/GetDriverInfo', () =>
-    {
-        const numOut = [0];
-        check(FMOD_System_GetNumDrivers(system, numOut), 'GetNumDrivers');
-        const count = numOut[0];
-        const drivers = [];
-        for (let i = 0; i < count; i++)
-        {
-            const nameBuf = Buffer.alloc(512);
-            const rateOut = [0];
-            const modeOut = [0];
-            const channelsOut = [0];
-            const rc = FMOD_System_GetDriverInfo(system, i, nameBuf, nameBuf.length, null, rateOut, modeOut, channelsOut);
-            if (rc !== 0)
-            {
-                drivers.push({ index: i, error: rc });
-                continue;
-            }
-            const zero = nameBuf.indexOf(0);
-            const name = nameBuf.slice(0, zero >= 0 ? zero : undefined).toString('utf8');
-            drivers.push({ index: i, name, systemRate: rateOut[0], speakerMode: modeOut[0], channels: channelsOut[0] });
-        }
-        return drivers;
-    }, []);
-}
-
-function currentDriverIndex()
-{
-    if (!system) return null;
-    return safeCall('GetDriver', () =>
-    {
-        const out = [0];
-        check(FMOD_System_GetDriver(system, out), 'GetDriver');
-        return out[0];
-    });
+    }, null);
 }
 
 function groupSnapshot(group, name)
@@ -279,10 +223,6 @@ function dumpMixerState(context = 'snapshot')
     log(`==== MIXER STATE (${context}) ====`);
     log('system ptr:', ptrLabel(system));
     log('FMOD runtime version:', getSystemVersion());
-    log('FMOD output type:', getOutputType());
-    log('current driver index:', currentDriverIndex());
-    const drivers = listDrivers();
-    drivers.forEach(d => log('driver:', JSON.stringify(d)));
     log('group master:', JSON.stringify(groupSnapshot(masterGroup, 'master')));
     log('group sfx:', JSON.stringify(groupSnapshot(sfxGroup, 'sfx')));
     log('group music:', JSON.stringify(groupSnapshot(musicGroup, 'music')));
@@ -312,9 +252,6 @@ function init()
     check(FMOD_System_Create(sysOut, FMOD_VERSION), 'System_Create');
     system = sysOut[0];
     log('System created ->', ptrLabel(system));
-
-    const preDrivers = listDrivers();
-    if (preDrivers.length) preDrivers.forEach(d => log('pre-init driver:', JSON.stringify(d)));
 
     check(FMOD_System_Init(system, 64, FMOD_INIT_NORMAL, null), 'System_Init');
     log('System initialized');
