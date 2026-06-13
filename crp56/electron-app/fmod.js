@@ -23,16 +23,12 @@ const FMOD_System_CreateChannelGroup = lib.func('FMOD_System_CreateChannelGroup'
 const FMOD_System_GetMasterChannelGroup = lib.func('FMOD_System_GetMasterChannelGroup', 'int', [FMOD_SYSTEM, '_Out_ void **']);
 const FMOD_System_Update = lib.func('FMOD_System_Update', 'int', [FMOD_SYSTEM]);
 const FMOD_System_Release = lib.func('FMOD_System_Release', 'int', [FMOD_SYSTEM]);
-const FMOD_System_GetVersion = lib.func('FMOD_System_GetVersion', 'int', [FMOD_SYSTEM, '_Out_ uint *']);
 
 const FMOD_ChannelGroup_SetVolume = lib.func('FMOD_ChannelGroup_SetVolume', 'int', [FMOD_CHANNELGROUP, 'float']);
-const FMOD_ChannelGroup_GetVolume = lib.func('FMOD_ChannelGroup_GetVolume', 'int', [FMOD_CHANNELGROUP, '_Out_ float *']);
 const FMOD_ChannelGroup_SetMute = lib.func('FMOD_ChannelGroup_SetMute', 'int', [FMOD_CHANNELGROUP, FMOD_BOOL]);
-const FMOD_ChannelGroup_GetMute = lib.func('FMOD_ChannelGroup_GetMute', 'int', [FMOD_CHANNELGROUP, '_Out_ int *']);
 const FMOD_ChannelGroup_AddGroup = lib.func('FMOD_ChannelGroup_AddGroup', 'int', [FMOD_CHANNELGROUP, FMOD_CHANNELGROUP, FMOD_BOOL, '_Out_ void **']);
 
 const FMOD_Channel_SetVolume = lib.func('FMOD_Channel_SetVolume', 'int', [FMOD_CHANNEL, 'float']);
-const FMOD_Channel_GetVolume = lib.func('FMOD_Channel_GetVolume', 'int', [FMOD_CHANNEL, '_Out_ float *']);
 const FMOD_Channel_SetPaused = lib.func('FMOD_Channel_SetPaused', 'int', [FMOD_CHANNEL, FMOD_BOOL]);
 const FMOD_Channel_GetPaused = lib.func('FMOD_Channel_GetPaused', 'int', [FMOD_CHANNEL, '_Out_ int *']);
 const FMOD_Channel_Stop = lib.func('FMOD_Channel_Stop', 'int', [FMOD_CHANNEL]);
@@ -165,68 +161,14 @@ function loadMusicList()
     musicTracks.forEach((t, i) => log(`  [music ${i + 1}] ${t.name} -> ${t.path}`));
 }
 
-function getSystemVersion()
-{
-    if (!system) return null;
-    return safeCall('GetVersion', () =>
-    {
-        const out = [0];
-        check(FMOD_System_GetVersion(system, out), 'GetVersion');
-        return out[0];
-    }, null);
-}
-
-function groupSnapshot(group, name)
-{
-    if (!group) return { name, ptr: 'null' };
-    const volume = safeCall(`GetVolume(${name})`, () =>
-    {
-        const out = [0];
-        check(FMOD_ChannelGroup_GetVolume(group, out), `GetVolume(${name})`);
-        return out[0];
-    }, null);
-    const muted = safeCall(`GetMute(${name})`, () =>
-    {
-        const out = [0];
-        check(FMOD_ChannelGroup_GetMute(group, out), `GetMute(${name})`);
-        return !!out[0];
-    }, null);
-    return { name, ptr: ptrLabel(group), volume, muted };
-}
-
-function channelSnapshot(channel, name)
-{
-    if (!channel) return { name, ptr: 'null' };
-    const volume = safeCall(`Channel_GetVolume(${name})`, () =>
-    {
-        const out = [0];
-        check(FMOD_Channel_GetVolume(channel, out), `Channel_GetVolume(${name})`);
-        return out[0];
-    }, null);
-    const paused = safeCall(`Channel_GetPaused(${name})`, () =>
-    {
-        const out = [0];
-        check(FMOD_Channel_GetPaused(channel, out), `Channel_GetPaused(${name})`);
-        return !!out[0];
-    }, null);
-    const playing = safeCall(`Channel_IsPlaying(${name})`, () =>
-    {
-        const out = [0];
-        check(FMOD_Channel_IsPlaying(channel, out), `Channel_IsPlaying(${name})`);
-        return !!out[0];
-    }, null);
-    return { name, ptr: ptrLabel(channel), volume, paused, playing };
-}
-
 function dumpMixerState(context = 'snapshot')
 {
     log(`==== MIXER STATE (${context}) ====`);
     log('system ptr:', ptrLabel(system));
-    log('FMOD runtime version:', getSystemVersion());
-    log('group master:', JSON.stringify(groupSnapshot(masterGroup, 'master')));
-    log('group sfx:', JSON.stringify(groupSnapshot(sfxGroup, 'sfx')));
-    log('group music:', JSON.stringify(groupSnapshot(musicGroup, 'music')));
-    log('music channel:', JSON.stringify(channelSnapshot(currentMusicChannel, 'music-current')));
+    log('master group ptr:', ptrLabel(masterGroup));
+    log('sfx group ptr:', ptrLabel(sfxGroup));
+    log('music group ptr:', ptrLabel(musicGroup));
+    log('music channel ptr:', ptrLabel(currentMusicChannel));
     log('current track name:', currentTrackName);
     log('==============================');
 }
@@ -353,8 +295,11 @@ function play(category)
     safeCall('Channel_SetVolume(sfx one-shot)', () => check(FMOD_Channel_SetVolume(channel, 1.0), 'Channel_SetVolume(sfx one-shot)'));
     safeCall('Channel_SetPaused(false)', () => check(FMOD_Channel_SetPaused(channel, 0), 'Channel_SetPaused(false)'));
 
+    const pausedOut = [0];
+    const pausedRc = safeCall('Channel_GetPaused(immediate)', () => FMOD_Channel_GetPaused(channel, pausedOut), -1);
+
     log(`playing sfx/${cat}: ${file}`);
-    log('channel snapshot immediately after play:', JSON.stringify(channelSnapshot(channel, `sfx-${cat}`)));
+    log(`channel immediate -> pausedRc=${pausedRc} paused=${pausedOut[0]}`);
     dumpMixerState(`after play(${cat})`);
 
     let pollCount = 0;
@@ -373,11 +318,9 @@ function play(category)
                 return;
             }
 
-            const volumeOut = [0];
-            const rv = FMOD_Channel_GetVolume(channel, volumeOut);
-            const pausedOut = [0];
-            const rp = FMOD_Channel_GetPaused(channel, pausedOut);
-            log(`poll #${pollCount} for ${path.basename(file)} -> playing=${playingOut[0]} volumeRc=${rv} volume=${volumeOut[0]} pausedRc=${rp} paused=${pausedOut[0]}`);
+            const pausedOut2 = [0];
+            const rp = FMOD_Channel_GetPaused(channel, pausedOut2);
+            log(`poll #${pollCount} for ${path.basename(file)} -> playing=${playingOut[0]} pausedRc=${rp} paused=${pausedOut2[0]}`);
 
             if (playingOut[0] !== 1)
             {
@@ -522,6 +465,15 @@ function clamp01(v)
 function setMasterVolume(v)
 {
     const n = clamp01(v);
+
+    if (n === 0)
+    {
+        warn('setMasterVolume received 0; coercing to 1 temporarily for debugging');
+        if (masterGroup) check(FMOD_ChannelGroup_SetVolume(masterGroup, 1.0), 'SetVolume(master debug override)');
+        dumpMixerState('after setMasterVolume(debug override)');
+        return;
+    }
+
     log('setMasterVolume ->', n);
     if (masterGroup) check(FMOD_ChannelGroup_SetVolume(masterGroup, n), 'SetVolume(master)');
     dumpMixerState('after setMasterVolume');
