@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="fixed up how the folder encryption and decryption works it now actually saves it too a singular folder" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="fixed up how the folder encryption and decryption works it now actually saves it too a singular folder 2">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/ruby-core/lib/file_crypto.rb" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/ruby-core/lib/file_crypto.rb" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -44,61 +48,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.2717489517140024" />
-      <entry key="MS500" value="2.205524861032156" />
-      <entry key="S2" value="5.587358623454386" />
-      <entry key="S5" value="9.034445384457053" />
-      <entry key="S10" value="11.24654394169119" />
-      <entry key="S30" value="20.123798654863545" />
-      <entry key="S60" value="37.32593629540589" />
-      <entry key="M2" value="59.670763701394335" />
-      <entry key="M5" value="84.46922843748028" />
-      <entry key="M10" value="103.1581155014749" />
-      <entry key="M15" value="118.2529213796729" />
-      <entry key="M30" value="156.92135125694793" />
-      <entry key="H1" value="217.06836113586226" />
-      <entry key="H2" value="304.99094312870625" />
-      <entry key="H4" value="416.08622542643496" />
-      <entry key="D1" value="626.1808890937051" />
-      <entry key="W1" value="684.3700068851767" />
+      <entry key="MS100" value="1.6588997034723212" />
+      <entry key="MS500" value="3.6458685197559477" />
+      <entry key="S2" value="4.61784040110974" />
+      <entry key="S5" value="5.240501586873472" />
+      <entry key="S10" value="6.021090733617952" />
+      <entry key="S30" value="7.122990151962831" />
+      <entry key="S60" value="7.5926274048764935" />
+      <entry key="M2" value="8.559108754785946" />
+      <entry key="M5" value="12.358494586186508" />
+      <entry key="M10" value="20.092725192362114" />
+      <entry key="M15" value="31.672018865547514" />
+      <entry key="M30" value="73.89597336824137" />
+      <entry key="H1" value="148.7784709840122" />
+      <entry key="H2" value="256.158004772905" />
+      <entry key="H4" value="387.53517824542763" />
+      <entry key="D1" value="637.0286427748175" />
+      <entry key="W1" value="707.1401819740252" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="2.5972956877111553E-72" />
-      <entry key="S2" value="1.4049839054766492E-18" />
-      <entry key="S5" value="9.778112793217052E-8" />
-      <entry key="S10" value="4.318909033563279E-4" />
-      <entry key="S30" value="0.11933239028193991" />
-      <entry key="S60" value="0.4881943803912725" />
-      <entry key="M2" value="0.9879522308707498" />
-      <entry key="M5" value="1.5083238488807336" />
-      <entry key="M10" value="1.7379130399899756" />
-      <entry key="M15" value="1.8309660725084327" />
-      <entry key="M30" value="2.013080669853227" />
-      <entry key="H1" value="2.367658872354876" />
-      <entry key="H2" value="3.3483491278675235" />
-      <entry key="H4" value="5.537511490217553" />
-      <entry key="D1" value="11.636151584695204" />
-      <entry key="W1" value="13.625753737029825" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="3.935459732127617E-178" />
+      <entry key="S10" value="2.739960311337458E-89" />
+      <entry key="S30" value="4.759358414200021E-30" />
+      <entry key="S60" value="3.08310142379262E-15" />
+      <entry key="M2" value="7.851153422598153E-8" />
+      <entry key="M5" value="0.0021805879364225353" />
+      <entry key="M10" value="0.06607962130652849" />
+      <entry key="M15" value="0.2070331862699981" />
+      <entry key="M30" value="0.6769257162833302" />
+      <entry key="H1" value="1.372963676340819" />
+      <entry key="H2" value="2.5497681600610216" />
+      <entry key="H4" value="4.8322525030761625" />
+      <entry key="D1" value="11.3749247791068" />
+      <entry key="W1" value="13.58162842399357" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.2561042809606158" />
-      <entry key="MS500" value="2.2006728918931224" />
-      <entry key="S2" value="5.583931614546616" />
-      <entry key="S5" value="9.032065021423506" />
-      <entry key="S10" value="11.245368009754388" />
-      <entry key="S30" value="20.237538119157332" />
-      <entry key="S60" value="37.80406298942761" />
-      <entry key="M2" value="60.648797632850226" />
-      <entry key="M5" value="85.97151502367409" />
-      <entry key="M10" value="104.89244353693933" />
-      <entry key="M15" value="120.08122357193754" />
-      <entry key="M30" value="158.93257804880867" />
-      <entry key="H1" value="219.43453774913488" />
-      <entry key="H2" value="308.33806403432243" />
-      <entry key="H4" value="421.622757129877" />
-      <entry key="D1" value="637.8167439698423" />
-      <entry key="W1" value="697.9957125760429" />
+      <entry key="MS100" value="1.6234718396592087" />
+      <entry key="MS500" value="3.6277745671222728" />
+      <entry key="S2" value="4.6118548635664425" />
+      <entry key="S5" value="5.237783576417904" />
+      <entry key="S10" value="6.019544955170928" />
+      <entry key="S30" value="7.122388502595361" />
+      <entry key="S60" value="7.592308828469397" />
+      <entry key="M2" value="8.558933738375986" />
+      <entry key="M5" value="12.360572785580965" />
+      <entry key="M10" value="20.15860864887725" />
+      <entry key="M15" value="31.878706087010766" />
+      <entry key="M30" value="74.57225000261472" />
+      <entry key="H1" value="150.1505612086422" />
+      <entry key="H2" value="258.7068303759353" />
+      <entry key="H4" value="392.36657203201423" />
+      <entry key="D1" value="648.4032768750407" />
+      <entry key="W1" value="720.7217624169571" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -172,7 +176,7 @@
       <workItem from="1781289788961" duration="2674000" />
       <workItem from="1781356918690" duration="706000" />
       <workItem from="1781370031836" duration="6122000" />
-      <workItem from="1781547132681" duration="2053000" />
+      <workItem from="1781547132681" duration="6218000" />
     </task>
     <task id="LOCAL-00001" summary="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work">
       <option name="closed" value="true" />
@@ -446,7 +450,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781548742346</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="fixed up how the folder encryption and decryption works it now actually saves it too a singular folder 2">
+      <option name="closed" value="true" />
+      <created>1781549528928</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1781549528928</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -464,7 +476,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="testing electron app RUBY -&gt; ELECTRON TEST" />
     <MESSAGE value="testing electron app RUBY -&gt; ELECTRON TEST 2" />
     <MESSAGE value="base html and CSS work" />
     <MESSAGE value="page tweaks" />
@@ -489,6 +500,7 @@
     <MESSAGE value="removed unsafe diagnostic elements" />
     <MESSAGE value="removed unsafe diagnostic elements 2" />
     <MESSAGE value="fixed up how the folder encryption and decryption works it now actually saves it too a singular folder" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed up how the folder encryption and decryption works it now actually saves it too a singular folder" />
+    <MESSAGE value="fixed up how the folder encryption and decryption works it now actually saves it too a singular folder 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed up how the folder encryption and decryption works it now actually saves it too a singular folder 2" />
   </component>
 </project>

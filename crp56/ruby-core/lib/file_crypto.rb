@@ -9,30 +9,56 @@ require "stringio"
 
 module CRP56
   ##
-  # FileCrypto is the high-level file/folder wrapper around +CRP56::Crypto+.
+  # FileCrypto is the high-level file, folder, and text wrapper around
+  # +CRP56::Crypto+.
   #
-  # It provides:
-  # - text-to-Base64 encryption and decryption,
-  # - raw byte encryption and decryption,
-  # - file-to-file encryption and decryption,
-  # - folder archive encryption and decryption.
+  # It provides convenience methods for:
+  # - encrypting UTF-8 text to Base64,
+  # - decrypting Base64 back to UTF-8 text,
+  # - encrypting raw byte strings,
+  # - decrypting raw byte strings,
+  # - encrypting files to disk,
+  # - decrypting files back to disk,
+  # - encrypting folders into encrypted container files,
+  # - decrypting folder containers back into regular files.
   #
-  # The class also handles:
-  # - custom file envelope formats,
-  # - encrypted output naming,
+  # This class sits above the lower-level crypto engine and provides
+  # filesystem-aware helpers that are easy to call from a CLI or an Electron
+  # backend process.
+  #
+  # The methods in this class assume that +cipher+ responds to:
+  # - +encrypt(plain_bytes, user_passphrase, progress: nil)+
+  # - +decrypt(cipher_bytes, user_passphrase, progress: nil)+
+  #
+  # Responsibilities handled here:
+  # - Base64 transport encoding for text,
+  # - binary file IO,
   # - output directory creation,
-  # - collision-safe output paths,
-  # - folder packaging into tar archives.
+  # - basic path validation,
+  # - UTF-8 validation for decrypted text,
+  # - recursive folder packaging,
+  # - tar archive creation and extraction,
+  # - collision-safe restore paths,
+  # - safe file name restoration.
   #
-  # The file envelope format is:
-  # - magic bytes,
-  # - version byte,
-  # - name length,
-  # - UTF-8 file name,
-  # - raw content.
+  # File envelope format:
+  # - 4-byte magic: "CRPF"
+  # - 1-byte format version
+  # - 2-byte big-endian UTF-8 file-name length
+  # - UTF-8 file-name bytes
+  # - raw file content bytes
   #
-  # The folder envelope format is similar, but wraps a tar archive of encrypted
-  # entries instead of a single file payload.
+  # Folder envelope format:
+  # - 4-byte magic: "CRPD"
+  # - 1-byte format version
+  # - 2-byte big-endian UTF-8 folder-name length
+  # - UTF-8 folder-name bytes
+  # - tar archive bytes containing encrypted file entries
+  #
+  # Folder encryption stores each source file as its own encrypted payload
+  # inside a tar archive. Folder decryption supports both:
+  # - folder-encrypted containers, and
+  # - legacy single-file encrypted payloads.
   class FileCrypto
     ENCRYPTED_EXTENSION = ".crp56"
 
@@ -49,8 +75,9 @@ module CRP56
     ##
     # Creates a new file crypto wrapper.
     #
-    # @param cipher [CRP56::Crypto] the core cipher instance used for all crypto operations
-    # @raise [ArgumentError] if cipher is nil
+    # @param cipher [Object] cipher object used for encrypt and decrypt calls.
+    #   It must implement +encrypt+ and +decrypt+ with the expected signature.
+    # @raise [ArgumentError] if +cipher+ is nil
     def initialize(cipher:)
       raise ArgumentError, "cipher cannot be nil." if cipher.nil?
 
@@ -58,12 +85,16 @@ module CRP56
     end
 
     ##
-    # Encrypts a UTF-8 string and returns Base64-encoded encrypted output.
+    # Encrypts a UTF-8 string and returns a Base64-encoded encrypted payload.
+    #
+    # The input text is first encoded as UTF-8 bytes, then encrypted through the
+    # configured cipher, and finally encoded with strict Base64 so the result can
+    # be stored or transmitted as text.
     #
     # @param plain_text [String] text to encrypt
     # @param user_passphrase [String] passphrase used for encryption
     # @return [String] Base64-encoded encrypted payload
-    # @raise [ArgumentError] if plain_text is blank or passphrase is blank
+    # @raise [ArgumentError] if +plain_text+ is blank or +user_passphrase+ is blank
     def encrypt_text_to_base64(plain_text, user_passphrase)
       raise ArgumentError, "Plain text cannot be nil or empty." if blank?(plain_text)
 
@@ -74,14 +105,17 @@ module CRP56
     end
 
     ##
-    # Decrypts a Base64-encoded encrypted string and returns UTF-8 text.
+    # Decrypts a Base64-encoded encrypted payload and returns UTF-8 text.
+    #
+    # The input is first decoded from Base64, then decrypted through the
+    # configured cipher, and finally validated as UTF-8 before being returned.
     #
     # @param cipher_text_base64 [String] Base64-encoded encrypted payload
     # @param user_passphrase [String] passphrase used for decryption
     # @return [String] decrypted UTF-8 text
-    # @raise [ArgumentError] if cipher_text_base64 is blank or passphrase is blank
+    # @raise [ArgumentError] if +cipher_text_base64+ is blank or +user_passphrase+ is blank
     # @raise [InvalidPayloadError] if the input is not valid Base64
-    # @raise [DecryptionError] if decrypted bytes are not valid UTF-8
+    # @raise [DecryptionError] if the decrypted bytes are not valid UTF-8
     def decrypt_base64_text_to_string(cipher_text_base64, user_passphrase)
       raise ArgumentError, "Cipher text cannot be nil or empty." if blank?(cipher_text_base64)
 
@@ -92,8 +126,8 @@ module CRP56
       end
 
       plain_bytes = decrypt_bytes(cipher_bytes, user_passphrase)
-
       plain_bytes.force_encoding("UTF-8")
+
       unless plain_bytes.valid_encoding?
         raise DecryptionError, "Decrypted text is not valid UTF-8."
       end
@@ -104,40 +138,47 @@ module CRP56
     ##
     # Encrypts raw bytes and returns encrypted bytes.
     #
-    # @param plain_bytes [String] binary data to encrypt
+    # This is the core byte-level wrapper used by both text and file helpers.
+    # It does not perform any file IO or encoding conversion.
+    #
+    # @param plain_bytes [String] binary plaintext
     # @param user_passphrase [String] passphrase used for encryption
-    # @param progress [Proc, nil] optional progress callback
-    # @return [String] encrypted bytes
-    def encrypt_bytes(plain_bytes, user_passphrase, progress: nil)
+    # @return [String] encrypted binary payload
+    # @raise [ArgumentError] if the plaintext or passphrase is blank
+    def encrypt_bytes(plain_bytes, user_passphrase)
       raise ArgumentError, "Plain bytes cannot be nil or empty." if plain_bytes.nil? || plain_bytes.empty?
       raise ArgumentError, "User passphrase cannot be nil or empty." if blank?(user_passphrase)
 
-      shard_progress = progress && ->(current, total) { progress.call(current, total, nil) }
+      shard_progress = nil
       cipher.encrypt(plain_bytes, user_passphrase, progress: shard_progress)
     end
 
     ##
     # Decrypts raw encrypted bytes and returns plaintext bytes.
     #
-    # @param cipher_bytes [String] encrypted binary data
+    # This is the core byte-level wrapper used by both text and file helpers.
+    # It does not perform any file IO or encoding conversion.
+    #
+    # @param cipher_bytes [String] encrypted binary payload
     # @param user_passphrase [String] passphrase used for decryption
-    # @param progress [Proc, nil] optional progress callback
-    # @return [String] decrypted bytes
-    def decrypt_bytes(cipher_bytes, user_passphrase, progress: nil)
+    # @return [String] decrypted binary payload
+    # @raise [ArgumentError] if the cipher bytes or passphrase is blank
+    def decrypt_bytes(cipher_bytes, user_passphrase)
       raise ArgumentError, "Cipher bytes cannot be nil or empty." if cipher_bytes.nil? || cipher_bytes.empty?
       raise ArgumentError, "User passphrase cannot be nil or empty." if blank?(user_passphrase)
 
-      shard_progress = progress && ->(current, total) { progress.call(current, total, nil) }
+      shard_progress = nil
       cipher.decrypt(cipher_bytes, user_passphrase, progress: shard_progress)
     end
 
     ##
-    # Encrypts a file's contents and returns encrypted bytes.
+    # Encrypts the contents of a file and returns encrypted bytes.
     #
     # @param source_file_path [String] path to the input file
     # @param user_passphrase [String] passphrase used for encryption
     # @param progress [Proc, nil] optional progress callback
     # @return [String] encrypted bytes
+    # @raise [ArgumentError] if the source file path is invalid
     def encrypt_file_bytes(source_file_path, user_passphrase, progress: nil)
       validate_source_file!(source_file_path)
 
@@ -152,6 +193,7 @@ module CRP56
     # @param user_passphrase [String] passphrase used for decryption
     # @param progress [Proc, nil] optional progress callback
     # @return [String] plaintext bytes
+    # @raise [ArgumentError] if the encrypted file path is invalid
     def decrypt_file_bytes(encrypted_file_path, user_passphrase, progress: nil)
       validate_source_file!(encrypted_file_path)
 
@@ -160,16 +202,17 @@ module CRP56
     end
 
     ##
-    # Encrypts a file and writes the encrypted output to disk.
+    # Encrypts a file and writes the encrypted result to disk.
     #
     # If the output path does not already end with +.crp56+, the extension is
     # appended automatically.
     #
     # @param source_file_path [String] input file path
-    # @param output_file_path [String] output file path
+    # @param output_file_path [String] destination file path
     # @param user_passphrase [String] passphrase used for encryption
     # @param progress [Proc, nil] optional progress callback
-    # @return [String] final encrypted output path
+    # @return [String] final output path
+    # @raise [ArgumentError] if the input or output path is invalid
     def encrypt_file_to_path(source_file_path, output_file_path, user_passphrase, progress: nil)
       validate_source_file!(source_file_path)
       validate_output_path!(output_file_path)
@@ -196,6 +239,7 @@ module CRP56
     # @param user_passphrase [String] passphrase used for decryption
     # @param progress [Proc, nil] optional progress callback
     # @return [String] final output path
+    # @raise [ArgumentError] if the encrypted file path or output target is invalid
     def decrypt_file_to_path(encrypted_file_path, output_target, user_passphrase, progress: nil)
       validate_source_file!(encrypted_file_path)
       validate_output_path!(output_target)
@@ -234,23 +278,17 @@ module CRP56
       files = Dir.glob(File.join(source_root.to_s, "**", "*")).select { |p| File.file?(p) }
       raise ArgumentError, "Source folder contains no files: #{source_folder}" if files.empty?
 
-      taken = Set.new
-
       staged = files.each_with_index.map do |file, index|
-        relative = Pathname.new(file).relative_path_from(source_root)
-        stem     = File.basename(file, ".*")
-        rel_dir  = File.dirname(relative.to_s)
-
-        candidate      = output_root.join(rel_dir == "." ? "" : rel_dir, "#{stem}#{ENCRYPTED_EXTENSION}").to_s
-        entry_path     = resolve_collision(candidate, taken)
-        tar_entry_name = Pathname.new(entry_path).relative_path_from(output_root).to_s
-
-        envelope        = build_file_envelope(File.basename(file), File.binread(file))
+        relative = Pathname.new(file).relative_path_from(source_root).to_s
+        envelope = build_file_envelope(File.basename(file), File.binread(file))
         encrypted_bytes = encrypt_bytes(envelope, user_passphrase)
 
-        progress&.call(index + 1, files.length, relative.to_s)
+        progress&.call(index + 1, files.length, relative)
 
-        { tar_name: tar_entry_name, bytes: encrypted_bytes }
+        {
+          tar_name: "#{relative}#{ENCRYPTED_EXTENSION}",
+          bytes: encrypted_bytes
+        }
       end
 
       tar_bytes       = build_folder_tar(staged)
@@ -299,15 +337,23 @@ module CRP56
             fallback_name = File.basename(entry[:tar_name]).sub(/#{Regexp.escape(ENCRYPTED_EXTENSION)}\z/i, "")
             original_name, content = parse_file_envelope(inner_payload, fallback_name)
 
-            rel_dir   = File.dirname(entry[:tar_name])
-            candidate = output_root.join(rel_dir == "." ? "" : rel_dir, original_name).to_s
-            out_path  = resolve_collision(candidate, taken)
+            rel_path = entry[:tar_name].sub(/#{Regexp.escape(ENCRYPTED_EXTENSION)}\z/i, "")
+            rel_dir  = File.dirname(rel_path)
+
+            candidate =
+              if rel_dir == "."
+                File.join(output_root.to_s, original_name)
+              else
+                File.join(output_root.to_s, rel_dir, original_name)
+              end
+
+            out_path = resolve_collision(candidate, taken)
 
             ensure_output_directory!(out_path)
             File.binwrite(out_path, content)
             written << out_path
 
-            progress&.call(i + 1, staged.length, original_name)
+            progress&.call(i + 1, staged.length, rel_path)
           end
         else
           fallback_name = File.basename(file).sub(/#{Regexp.escape(ENCRYPTED_EXTENSION)}\z/i, "")
@@ -316,8 +362,14 @@ module CRP56
           relative = Pathname.new(file).relative_path_from(source_root)
           rel_dir  = File.dirname(relative.to_s)
 
-          candidate = output_root.join(rel_dir == "." ? "" : rel_dir, original_name).to_s
-          out_path  = resolve_collision(candidate, taken)
+          candidate =
+            if rel_dir == "."
+              File.join(output_root.to_s, original_name)
+            else
+              File.join(output_root.to_s, rel_dir, original_name)
+            end
+
+          out_path = resolve_collision(candidate, taken)
 
           ensure_output_directory!(out_path)
           File.binwrite(out_path, content)
@@ -332,7 +384,11 @@ module CRP56
 
     private
 
+    ##
     # Builds a binary envelope for a single file.
+    #
+    # The envelope stores the original file name alongside raw file content so
+    # the name can be restored after decryption.
     def build_file_envelope(original_name, content)
       name_bytes = original_name.encode("UTF-8").b
       raise ArgumentError, "File name is too long." if name_bytes.bytesize > 65_535
@@ -340,7 +396,11 @@ module CRP56
       FILE_MAGIC + [FILE_FORMAT_VERSION].pack("C") + [name_bytes.bytesize].pack("n") + name_bytes + content
     end
 
+    ##
     # Parses a single-file envelope and returns [file_name, content].
+    #
+    # If the payload does not match the expected envelope layout, the raw payload
+    # is returned unchanged with the fallback name.
     def parse_file_envelope(payload, fallback_name)
       if payload.bytesize > FILE_HEADER_SIZE &&
          payload.byteslice(0, 4) == FILE_MAGIC &&
@@ -360,7 +420,11 @@ module CRP56
       [fallback_name, payload]
     end
 
+    ##
     # Builds a binary envelope for a folder tar archive.
+    #
+    # The folder name is stored so the outer encrypted container can be traced
+    # back to the original source folder.
     def build_folder_envelope(folder_name, tar_bytes)
       name_bytes = folder_name.encode("UTF-8").b
       raise ArgumentError, "Folder name is too long." if name_bytes.bytesize > 65_535
@@ -372,13 +436,15 @@ module CRP56
         tar_bytes
     end
 
-    # Returns true if payload begins with the folder envelope header.
+    ##
+    # Returns true if the payload begins with the expected folder envelope header.
     def folder_envelope?(payload)
       payload.bytesize > FOLDER_HEADER_SIZE &&
         payload.byteslice(0, 4) == FOLDER_MAGIC &&
         payload.getbyte(4) == FOLDER_FORMAT_VERSION
     end
 
+    ##
     # Parses a folder envelope and returns [folder_name, tar_bytes].
     def parse_folder_envelope(payload)
       name_length = payload.byteslice(5, 2).unpack1("n")
@@ -388,7 +454,10 @@ module CRP56
       [name, tar_bytes]
     end
 
+    ##
     # Creates an in-memory tar archive from staged encrypted entries.
+    #
+    # Each staged entry is written using its tar path and encrypted bytes.
     def build_folder_tar(staged)
       buf = StringIO.new("".b)
       Gem::Package::TarWriter.new(buf) do |tar|
@@ -399,6 +468,7 @@ module CRP56
       buf.string
     end
 
+    ##
     # Reads tar entries into memory so they can be decrypted later.
     def extract_folder_tar_to_memory(tar_bytes)
       entries = []
@@ -412,7 +482,11 @@ module CRP56
       entries
     end
 
+    ##
     # Normalizes a restored file name so it is safe to write on disk.
+    #
+    # Path components are removed and suspicious names fall back to the provided
+    # safe name.
     def sanitize_file_name(name, fallback_name)
       cleaned = File.basename(name.tr("\\", "/"))
       return fallback_name if cleaned.empty? || cleaned == "." || cleaned == ".."
@@ -420,6 +494,7 @@ module CRP56
       cleaned
     end
 
+    ##
     # Ensures encrypted file names end in +.crp56+.
     def normalize_encrypted_output_path(path)
       return path if path.to_s.downcase.end_with?(ENCRYPTED_EXTENSION)
@@ -431,6 +506,7 @@ module CRP56
       dir == "." ? normalized : File.join(dir, normalized)
     end
 
+    ##
     # Resolves name collisions by appending a numeric suffix.
     def resolve_collision(path, taken)
       candidate = path
@@ -448,6 +524,7 @@ module CRP56
       candidate
     end
 
+    ##
     # Validates that the source and output folders are usable and separate.
     def validate_folder_pair!(source_folder, output_folder)
       validate_source_folder!(source_folder)
@@ -463,25 +540,29 @@ module CRP56
       [source_root, output_root]
     end
 
-    # Validates a file path before reading it.
+    ##
+    # Validates that a source file exists and is a regular file.
     def validate_source_file!(path)
       raise ArgumentError, "Source file path cannot be nil or empty." if blank?(path)
       raise ArgumentError, "Source file was not found: #{path}" unless File.exist?(path)
       raise ArgumentError, "Source path is not a file: #{path}" unless File.file?(path)
     end
 
-    # Validates a folder path before walking it.
+    ##
+    # Validates that a source folder exists and is a directory.
     def validate_source_folder!(path)
       raise ArgumentError, "Source folder path cannot be nil or empty." if blank?(path)
       raise ArgumentError, "Source folder was not found: #{path}" unless File.exist?(path)
       raise ArgumentError, "Source path is not a folder: #{path}" unless File.directory?(path)
     end
 
+    ##
     # Validates that an output path is present.
     def validate_output_path!(path)
       raise ArgumentError, "Output file path cannot be nil or empty." if blank?(path)
     end
 
+    ##
     # Creates the destination directory for a file path if needed.
     def ensure_output_directory!(path)
       dir = File.dirname(path)
@@ -490,6 +571,7 @@ module CRP56
       FileUtils.mkdir_p(dir)
     end
 
+    ##
     # Returns true when a string-like value is nil, empty, or whitespace.
     def blank?(value)
       value.nil? || value.to_s.strip.empty?
