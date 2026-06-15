@@ -1,14 +1,13 @@
-
 # frozen_string_literal: true
 
 require "fileutils"
 require "tmpdir"
+require "pathname"
 
 require_relative "lib/errors"
 require_relative "lib/constants"
 require_relative "lib/config"
-require_relative "lib/phrase_store"
-require_relative "lib/embedded_phrase_store"
+require_relative "lib/embedded_phrase_storage"
 require_relative "lib/header"
 require_relative "lib/payload"
 require_relative "lib/compression"
