@@ -308,16 +308,35 @@ function bindSelectionZones()
     {
         folderZone.addEventListener('click', async () =>
         {
-            const result = await window.crp56.pickFolder();
+            let result;
+            if (isDecryptPage)
+            {
+                // WinRAR-style: on the decrypt page the folder tab selects the
+                // single encrypted ARCHIVE FILE (.crp56) to extract, not a directory.
+                result = await window.crp56.pickFile({
+                    title: 'Select Encrypted Archive to Extract',
+                    properties: ['openFile'],
+                    filters: [
+                        { name: 'CRP56 Encrypted Archive', extensions: ['crp56'] },
+                        { name: 'All Files', extensions: ['*'] }
+                    ]
+                });
+            }
+            else
+            {
+                // Encrypt page: select the SOURCE folder to archive.
+                result = await window.crp56.pickFolder();
+            }
             if (result.canceled) return;
             selectedEncryptedFolder = result.filePaths[0];
             if (folderList)
             {
                 folderList.style.display = 'block';
-                folderList.innerText = `📂 ${selectedEncryptedFolder}`;
+                const icon = isDecryptPage ? '🗄️' : '📂';
+                folderList.innerText = `${icon} ${selectedEncryptedFolder}`;
             }
             playSfx('cursor');
-            log('Encrypted folder selected:', selectedEncryptedFolder);
+            log(isDecryptPage ? 'Encrypted archive selected:' : 'Source folder selected:', selectedEncryptedFolder);
         });
     }
 }
@@ -366,7 +385,7 @@ function bindPageActions()
             else if (activeTab === 'folder')
             {
                 if (!selectedEncryptedFolder) { playSfx('error'); return show({ ok: false, error: 'No folder selected' }); }
-                const saveRes = await window.crp56.pickFolder({ title: 'Select Output Folder for Encrypted Files', properties: ['openDirectory', 'createDirectory'] });
+                const saveRes = await window.crp56.pickFolder({ title: 'Select Output Folder for the Encrypted Archive', properties: ['openDirectory', 'createDirectory'] });
                 if (saveRes.canceled) return;
                 selectedFolderOutput = saveRes.filePaths[0];
                 await runAction('encrypt_folder', () => window.crp56.encryptFolder(passphrase, selectedEncryptedFolder, selectedFolderOutput));
@@ -397,8 +416,10 @@ function bindPageActions()
             }
             else if (activeTab === 'folder')
             {
-                if (!selectedEncryptedFolder) { playSfx('error'); return show({ ok: false, error: 'No encrypted folder selected' }); }
-                const saveRes = await window.crp56.pickFolder({ title: 'Select Output Folder for Decrypted Files', properties: ['openDirectory', 'createDirectory'] });
+                // WinRAR-style: selectedEncryptedFolder holds the .crp56 ARCHIVE FILE
+                // chosen via the file picker. The Ruby backend extracts the full tree.
+                if (!selectedEncryptedFolder) { playSfx('error'); return show({ ok: false, error: 'No encrypted archive (.crp56) selected' }); }
+                const saveRes = await window.crp56.pickFolder({ title: 'Select Output Folder to Extract Into', properties: ['openDirectory', 'createDirectory'] });
                 if (saveRes.canceled) return;
                 selectedFolderOutput = saveRes.filePaths[0];
                 await runAction('decrypt_folder', () => window.crp56.decryptFolder(passphrase, selectedEncryptedFolder, selectedFolderOutput));
