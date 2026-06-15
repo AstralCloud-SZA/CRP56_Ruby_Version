@@ -1,18 +1,19 @@
 # CRP56 Ruby + Electron Version
 
-CRP56 is now being rebuilt as a **private Ruby core + Electron desktop application**. The project is no longer being structured as a Ruby gem. Instead, it uses a plain Ruby codebase inside the repository for encryption, compression, phrase handling, and file operations, while Electron provides the desktop UI and application shell.[1][2]
+CRP56 is being rebuilt as a **private Ruby core + Electron desktop app**. It is no longer being treated as a Ruby gem. Instead, the repo now holds a plain Ruby codebase for encryption, compression, phrase handling, and file operations, while Electron provides the desktop UI and shell around it.
 
-This change is aimed at making the project easier to build in RubyMine, easier to maintain as a personal tool, and easier to style as a modern desktop application.[1][3]
+This shift makes the project easier to open in RubyMine, easier to maintain as a personal tool, and easier to style into something that feels more like a custom desktop app than a packaged library.
 
 ## Project direction
 
-The original WPF version is now considered the legacy build. The new direction is:
+The old WPF build is now the legacy version. The new direction is:
 
-- a **private Ruby core** for the actual encryption and compression logic,[1][4]
-- an **Electron frontend** for the desktop experience and interface,[3][5]
-- and a **private bridge layer** that lets Electron communicate with the Ruby process safely.[2][6]
+- a **private Ruby core** for the encryption and compression logic,
+- an **Electron frontend** for the desktop interface,
+- a **private bridge layer** that lets Electron talk to Ruby safely,
+- and **FMOD audio** for sound effects and music playback.
 
-This architecture keeps the business logic separate from the interface and avoids tying the core engine to one UI framework.[3][1]
+That setup keeps the real logic separate from the UI and avoids tying the core engine to one front end.
 
 ## Project structure
 
@@ -38,36 +39,43 @@ crp56/
 │   │   ├── index.html
 │   │   ├── styles.css
 │   │   └── app.js
-│   └── bridge/
-│       └── ruby_bridge.js
+│   ├── bridge/
+│   │   └── ruby_bridge.js
+│   ├── audio/
+│   │   ├── sfx/
+│   │   └── music/
+│   └── fmod/
+│       └── (FMOD runtime integration files)
 │
 └── README.md
 ```
 
-The `ruby-core` folder contains the private application logic. The `electron-app` folder contains the UI and desktop runtime. Electron should talk to Ruby through a controlled bridge instead of putting crypto logic in the renderer.[1][2][5]
+The `ruby-core` folder is where the private app logic lives. The `electron-app` folder handles the interface, the desktop runtime, and the audio layer. Electron talks to Ruby through a controlled bridge instead of putting crypto logic in the renderer.
 
-## Why this setup
+## Why I built it this way
 
-This project is a personal encryption and compression tool, so it does not need to be packaged as a public gem or designed as a shared library for outside users.[1] A plain Ruby structure is enough for a private application and keeps development straightforward inside RubyMine.[1][7]
+This is a personal encryption and compression tool, so it does not need to be packaged as a public gem or built for other people to consume. A plain Ruby structure is enough for a private project, and it keeps development pretty straightforward inside RubyMine.
 
-Electron is being used because it gives much more flexibility for layout, styling, navigation, and desktop UX than the previous WPF version.[3] Using Electron’s multi-process architecture also makes it easier to isolate the UI from the Ruby backend logic.[3][2]
+Electron is a better fit for the kind of desktop UI I want here. It gives more room for layout, styling, navigation, and overall feel than the older WPF version, and its multi-process setup makes it easier to keep the interface separate from the Ruby backend.
+
+FMOD is being used for audio so the app can handle UI sound effects, music playback, mixer groups, and volume control without pushing audio logic into the Ruby core. That keeps sound as part of the desktop layer instead of the encryption engine itself.
 
 ## Ruby core responsibilities
 
 The Ruby side is the source of truth for:
 
-- text encryption and decryption,[4]
-- file encryption and decryption,[4]
+- text encryption and decryption,
+- file encryption and decryption,
 - compression and decompression,
 - phrase storage and lookup,
 - payload formatting,
 - and error handling.
 
-The Ruby core should stay independent from Electron-specific concerns. It should not contain any UI code, renderer logic, or window management.[1][5]
+The Ruby core should stay independent from Electron-specific concerns. It should not contain UI code, renderer logic, window management, or audio playback code.
 
 ## Example Ruby layout
 
-A simple plain-Ruby entry point can load files directly from `lib/`:
+A plain Ruby entry point can load files directly from `lib/`:
 
 ```ruby
 # ruby-core/main.rb
@@ -87,19 +95,48 @@ require 'crypto'
 require 'file_crypto'
 ```
 
-Ruby’s OpenSSL support is available through the standard/default library, so encryption logic can be built directly in the private Ruby core without introducing a gem-based package layer.[4][8]
+Ruby's OpenSSL support is available through the standard/default library, so encryption logic can live directly in the private Ruby core without needing a gem-based package layer.
 
 ## Electron responsibilities
 
-The Electron application is responsible for:
+The Electron app handles:
 
-- launching the desktop window,[3]
+- launching the desktop window,
 - loading the renderer UI,
-- exposing a safe API through `preload.js`,[2][5]
+- exposing a safe API through `preload.js`,
 - sending requests to Ruby,
-- and displaying encryption, compression, and file results.
+- showing encryption, compression, and file results,
+- and coordinating desktop audio playback through FMOD.
 
-The Electron renderer should not directly access system-level functionality. That work should stay behind the preload and main-process boundary.[2][5]
+The renderer should not directly touch system-level functionality. That belongs behind the preload and main-process boundary.
+
+## FMOD audio handling
+
+FMOD is the desktop audio engine for CRP56.
+
+It handles:
+
+- UI sound categories like cursor, confirm, back, and error,
+- music playback separately from sound effects,
+- mixer groups like master, SFX, and music,
+- mute and volume controls from the Electron UI,
+- and audio playback outside the Ruby core.
+
+The intended audio flow is:
+
+```text
+Renderer UI interaction
+   ↓
+preload.js audio bridge
+   ↓
+Electron main process
+   ↓
+FMOD audio layer
+   ↓
+SFX / music playback
+```
+
+That keeps audio secure and nicely separated, the same way the Ruby bridge keeps the app logic under control.
 
 ## Bridge flow
 
@@ -117,13 +154,13 @@ Ruby bridge process
 CRP56 Ruby core
 ```
 
-This keeps the UI responsive, keeps the logic organized, and follows Electron’s recommended security model based on isolated contexts and controlled bridging.[3][2][5]
+This keeps the UI responsive, keeps the logic organized, and follows Electron's recommended security model with isolated contexts and controlled bridging.
 
 ## Development workflow
 
 ### Ruby side
 
-Open the `ruby-core/` project in RubyMine and work directly with the plain Ruby files. No gem packaging is required for the private core.[1][7]
+Open the `ruby-core/` folder in RubyMine and work directly with the plain Ruby files. No gem packaging is required for the private core.
 
 Typical workflow:
 
@@ -132,7 +169,7 @@ cd ruby-core
 ruby main.rb
 ```
 
-You can also add simple local scripts for testing text encryption, file encryption, compression, and phrase storage.
+I can also add small local scripts later for testing text encryption, file encryption, compression, and phrase storage.
 
 ### Electron side
 
@@ -144,36 +181,52 @@ npm install
 npm run dev
 ```
 
-Electron should start the Ruby bridge from the main process and exchange JSON messages over stdin/stdout or another private IPC layer.[6][9]
+Electron should start the Ruby bridge from the main process and exchange JSON messages over stdin/stdout or another private IPC layer.
+
+### Audio side
+
+FMOD should be initialized from the Electron main process, not from the renderer and not from the Ruby core.
+
+Typical responsibilities include:
+
+- loading sound assets from local app folders,
+- creating master, SFX, and music routing groups,
+- responding to preload-exposed audio commands,
+- and updating mixer state during the app session.
+
+That keeps the audio behavior centralized and easier to debug.
 
 ## Migration goals
 
-The migration from the older application into the new Ruby + Electron version is planned in stages:
+The migration from the older app into the new Ruby + Electron version is happening in stages:
 
 1. Rebuild the encryption logic in plain Ruby.
 2. Rebuild the compression logic in plain Ruby.
 3. Recreate the file format and payload handling.
 4. Add phrase storage and utility helpers.
 5. Connect the Ruby core to Electron through the bridge.
-6. Replace the old UI with the new desktop interface.
+6. Integrate FMOD audio into the Electron shell.
+7. Replace the old UI with the new desktop interface.
 
-This staged approach helps keep the rewrite manageable and reduces the risk of breaking behavior while the project transitions away from the legacy app.[10][11]
+That staged approach keeps the rewrite manageable and lowers the risk of breaking behavior while the project moves away from the legacy build.
 
 ## Status
 
 Current direction:
 
-- WPF version is legacy.
-- Ruby is now the core implementation language.
+- WPF is the legacy version.
+- Ruby is the core implementation language.
 - Electron is the new desktop shell.
+- FMOD handles desktop audio playback and mixer control.
 - RubyMine is the main IDE.
-- The Ruby core is private and kept inside the application repository.
+- The Ruby core stays private inside the repository.
 
 ## Notes
 
-- Keep the file and encryption format versioned from the beginning so future updates remain readable.[10][11]
-- Keep the Ruby core separate from Electron UI code for maintainability.[1][5]
-- Treat Electron as the presentation layer and Ruby as the logic layer.[3][2]
+- Keep the file and encryption format versioned from the beginning so future updates stay readable.
+- Keep the Ruby core separate from Electron UI code for maintainability.
+- Treat Electron as the presentation layer and Ruby as the logic layer.
+- Treat FMOD as part of the Electron desktop infrastructure, not part of the Ruby encryption core.
 
 ## License
 
