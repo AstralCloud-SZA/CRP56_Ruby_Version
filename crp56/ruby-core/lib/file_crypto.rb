@@ -487,14 +487,14 @@ module CRP56
     # Resolves name collisions by appending a numeric suffix.
     def resolve_collision(path, taken)
       candidate = path
-      counter   = 2
+      version = 1
 
       while taken.include?(candidate) || File.exist?(candidate)
-        dir       = File.dirname(path)
-        ext       = File.extname(path)
-        stem      = File.basename(path, ".*")
-        candidate = File.join(dir, "#{stem} (#{counter})#{ext}")
-        counter  += 1
+        dir  = File.dirname(path)
+        ext  = File.extname(path)
+        stem = File.basename(path, ext)
+        candidate = File.join(dir, "#{stem}_ver#{version}#{ext}")
+        version += 1
       end
 
       taken << candidate

@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="path and requirement patches">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="small decryption TWEAK" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -46,61 +44,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0029343812221179" />
-      <entry key="MS500" value="1.993181201145667" />
-      <entry key="S2" value="5.4267735443768" />
-      <entry key="S5" value="7.964256735332877" />
-      <entry key="S10" value="10.54937083469811" />
-      <entry key="S30" value="14.523357738876259" />
-      <entry key="S60" value="16.195282653749857" />
-      <entry key="M2" value="17.723971870377127" />
-      <entry key="M5" value="24.82685717649778" />
-      <entry key="M10" value="38.35554028026842" />
-      <entry key="M15" value="48.59583322831105" />
-      <entry key="M30" value="70.81440557230394" />
-      <entry key="H1" value="116.96865379556685" />
-      <entry key="H2" value="216.9704666582145" />
-      <entry key="H4" value="370.62424576020544" />
-      <entry key="D1" value="713.2896178392376" />
-      <entry key="W1" value="818.3699540746295" />
+      <entry key="MS100" value="1.0334930605170802" />
+      <entry key="MS500" value="1.5499498855142064" />
+      <entry key="S2" value="2.653491428639237" />
+      <entry key="S5" value="4.167223344944954" />
+      <entry key="S10" value="5.268917901752457" />
+      <entry key="S30" value="6.332460292755327" />
+      <entry key="S60" value="6.653311879646678" />
+      <entry key="M2" value="6.823293766480358" />
+      <entry key="M5" value="6.970634708006611" />
+      <entry key="M10" value="8.544378784494707" />
+      <entry key="M15" value="12.773016842148682" />
+      <entry key="M30" value="31.446113626332725" />
+      <entry key="H1" value="75.73567552985884" />
+      <entry key="H2" value="173.3290478689515" />
+      <entry key="H4" value="331.50356771792167" />
+      <entry key="D1" value="704.6651401298446" />
+      <entry key="W1" value="822.7846959779058" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
-      <entry key="S2" value="1.0402195557363572E-85" />
-      <entry key="S5" value="1.0158977667978458E-34" />
-      <entry key="S10" value="1.0079175927200152E-17" />
-      <entry key="S30" value="2.1777383096293767E-6" />
-      <entry key="S60" value="0.0017241576970236342" />
-      <entry key="M2" value="0.06979021444491772" />
-      <entry key="M5" value="0.8449026541748048" />
-      <entry key="M10" value="2.034557671847782" />
-      <entry key="M15" value="2.7401730378642575" />
-      <entry key="M30" value="3.727724086317612" />
-      <entry key="H1" value="4.5892402005294155" />
-      <entry key="H2" value="5.808959050489099" />
-      <entry key="H4" value="8.092193091162372" />
-      <entry key="D1" value="15.6309550959587" />
-      <entry key="W1" value="18.452192460329886" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="6.241734848881409E-201" />
+      <entry key="S10" value="7.900465496275266E-101" />
+      <entry key="S30" value="4.32595080283082E-34" />
+      <entry key="S60" value="2.430048423111181E-17" />
+      <entry key="M2" value="8.285400458723613E-9" />
+      <entry key="M5" value="0.0014342150084843404" />
+      <entry key="M10" value="0.08382504576060479" />
+      <entry key="M15" value="0.3268741058652843" />
+      <entry key="M30" value="1.2874934390551551" />
+      <entry key="H1" value="2.6970650522595463" />
+      <entry key="H2" value="4.45321467100778" />
+      <entry key="H4" value="7.085229059667119" />
+      <entry key="D1" value="15.288567386783601" />
+      <entry key="W1" value="18.393902172288705" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.975491222278704" />
-      <entry key="MS500" value="1.9812622379756921" />
-      <entry key="S2" value="5.418295390671865" />
-      <entry key="S5" value="7.959282314550235" />
-      <entry key="S10" value="10.54610579186928" />
-      <entry key="S30" value="14.5218769751522" />
-      <entry key="S60" value="16.196151125444054" />
-      <entry key="M2" value="17.79275858987263" />
-      <entry key="M5" value="25.668706183853974" />
-      <entry key="M10" value="40.386343135162655" />
-      <entry key="M15" value="51.332559181251604" />
-      <entry key="M30" value="74.53967045356981" />
-      <entry key="H1" value="121.55623203450654" />
-      <entry key="H2" value="222.77816798569526" />
-      <entry key="H4" value="378.71541927373187" />
-      <entry key="D1" value="728.9202237360671" />
-      <entry key="W1" value="836.8220879331323" />
+      <entry key="MS100" value="0.9920679026239999" />
+      <entry key="MS500" value="1.5393835244616998" />
+      <entry key="S2" value="2.64948086915452" />
+      <entry key="S5" value="4.164679486770456" />
+      <entry key="S10" value="5.267283786419727" />
+      <entry key="S30" value="6.331796525047341" />
+      <entry key="S60" value="6.652961865073721" />
+      <entry key="M2" value="6.823113951307775" />
+      <entry key="M5" value="6.97199061613351" />
+      <entry key="M10" value="8.62801236552011" />
+      <entry key="M15" value="13.099455192201532" />
+      <entry key="M30" value="32.7327453972709" />
+      <entry key="H1" value="78.43175770304359" />
+      <entry key="H2" value="177.78129527583488" />
+      <entry key="H4" value="338.58790253263436" />
+      <entry key="D1" value="719.9533657098077" />
+      <entry key="W1" value="841.1785396968156" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -175,7 +173,7 @@
       <workItem from="1781289788961" duration="2674000" />
       <workItem from="1781356918690" duration="706000" />
       <workItem from="1781370031836" duration="6122000" />
-      <workItem from="1781547132681" duration="13081000" />
+      <workItem from="1781547132681" duration="13427000" />
     </task>
     <task id="LOCAL-00001" summary="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work">
       <option name="closed" value="true" />
@@ -505,7 +503,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781559679932</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="small decryption TWEAK">
+      <option name="closed" value="true" />
+      <created>1781562455972</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1781562455972</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -523,7 +529,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Updated and fixes made by the claude flame model" />
     <MESSAGE value="Updated and fixes made by the claude flame model 2" />
     <MESSAGE value="Updated and fixes made by the claude flame model 3" />
     <MESSAGE value="BG system work" />
@@ -548,6 +553,7 @@
     <MESSAGE value="decryption of folders fixes and crypto logic tweaks +new testing file" />
     <MESSAGE value="testing file" />
     <MESSAGE value="path and requirement patches" />
-    <option name="LAST_COMMIT_MESSAGE" value="path and requirement patches" />
+    <MESSAGE value="small decryption TWEAK" />
+    <option name="LAST_COMMIT_MESSAGE" value="small decryption TWEAK" />
   </component>
 </project>
