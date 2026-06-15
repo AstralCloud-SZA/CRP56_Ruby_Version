@@ -4,19 +4,26 @@ require "base64"
 require "fileutils"
 require "pathname"
 require "set"
+require "rubygems/package"
+require "stringio"
 
 module CRP56
   class FileCrypto
     ENCRYPTED_EXTENSION = ".crp56"
 
-    # File envelope: the original filename travels INSIDE the encrypted payload
-    # so the encrypted file can be renamed to "stem.crp56" without losing the
-    # original extension. Layout (before encryption):
+    # File envelope layout (before encryption):
     #   [4 bytes magic "CRPF"][1 byte version][2 bytes name length (big-endian)]
     #   [name bytes UTF-8][file content bytes]
-    FILE_MAGIC = "CRPF".b
+    FILE_MAGIC          = "CRPF".b
     FILE_FORMAT_VERSION = 1
-    FILE_HEADER_SIZE = 7
+    FILE_HEADER_SIZE    = 7
+
+    # Folder envelope layout (before final encryption):
+    #   [4 bytes magic "CRPD"][1 byte version][2 bytes name length (big-endian)]
+    #   [name bytes UTF-8][tar bytes containing individually-encrypted .crp56 entries]
+    FOLDER_MAGIC          = "CRPD".b
+    FOLDER_FORMAT_VERSION = 1
+    FOLDER_HEADER_SIZE    = 7
 
     attr_reader :cipher
 
@@ -29,7 +36,7 @@ module CRP56
     def encrypt_text_to_base64(plain_text, user_passphrase)
       raise ArgumentError, "Plain text cannot be nil or empty." if blank?(plain_text)
 
-      plain_bytes = plain_text.encode("UTF-8").b
+      plain_bytes     = plain_text.encode("UTF-8").b
       encrypted_bytes = encrypt_bytes(plain_bytes, user_passphrase)
 
       Base64.strict_encode64(encrypted_bytes)
@@ -94,10 +101,7 @@ module CRP56
 
       output_file_path = normalize_encrypted_output_path(output_file_path)
 
-      envelope = build_file_envelope(
-        File.basename(source_file_path),
-        File.binread(source_file_path)
-      )
+      envelope        = build_file_envelope(File.basename(source_file_path), File.binread(source_file_path))
       encrypted_bytes = encrypt_bytes(envelope, user_passphrase, progress: progress)
 
       ensure_output_directory!(output_file_path)
@@ -114,7 +118,7 @@ module CRP56
       validate_source_file!(encrypted_file_path)
       validate_output_path!(output_target)
 
-      payload = decrypt_file_bytes(encrypted_file_path, user_passphrase, progress: progress)
+      payload       = decrypt_file_bytes(encrypted_file_path, user_passphrase, progress: progress)
       fallback_name = File.basename(encrypted_file_path).sub(/#{Regexp.escape(ENCRYPTED_EXTENSION)}\z/i, "")
       original_name, content = parse_file_envelope(payload, fallback_name)
 
@@ -131,11 +135,15 @@ module CRP56
       output_path
     end
 
-    # Encrypts every file inside source_folder (recursively) into output_folder,
-    # preserving the relative directory structure. Each file becomes
-    # "stem.crp56" (docs/test1.png -> docs/test1.crp56); the original name is
-    # stored inside the payload. Name clashes (test1.png + test1.txt) get a
-    # " (2)" suffix. Returns the encrypted file paths that were written.
+    # Encrypts every file inside source_folder (recursively).
+    #
+    # Pass 1 — each file is individually wrapped in a file envelope and
+    #           encrypted, producing an in-memory .crp56 blob per file.
+    # Pass 2 — all blobs are bundled into an in-memory tar archive, wrapped
+    #           in a folder envelope, and encrypted one final time into a
+    #           single  <folder_name>.crp56  file written to output_folder.
+    #
+    # progress: called once per file during Pass 1 with (current, total, relative_path).
     def encrypt_folder_to_path(source_folder, output_folder, user_passphrase, progress: nil)
       source_root, output_root = validate_folder_pair!(source_folder, output_folder)
 
@@ -144,83 +152,127 @@ module CRP56
 
       taken = Set.new
 
-      files.each_with_index.map do |file, index|
+      # --- Pass 1: encrypt each file into memory ---
+      staged = files.each_with_index.map do |file, index|
         relative = Pathname.new(file).relative_path_from(source_root)
-        stem = File.basename(file, ".*")
-        rel_dir = File.dirname(relative.to_s)
+        stem     = File.basename(file, ".*")
+        rel_dir  = File.dirname(relative.to_s)
 
-        candidate = output_root.join(rel_dir == "." ? "" : rel_dir, "#{stem}#{ENCRYPTED_EXTENSION}").to_s
-        output_path = resolve_collision(candidate, taken)
+        candidate    = output_root.join(rel_dir == "." ? "" : rel_dir, "#{stem}#{ENCRYPTED_EXTENSION}").to_s
+        entry_path   = resolve_collision(candidate, taken)
+        tar_entry_name = Pathname.new(entry_path).relative_path_from(output_root).to_s
 
-        envelope = build_file_envelope(File.basename(file), File.binread(file))
-        ensure_output_directory!(output_path)
-        File.binwrite(output_path, encrypt_bytes(envelope, user_passphrase))
+        envelope        = build_file_envelope(File.basename(file), File.binread(file))
+        encrypted_bytes = encrypt_bytes(envelope, user_passphrase)
 
         progress&.call(index + 1, files.length, relative.to_s)
 
-        output_path
+        { tar_name: tar_entry_name, bytes: encrypted_bytes }
       end
+
+      # --- Pass 2: bundle into tar → wrap in folder envelope → encrypt → write ---
+      tar_bytes       = build_folder_tar(staged)
+      folder_name     = source_root.basename.to_s
+      folder_envelope = build_folder_envelope(folder_name, tar_bytes)
+      final_encrypted = encrypt_bytes(folder_envelope, user_passphrase)
+
+      FileUtils.mkdir_p(output_root.to_s)
+      final_output = File.join(output_root.to_s, "#{folder_name}#{ENCRYPTED_EXTENSION}")
+      File.binwrite(final_output, final_encrypted)
+
+      final_output
     end
 
-    # Decrypts every .crp56 file inside source_folder (recursively) into
-    # output_folder, restoring each file's original name and extension from
-    # the envelope. Returns the decrypted file paths that were written.
+    # Decrypts a folder .crp56 produced by encrypt_folder_to_path.
+    #
+    # Reverse Pass 2 — decrypt the outer blob → parse folder envelope → untar
+    #                   to get the individual encrypted blobs back in memory.
+    # Reverse Pass 1 — decrypt each blob → parse file envelope → restore the
+    #                   original filename and write to output_folder, mirroring
+    #                   the original directory structure.
+    #
+    # Also handles legacy archives where the folder was not double-encrypted
+    # (plain per-file .crp56 files sitting inside source_folder on disk).
+    #
+    # progress: called once per file during Reverse Pass 1 with
+    #           (current, total, original_filename).
     def decrypt_folder_to_path(source_folder, output_folder, user_passphrase, progress: nil)
       source_root, output_root = validate_folder_pair!(source_folder, output_folder)
 
       encrypted_files = Dir.glob(File.join(source_root.to_s, "**", "*#{ENCRYPTED_EXTENSION}"))
                            .select { |p| File.file?(p) }
+      raise ArgumentError, "No #{ENCRYPTED_EXTENSION} files found in: #{source_folder}" if encrypted_files.empty?
 
-      if encrypted_files.empty?
-        raise ArgumentError, "No #{ENCRYPTED_EXTENSION} files found in: #{source_folder}"
+      taken   = Set.new
+      written = []
+
+      encrypted_files.each_with_index do |file, file_index|
+        outer_payload = decrypt_bytes(File.binread(file), user_passphrase)
+
+        if folder_envelope?(outer_payload)
+          # --- Modern double-encrypted format ---
+          _folder_name, tar_bytes = parse_folder_envelope(outer_payload)
+          staged = extract_folder_tar_to_memory(tar_bytes)
+
+          staged.each_with_index do |entry, i|
+            inner_payload = decrypt_bytes(entry[:bytes], user_passphrase)
+            fallback_name = File.basename(entry[:tar_name]).sub(/#{Regexp.escape(ENCRYPTED_EXTENSION)}\z/i, "")
+            original_name, content = parse_file_envelope(inner_payload, fallback_name)
+
+            rel_dir   = File.dirname(entry[:tar_name])
+            candidate = output_root.join(rel_dir == "." ? "" : rel_dir, original_name).to_s
+            out_path  = resolve_collision(candidate, taken)
+
+            ensure_output_directory!(out_path)
+            File.binwrite(out_path, content)
+            written << out_path
+
+            progress&.call(i + 1, staged.length, original_name)
+          end
+        else
+          # --- Legacy format: single per-file blob, no outer tar ---
+          fallback_name = File.basename(file).sub(/#{Regexp.escape(ENCRYPTED_EXTENSION)}\z/i, "")
+          original_name, content = parse_file_envelope(outer_payload, fallback_name)
+
+          relative = Pathname.new(file).relative_path_from(source_root)
+          rel_dir  = File.dirname(relative.to_s)
+
+          candidate = output_root.join(rel_dir == "." ? "" : rel_dir, original_name).to_s
+          out_path  = resolve_collision(candidate, taken)
+
+          ensure_output_directory!(out_path)
+          File.binwrite(out_path, content)
+          written << out_path
+
+          progress&.call(file_index + 1, encrypted_files.length, original_name)
+        end
       end
 
-      taken = Set.new
-
-      encrypted_files.each_with_index.map do |file, index|
-        payload = decrypt_bytes(File.binread(file), user_passphrase)
-        fallback_name = File.basename(file).sub(/#{Regexp.escape(ENCRYPTED_EXTENSION)}\z/i, "")
-        original_name, content = parse_file_envelope(payload, fallback_name)
-
-        relative = Pathname.new(file).relative_path_from(source_root)
-        rel_dir = File.dirname(relative.to_s)
-
-        candidate = output_root.join(rel_dir == "." ? "" : rel_dir, original_name).to_s
-        output_path = resolve_collision(candidate, taken)
-
-        ensure_output_directory!(output_path)
-        File.binwrite(output_path, content)
-
-        progress&.call(index + 1, encrypted_files.length, relative.to_s)
-
-        output_path
-      end
+      written
     end
 
     private
+
+    # -----------------------------------------------------------------------
+    # File envelope
+    # -----------------------------------------------------------------------
 
     def build_file_envelope(original_name, content)
       name_bytes = original_name.encode("UTF-8").b
       raise ArgumentError, "File name is too long." if name_bytes.bytesize > 65_535
 
-      FILE_MAGIC +
-        [FILE_FORMAT_VERSION].pack("C") +
-        [name_bytes.bytesize].pack("n") +
-        name_bytes +
-        content
+      FILE_MAGIC + [FILE_FORMAT_VERSION].pack("C") + [name_bytes.bytesize].pack("n") + name_bytes + content
     end
 
     def parse_file_envelope(payload, fallback_name)
-      if payload.bytesize > FILE_HEADER_SIZE &&
-         payload.byteslice(0, 4) == FILE_MAGIC &&
-         payload.getbyte(4) == FILE_FORMAT_VERSION
+      if payload.bytesize > FILE_HEADER_SIZE && payload.byteslice(0, 4) == FILE_MAGIC && payload.getbyte(4) == FILE_FORMAT_VERSION
 
         name_length = payload.byteslice(5, 2).unpack1("n")
         data_offset = FILE_HEADER_SIZE + name_length
 
         if payload.bytesize >= data_offset
-          name = payload.byteslice(FILE_HEADER_SIZE, name_length).force_encoding("UTF-8")
-          name = fallback_name unless name.valid_encoding? && !name.strip.empty?
+          name    = payload.byteslice(FILE_HEADER_SIZE, name_length).force_encoding("UTF-8")
+          name    = fallback_name unless name.valid_encoding? && !name.strip.empty?
           content = payload.byteslice(data_offset, payload.bytesize - data_offset)
           return [sanitize_file_name(name, fallback_name), content]
         end
@@ -230,8 +282,67 @@ module CRP56
       [fallback_name, payload]
     end
 
-    # The embedded name is data from inside a container - never let it escape
-    # the destination directory or smuggle path separators.
+    # -----------------------------------------------------------------------
+    # Folder envelope
+    # -----------------------------------------------------------------------
+
+    def build_folder_envelope(folder_name, tar_bytes)
+      name_bytes = folder_name.encode("UTF-8").b
+      raise ArgumentError, "Folder name is too long." if name_bytes.bytesize > 65_535
+
+      FOLDER_MAGIC +
+        [FOLDER_FORMAT_VERSION].pack("C") +
+        [name_bytes.bytesize].pack("n") +
+        name_bytes +
+        tar_bytes
+    end
+
+    def folder_envelope?(payload)
+      payload.bytesize > FOLDER_HEADER_SIZE &&
+        payload.byteslice(0, 4) == FOLDER_MAGIC &&
+        payload.getbyte(4) == FOLDER_FORMAT_VERSION
+    end
+
+    def parse_folder_envelope(payload)
+      name_length = payload.byteslice(5, 2).unpack1("n")
+      data_offset = FOLDER_HEADER_SIZE + name_length
+      name        = payload.byteslice(FOLDER_HEADER_SIZE, name_length).force_encoding("UTF-8")
+      tar_bytes   = payload.byteslice(data_offset, payload.bytesize - data_offset)
+      [name, tar_bytes]
+    end
+
+    # -----------------------------------------------------------------------
+    # Tar helpers (in-memory only, no disk I/O)
+    # -----------------------------------------------------------------------
+
+    # staged: array of { tar_name: String, bytes: binary String }
+    def build_folder_tar(staged)
+      buf = StringIO.new("".b)
+      Gem::Package::TarWriter.new(buf) do |tar|
+        staged.each do |entry|
+          tar.add_file(entry[:tar_name], 0o644) { |f| f.write(entry[:bytes]) }
+        end
+      end
+      buf.string
+    end
+
+    # Returns array of { tar_name: String, bytes: binary String }
+    def extract_folder_tar_to_memory(tar_bytes)
+      entries = []
+      Gem::Package::TarReader.new(StringIO.new(tar_bytes)) do |tar|
+        tar.each do |entry|
+          next unless entry.file?
+
+          entries << { tar_name: entry.full_name, bytes: entry.read }
+        end
+      end
+      entries
+    end
+
+    # -----------------------------------------------------------------------
+    # Shared helpers
+    # -----------------------------------------------------------------------
+
     def sanitize_file_name(name, fallback_name)
       cleaned = File.basename(name.tr("\\", "/"))
       return fallback_name if cleaned.empty? || cleaned == "." || cleaned == ".."
@@ -239,13 +350,11 @@ module CRP56
       cleaned
     end
 
-    # "test1.png" -> "test1.crp56", "test1" -> "test1.crp56",
-    # already ".crp56" -> unchanged.
     def normalize_encrypted_output_path(path)
       return path if path.to_s.downcase.end_with?(ENCRYPTED_EXTENSION)
 
-      dir = File.dirname(path)
-      stem = File.basename(path, ".*")
+      dir        = File.dirname(path)
+      stem       = File.basename(path, ".*")
       normalized = "#{stem}#{ENCRYPTED_EXTENSION}"
 
       dir == "." ? normalized : File.join(dir, normalized)
@@ -253,14 +362,14 @@ module CRP56
 
     def resolve_collision(path, taken)
       candidate = path
-      counter = 2
+      counter   = 2
 
       while taken.include?(candidate) || File.exist?(candidate)
-        dir = File.dirname(path)
-        ext = File.extname(path)
-        stem = File.basename(path, ".*")
+        dir       = File.dirname(path)
+        ext       = File.extname(path)
+        stem      = File.basename(path, ".*")
         candidate = File.join(dir, "#{stem} (#{counter})#{ext}")
-        counter += 1
+        counter  += 1
       end
 
       taken << candidate
@@ -268,6 +377,7 @@ module CRP56
     end
 
     def validate_folder_pair!(source_folder, output_folder)
+
       validate_source_folder!(source_folder)
       raise ArgumentError, "Output folder cannot be nil or empty." if blank?(output_folder)
 

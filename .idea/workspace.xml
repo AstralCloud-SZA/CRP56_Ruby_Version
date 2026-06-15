@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="removed unsafe diagnostic elements">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="removed unsafe diagnostic elements 2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/fmod.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/fmod.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/ruby-core/lib/file_crypto.rb" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/ruby-core/lib/file_crypto.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,61 +47,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.5132322062370585" />
-      <entry key="MS500" value="4.168506876070989" />
-      <entry key="S2" value="6.606487102537637" />
-      <entry key="S5" value="7.492282256496688" />
-      <entry key="S10" value="8.634672232709045" />
-      <entry key="S30" value="12.276002845952956" />
-      <entry key="S60" value="15.387763646272337" />
-      <entry key="M2" value="20.66223082037315" />
-      <entry key="M5" value="33.783771325866624" />
-      <entry key="M10" value="48.952939374574555" />
-      <entry key="M15" value="61.20165224652942" />
-      <entry key="M30" value="93.77340772569663" />
-      <entry key="H1" value="146.05417117463273" />
-      <entry key="H2" value="225.51760966468922" />
-      <entry key="H4" value="327.6458775566248" />
-      <entry key="D1" value="519.0439041524369" />
-      <entry key="W1" value="571.4528575567069" />
+      <entry key="MS100" value="1.609372821222685" />
+      <entry key="MS500" value="4.196920157791535" />
+      <entry key="S2" value="6.603640058507093" />
+      <entry key="S5" value="7.3894552745248605" />
+      <entry key="S10" value="7.685223634698334" />
+      <entry key="S30" value="7.89692871417323" />
+      <entry key="S60" value="8.225676732247855" />
+      <entry key="M2" value="10.75780985438926" />
+      <entry key="M5" value="23.144150277903446" />
+      <entry key="M10" value="40.78162658124897" />
+      <entry key="M15" value="54.84665999000773" />
+      <entry key="M30" value="90.04358172325183" />
+      <entry key="H1" value="144.61498159132822" />
+      <entry key="H2" value="226.1087942986551" />
+      <entry key="H4" value="330.2190491713221" />
+      <entry key="D1" value="525.601108758322" />
+      <entry key="W1" value="579.2256619552546" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
-      <entry key="S5" value="1.4769045354684417E-259" />
-      <entry key="S10" value="3.843051568049068E-130" />
-      <entry key="S30" value="7.270407232071876E-44" />
-      <entry key="S60" value="2.696369268492703E-22" />
-      <entry key="M2" value="1.6420625044415013E-11" />
-      <entry key="M5" value="4.8546270755411485E-5" />
-      <entry key="M10" value="0.0069675363021681445" />
-      <entry key="M15" value="0.036489362748532664" />
-      <entry key="M30" value="0.19564542491206674" />
-      <entry key="H1" value="0.5654160557049108" />
-      <entry key="H2" value="1.6027959144056865" />
-      <entry key="H4" value="3.8365431967517765" />
-      <entry key="D1" value="9.763962959819736" />
-      <entry key="W1" value="11.647600508145846" />
+      <entry key="S5" value="1.9061564942437819E-280" />
+      <entry key="S10" value="1.3806362642795454E-140" />
+      <entry key="S30" value="2.398978885219757E-47" />
+      <entry key="S60" value="4.897937203782581E-24" />
+      <entry key="M2" value="2.2131283748988826E-12" />
+      <entry key="M5" value="2.177723023111462E-5" />
+      <entry key="M10" value="0.0046666220046644" />
+      <entry key="M15" value="0.02793284695339498" />
+      <entry key="M30" value="0.17117650622666025" />
+      <entry key="H1" value="0.5288778362963831" />
+      <entry key="H2" value="1.5501432805639395" />
+      <entry key="H4" value="3.77300082440947" />
+      <entry key="D1" value="9.73682260870278" />
+      <entry key="W1" value="11.642969818093825" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.4829934675106269" />
-      <entry key="MS500" value="4.152730463177838" />
-      <entry key="S2" value="6.600216943531779" />
-      <entry key="S5" value="7.489433851912317" />
-      <entry key="S10" value="8.633040319446128" />
-      <entry key="S30" value="12.27524038040593" />
-      <entry key="S60" value="15.387278206264693" />
-      <entry key="M2" value="20.66183592862313" />
-      <entry key="M5" value="33.78332788259417" />
-      <entry key="M10" value="48.95935162133184" />
-      <entry key="M15" value="61.2374450654893" />
-      <entry key="M30" value="93.96803258218709" />
-      <entry key="H1" value="146.61848405939224" />
-      <entry key="H2" value="227.11937096148614" />
-      <entry key="H4" value="331.48154848945575" />
-      <entry key="D1" value="528.8075959236812" />
-      <entry key="W1" value="583.1004140874884" />
+      <entry key="MS100" value="1.5699282407065547" />
+      <entry key="MS500" value="4.117761604056967" />
+      <entry key="S2" value="6.555928972521831" />
+      <entry key="S5" value="7.366336238484542" />
+      <entry key="S10" value="7.672888284752719" />
+      <entry key="S30" value="7.892633511015646" />
+      <entry key="S60" value="8.22349683787614" />
+      <entry key="M2" value="10.756665139493535" />
+      <entry key="M5" value="23.143513322011138" />
+      <entry key="M10" value="40.78570203255151" />
+      <entry key="M15" value="54.873913403823444" />
+      <entry key="M30" value="90.21379216234287" />
+      <entry key="H1" value="145.14279096951088" />
+      <entry key="H2" value="227.65791865959258" />
+      <entry key="H4" value="333.9911830333221" />
+      <entry key="D1" value="535.3376594079867" />
+      <entry key="W1" value="590.8685875957135" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -113,34 +113,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ruby.rubocop.migration.global.runOnSaveToExternalFormatter&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP&quot;: &quot;1781289850941&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;S:/CRP_56_EncryptionAPP/CRP56_MK2/crp56/electron-app/soundengine&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ruby.structure.view.model.defaults.configured&quot;: &quot;true&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;S:\\JetBrains\\RubyMine 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.ruby.rubocop.migration.global.runOnSaveToExternalFormatter": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP": "1781547190649",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "master",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "S:/CRP_56_EncryptionAPP/CRP56_MK2/crp56/electron-app/soundengine",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "ruby.structure.view.model.defaults.configured": "true",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "S:\\JetBrains\\RubyMine 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\soundengine" />
@@ -174,7 +174,8 @@
       <workItem from="1781259060203" duration="6264000" />
       <workItem from="1781289788961" duration="2674000" />
       <workItem from="1781356918690" duration="706000" />
-      <workItem from="1781370031836" duration="5477000" />
+      <workItem from="1781370031836" duration="6122000" />
+      <workItem from="1781547132681" duration="1472000" />
     </task>
     <task id="LOCAL-00001" summary="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work">
       <option name="closed" value="true" />
@@ -432,7 +433,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781374886183</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="removed unsafe diagnostic elements 2">
+      <option name="closed" value="true" />
+      <created>1781375605049</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1781375605049</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -450,7 +459,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Finished up ruby backend changes and started on Electron frontend work" />
     <MESSAGE value=".gitignore updates and starting Electron APP work" />
     <MESSAGE value="testing electron app RUBY -&gt; ELECTRON TEST" />
     <MESSAGE value="testing electron app RUBY -&gt; ELECTRON TEST 2" />
@@ -475,6 +483,7 @@
     <MESSAGE value="app.js fixes and reowrk" />
     <MESSAGE value="fmod.js diagnostic update and file rework" />
     <MESSAGE value="removed unsafe diagnostic elements" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed unsafe diagnostic elements" />
+    <MESSAGE value="removed unsafe diagnostic elements 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="removed unsafe diagnostic elements 2" />
   </component>
 </project>
