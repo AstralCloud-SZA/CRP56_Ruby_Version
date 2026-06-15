@@ -5,7 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="app.js and preload.js fixes">
+      <change afterPath="$PROJECT_DIR$/crp56/ruby-core/lib/folderDE_smokeTEST.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/ruby-core/lib/app_crypto_service.rb" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/ruby-core/lib/app_crypto_service.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/ruby-core/lib/compression.rb" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/ruby-core/lib/compression.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/ruby-core/lib/config.rb" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/ruby-core/lib/config.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/ruby-core/lib/constants.rb" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/ruby-core/lib/constants.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/ruby-core/lib/embedded_phrase_storage.rb" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/ruby-core/lib/embedded_phrase_storage.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/ruby-core/lib/errors.rb" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/ruby-core/lib/errors.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/ruby-core/lib/file_crypto.rb" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/ruby-core/lib/file_crypto.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/ruby-core/lib/header.rb" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/ruby-core/lib/header.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/ruby-core/lib/phrase_store.rb" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/ruby-core/lib/phrase_store.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/ruby-core/main.rb" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/ruby-core/main.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,10 +30,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Ruby File" />
         <option value="CSS File" />
         <option value="HTML File" />
         <option value="JavaScript File" />
+        <option value="Ruby File" />
       </list>
     </option>
   </component>
@@ -46,61 +58,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.5163017017896823" />
-      <entry key="MS500" value="3.901136637036837" />
-      <entry key="S2" value="6.844737582904972" />
-      <entry key="S5" value="9.223714502624363" />
-      <entry key="S10" value="11.594590436241488" />
-      <entry key="S30" value="14.653307921135927" />
-      <entry key="S60" value="15.786634622262712" />
-      <entry key="M2" value="16.995289139567994" />
-      <entry key="M5" value="19.874397242010136" />
-      <entry key="M10" value="22.7100325664847" />
-      <entry key="M15" value="26.073384002573516" />
-      <entry key="M30" value="46.61415524849973" />
-      <entry key="H1" value="106.60618511984717" />
-      <entry key="H2" value="215.06108278138015" />
-      <entry key="H4" value="359.08372159898704" />
-      <entry key="D1" value="647.1828574674531" />
-      <entry key="W1" value="730.6007924786949" />
+      <entry key="MS100" value="1.0116785134069581" />
+      <entry key="MS500" value="1.4426301412050142" />
+      <entry key="S2" value="3.172617657256568" />
+      <entry key="S5" value="6.46984830687274" />
+      <entry key="S10" value="9.626270679869187" />
+      <entry key="S30" value="13.333340466481785" />
+      <entry key="S60" value="14.58206572804766" />
+      <entry key="M2" value="15.268607855196148" />
+      <entry key="M5" value="15.856210699546272" />
+      <entry key="M10" value="17.471210790338866" />
+      <entry key="M15" value="20.13236858816026" />
+      <entry key="M30" value="33.07221488991067" />
+      <entry key="H1" value="77.47766398532771" />
+      <entry key="H2" value="178.09432213243429" />
+      <entry key="H4" value="328.73487216011074" />
+      <entry key="D1" value="655.1766647080574" />
+      <entry key="W1" value="753.6648267798618" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
       <entry key="S5" value="0.0" />
-      <entry key="S10" value="1.3352370713180343E-183" />
-      <entry key="S30" value="1.7384136152137407E-61" />
-      <entry key="S60" value="5.892372085004899E-31" />
-      <entry key="M2" value="1.0853870608699162E-15" />
-      <entry key="M5" value="1.5661525987131665E-6" />
-      <entry key="M10" value="0.001770915261286245" />
-      <entry key="M15" value="0.01854072828998032" />
-      <entry key="M30" value="0.20257433639659292" />
-      <entry key="H1" value="0.7510705846929601" />
-      <entry key="H2" value="1.8858691082491188" />
-      <entry key="H4" value="4.155803898644963" />
-      <entry key="D1" value="11.092585149345815" />
-      <entry key="W1" value="13.532949149446205" />
+      <entry key="S10" value="1.31662626065682E-288" />
+      <entry key="S30" value="1.730299006996178E-96" />
+      <entry key="S60" value="1.8589777223695726E-48" />
+      <entry key="M2" value="1.9278651422179756E-24" />
+      <entry key="M5" value="4.950292714230776E-10" />
+      <entry key="M10" value="3.148445520124952E-5" />
+      <entry key="M15" value="0.0012629681280042666" />
+      <entry key="M30" value="0.05287096358959076" />
+      <entry key="H1" value="0.38370473078620254" />
+      <entry key="H2" value="1.347937472234109" />
+      <entry key="H4" value="3.513452983560774" />
+      <entry key="D1" value="10.786468706204435" />
+      <entry key="W1" value="13.47895545418063" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.4849797635874185" />
-      <entry key="MS500" value="3.8847033589532205" />
-      <entry key="S2" value="6.832988605683765" />
-      <entry key="S5" value="9.194480842439637" />
-      <entry key="S10" value="11.561999026684818" />
-      <entry key="S30" value="14.634365988850288" />
-      <entry key="S60" value="15.77573054737672" />
-      <entry key="M2" value="16.98942811285983" />
-      <entry key="M5" value="19.871935808081698" />
-      <entry key="M10" value="22.71054182074507" />
-      <entry key="M15" value="26.0910498724153" />
-      <entry key="M30" value="46.81611002712457" />
-      <entry key="H1" value="107.3565643339455" />
-      <entry key="H2" value="216.94614774330145" />
-      <entry key="H4" value="363.2387334264091" />
-      <entry key="D1" value="658.275150217476" />
-      <entry key="W1" value="744.1336925423575" />
+      <entry key="MS100" value="0.9639186983875694" />
+      <entry key="MS500" value="1.4298999169386464" />
+      <entry key="S2" value="3.1665529203724487" />
+      <entry key="S5" value="6.465391443399951" />
+      <entry key="S10" value="9.62308294730211" />
+      <entry key="S30" value="13.331901894104105" />
+      <entry key="S60" value="14.581282985524805" />
+      <entry key="M2" value="15.268199025492377" />
+      <entry key="M5" value="15.85604054379234" />
+      <entry key="M10" value="17.47112921295032" />
+      <entry key="M15" value="20.13350736458636" />
+      <entry key="M30" value="33.12488772504218" />
+      <entry key="H1" value="77.86099559094893" />
+      <entry key="H2" value="179.44167432447944" />
+      <entry key="H4" value="332.2476500881443" />
+      <entry key="D1" value="665.9628481584488" />
+      <entry key="W1" value="767.1437332112577" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -174,7 +186,7 @@
       <workItem from="1781289788961" duration="2674000" />
       <workItem from="1781356918690" duration="706000" />
       <workItem from="1781370031836" duration="6122000" />
-      <workItem from="1781547132681" duration="8267000" />
+      <workItem from="1781547132681" duration="10760000" />
     </task>
     <task id="LOCAL-00001" summary="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work">
       <option name="closed" value="true" />
@@ -472,7 +484,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781554754065</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="app.js and preload.js fixes">
+      <option name="closed" value="true" />
+      <created>1781556416991</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1781556416991</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

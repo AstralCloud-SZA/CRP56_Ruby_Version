@@ -85,7 +85,7 @@ module CRP56
       puts "  ruby main.rb encrypt_file PASSPHRASE SOURCE_FILE OUTPUT_FILE"
       puts "  ruby main.rb decrypt_file PASSPHRASE SOURCE_FILE OUTPUT_FILE_OR_FOLDER"
       puts "  ruby main.rb encrypt_folder PASSPHRASE SOURCE_FOLDER OUTPUT_FOLDER"
-      puts "  ruby main.rb decrypt_folder PASSPHRASE SOURCE_FOLDER OUTPUT_FOLDER"
+      puts "  ruby main.rb decrypt_folder PASSPHRASE SOURCE_OR_ARCHIVE OUTPUT_FOLDER"
       puts "  ruby main.rb server"
       puts
       puts "Defaults:"
@@ -175,7 +175,6 @@ module CRP56
       original_bytes = File.binread(source_file)
       decrypted_path = "#{source_file}.dec"
 
-      # encrypt_file_to_path swaps the extension: test1.png -> test1.crp56
       encrypted_path = service.encrypt_file_to_path(source_file, source_file, user_passphrase)
       service.decrypt_file_to_path(encrypted_path, decrypted_path, user_passphrase)
 
@@ -327,25 +326,19 @@ module CRP56
 
     def self.run_decrypt_folder(argv)
       user_passphrase = argv.shift
-      source_folder = argv.shift
+      source = argv.shift
       output_folder = argv.shift
 
-      if blank?(user_passphrase) || blank?(source_folder) || blank?(output_folder)
-        raise ArgumentError, "Usage: ruby main.rb decrypt_folder PASSPHRASE SOURCE_FOLDER OUTPUT_FOLDER"
+      if blank?(user_passphrase) || blank?(source) || blank?(output_folder)
+        raise ArgumentError, "Usage: ruby main.rb decrypt_folder PASSPHRASE SOURCE_OR_ARCHIVE OUTPUT_FOLDER"
       end
 
       service = CRP56::AppCryptoService.new
-      written = service.decrypt_folder_to_path(source_folder, output_folder, user_passphrase)
+      written = service.decrypt_folder_to_path(source, output_folder, user_passphrase)
       puts "Decrypted #{written.length} file(s) into: #{output_folder}"
       written.each { |path| puts "  #{path}" }
     end
 
-    # Builds a throttled progress callback for one server request.
-    # Emits JSON progress events on stdout that the Electron main process
-    # forwards to the renderer:
-    #   {"id":"7","event":"progress","stage":"encrypt_folder","current":3,"total":120,"detail":"sub/test1.png"}
-    # Progress events carry an "event" key and never an "ok" key, so they
-    # can never be mistaken for the final response.
     def self.progress_emitter(id, stage)
       last_emitted = 0
       step = nil
@@ -355,7 +348,6 @@ module CRP56
         current = current.to_i
         next if total <= 0
 
-        # Emit at most ~100 events per operation (plus first and last).
         step ||= [total / 100, 1].max
         next unless current >= total || current == 1 || (current - last_emitted) >= step
 
@@ -431,10 +423,10 @@ module CRP56
             raise ArgumentError, "output_file is required" if output_file.empty?
             raise ArgumentError, "source_file does not exist: #{source_file}" unless File.file?(source_file)
 
-            # output_file may be a folder: the original filename stored inside
-            # the encrypted payload is then restored automatically.
             written = service.decrypt_file_to_path(
-              source_file, output_file, passphrase,
+              source_file,
+              output_file,
+              passphrase,
               progress: progress_emitter(id, "decrypt_file")
             )
             response = { id: id, ok: true, result: written }
@@ -450,7 +442,9 @@ module CRP56
             raise ArgumentError, "source_folder does not exist: #{source_folder}" unless File.directory?(source_folder)
 
             written = service.encrypt_folder_to_path(
-              source_folder, output_folder, passphrase,
+              source_folder,
+              output_folder,
+              passphrase,
               progress: progress_emitter(id, "encrypt_folder")
             )
             response = {
@@ -462,15 +456,19 @@ module CRP56
 
           when "decrypt_folder"
             passphrase = request[:passphrase].to_s
-            source_folder = request[:source_folder].to_s
+            source = request[:source].to_s
             output_folder = request[:output_folder].to_s
 
             raise ArgumentError, "passphrase is required" if passphrase.empty?
-            raise ArgumentError, "source_folder is required" if source_folder.empty?
+            raise ArgumentError, "source is required" if source.empty?
             raise ArgumentError, "output_folder is required" if output_folder.empty?
-            raise ArgumentError, "source_folder does not exist: #{source_folder}" unless File.directory?(source_folder)
 
-            written = service.decrypt_folder_to_path(source_folder, output_folder, passphrase, progress: progress_emitter(id, "decrypt_folder"))
+            written = service.decrypt_folder_to_path(
+              source,
+              output_folder,
+              passphrase,
+              progress: progress_emitter(id, "decrypt_folder")
+            )
             response = {
               id: id,
               ok: true,
@@ -491,7 +489,6 @@ module CRP56
           else
             response = { id: id, ok: false, error: "Unknown command: #{command.inspect}" }
           end
-
         rescue JSON::ParserError => e
           response = { id: id, ok: false, error: "Invalid JSON: #{e.message}" }
         rescue StandardError => e

@@ -328,7 +328,7 @@ ipcMain.handle('crp56:encrypt-folder', async (_event, { passphrase, sourceFolder
  */
 ipcMain.handle('crp56:decrypt-folder', async (_event, { passphrase, sourceFolder, outputFolder }) =>
 {
-    return safeInvoke('decrypt_folder', { passphrase, source_folder: sourceFolder, output_folder: outputFolder });
+    return safeInvoke('decrypt_folder', {passphrase, source: sourceFolder, output_folder: outputFolder});
 });
 
 /**

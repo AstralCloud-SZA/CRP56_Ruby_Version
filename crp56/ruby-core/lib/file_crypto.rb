@@ -309,7 +309,7 @@ module CRP56
           fallback_name = File.basename(file).sub(/#{Regexp.escape(ENCRYPTED_EXTENSION)}\z/i, "")
           original_name, content = parse_file_envelope(outer_payload, fallback_name)
 
-          relative = Pathname.new(file).relative_path_from(source_root)
+          relative = Pathname.new(file).relative_path_from(Pathname.new(File.expand_path(source))) rescue Pathname.new(File.basename(file))
           rel_dir  = File.dirname(relative.to_s)
 
           candidate =
