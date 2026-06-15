@@ -247,29 +247,45 @@ module CRP56
     # Legacy single-file encrypted payloads are also supported.
     #
     # @return [Array<String>] list of written output paths
+
     def decrypt_folder_to_path(source, output_folder, user_passphrase, progress: nil)
       raise ArgumentError, "Source cannot be nil or empty." if blank?(source)
       raise ArgumentError, "Output folder cannot be nil or empty." if blank?(output_folder)
       raise ArgumentError, "Source was not found: #{source}" unless File.exist?(source)
 
-      output_root = Pathname.new(File.expand_path(output_folder))
+      source_abs = File.expand_path(source)
+      output_parent = File.expand_path(output_folder)
+
+      output_root =
+        if File.directory?(source_abs)
+          source_name = File.basename(source_abs)
+          base_output = File.join(output_parent, "#{source_name}_Decrypted")
+          Pathname.new(unique_decrypted_folder_path(base_output))
+        else
+          base_name = File.basename(source_abs).sub(/#{Regexp.escape(ENCRYPTED_EXTENSION)}\z/i, "")
+          base_output = File.join(output_parent, "#{base_name}_Decrypted")
+          Pathname.new(unique_decrypted_folder_path(base_output))
+        end
+
+      if File.directory?(source_abs)
+        source_root = Pathname.new(source_abs)
+        if output_root.to_s == source_root.to_s || output_root.to_s.start_with?("#{source_root}#{File::SEPARATOR}")
+          raise ArgumentError, "Output folder cannot be inside the source folder."
+        end
+      end
+
+      FileUtils.mkdir_p(output_root.to_s)
 
       encrypted_files =
-        if File.directory?(source)
-          source_root = Pathname.new(File.expand_path(source))
-          if output_root.to_s == source_root.to_s ||
-             output_root.to_s.start_with?("#{source_root}#{File::SEPARATOR}")
-            raise ArgumentError, "Output folder cannot be inside the source folder."
-          end
-          found = Dir.glob(File.join(source_root.to_s, "**", "*#{ENCRYPTED_EXTENSION}"))
-                     .select { |p| File.file?(p) }
+        if File.directory?(source_abs)
+          found = Dir.glob(File.join(source_abs, "**", "*#{ENCRYPTED_EXTENSION}")).select { |p| File.file?(p) }
           raise ArgumentError, "No #{ENCRYPTED_EXTENSION} files found in: #{source}" if found.empty?
           found
         else
-          [File.expand_path(source)]
+          [source_abs]
         end
 
-      taken   = Set.new
+      taken = Set.new
       written = []
 
       encrypted_files.each_with_index do |file, file_index|
@@ -282,12 +298,8 @@ module CRP56
           staged.each_with_index do |entry, i|
             inner_payload = decrypt_bytes(entry[:bytes], user_passphrase)
 
-            # Recover the relative path stored in the tar entry. Split on '/'
-            # explicitly (after normalizing any legacy backslashes) so the tree
-            # is rebuilt identically on every OS — NOT with File.dirname, which
-            # is host-OS dependent.
             rel_dir, tar_file = split_tar_rel(entry[:tar_name])
-            fallback_name     = tar_file
+            fallback_name = tar_file
             original_name, content = parse_file_envelope(inner_payload, fallback_name)
 
             candidate =
@@ -309,8 +321,8 @@ module CRP56
           fallback_name = File.basename(file).sub(/#{Regexp.escape(ENCRYPTED_EXTENSION)}\z/i, "")
           original_name, content = parse_file_envelope(outer_payload, fallback_name)
 
-          relative = Pathname.new(file).relative_path_from(Pathname.new(File.expand_path(source))) rescue Pathname.new(File.basename(file))
-          rel_dir  = File.dirname(relative.to_s)
+          relative = Pathname.new(file).relative_path_from(Pathname.new(source_abs)) rescue Pathname.new(File.basename(file))
+          rel_dir = File.dirname(relative.to_s)
 
           candidate =
             if rel_dir == "."
@@ -331,6 +343,7 @@ module CRP56
 
       written
     end
+
 
     private
 
@@ -524,6 +537,17 @@ module CRP56
     # Validates that an output path is present.
     def validate_output_path!(path)
       raise ArgumentError, "Output file path cannot be nil or empty." if blank?(path)
+    end
+
+    def unique_decrypted_folder_path(base_path)
+      return base_path unless File.exist?(base_path)
+
+      version = 1
+      loop do
+        candidate = "#{base_path}_ver#{version}"
+        return candidate unless File.exist?(candidate)
+        version += 1
+      end
     end
 
     ##
