@@ -2,6 +2,12 @@
 
 require "openssl"
 require "stringio"
+require_relative "constants"
+require_relative "errors"
+require_relative "kdf"
+require_relative "header"
+require_relative "payload"
+require_relative "compression"
 
 module CRP56
   class Crypto
@@ -18,8 +24,6 @@ module CRP56
       @phrase_store.validate!
     end
 
-    # progress: optional callable receiving (current_shard, total_shards).
-    # Invoked once per shard so callers can report real encryption progress.
     def encrypt(plain_data, user_passphrase, progress: nil)
       raise ArgumentError, "Plaintext cannot be nil or empty." if plain_data.nil? || plain_data.empty?
       raise ArgumentError, "User passphrase cannot be nil or empty." if blank?(user_passphrase)
@@ -49,7 +53,6 @@ module CRP56
       encrypt_internal(data_to_encrypt, header, derived_keys, progress)
     end
 
-    # progress: optional callable receiving (current_shard, total_shards).
     def decrypt(cipher_data, user_passphrase, progress: nil)
       raise ArgumentError, "Input data cannot be nil or empty." if cipher_data.nil? || cipher_data.empty?
       raise ArgumentError, "User passphrase cannot be nil or empty." if blank?(user_passphrase)
@@ -61,7 +64,6 @@ module CRP56
 
     def encrypt_internal(plain_data, header, derived_keys, progress = nil)
       body_buffer = StringIO.new("".b, "w+b")
-
       offset = 0
       shard_size = config.shard_plain_size
 
@@ -84,23 +86,11 @@ module CRP56
         progress&.call(shard_index + 1, header.total_shards)
       end
 
-      payload_without_hmac = Payload.new(
-        header: header,
-        body: body_buffer.string,
-        hmac_tag: nil
-      )
-
+      payload_without_hmac = Payload.new(header: header, body: body_buffer.string, hmac_tag: nil)
       return payload_without_hmac.to_bytes unless header.hmac_enabled?
 
       hmac_tag = OpenSSL::HMAC.digest("SHA256", derived_keys.hmac_key, payload_without_hmac.to_bytes)
-
-      payload = Payload.new(
-        header: header,
-        body: body_buffer.string,
-        hmac_tag: hmac_tag
-      )
-
-      payload.to_bytes
+      Payload.new(header: header, body: body_buffer.string, hmac_tag: hmac_tag).to_bytes
     end
 
     def decrypt_internal(cipher_data, user_passphrase, progress = nil)
@@ -112,7 +102,6 @@ module CRP56
 
       if header.hmac_enabled?
         computed_tag = OpenSSL::HMAC.digest("SHA256", derived_keys.hmac_key, payload.bytes_without_hmac)
-
         unless constant_time_equals?(computed_tag, payload.hmac_tag)
           raise IntegrityError, "HMAC verification failed. Data may be corrupted or password is incorrect."
         end
@@ -120,7 +109,6 @@ module CRP56
 
       reader = StringIO.new(payload.body, "rb")
       plain_parts = []
-
       shard_size = config.shard_plain_size
       block_size = Constants::AES_BLOCK_SIZE
 
@@ -128,16 +116,11 @@ module CRP56
         expected_plain_size = shard_index == header.total_shards - 1 ? header.last_shard_size : shard_size
 
         iv = reader.read(block_size)
-        if iv.nil? || iv.bytesize != block_size
-          raise InvalidPayloadError, "Unexpected end of data while reading IV for shard #{shard_index}."
-        end
+        raise InvalidPayloadError, "Unexpected end of data while reading IV for shard #{shard_index}." if iv.nil? || iv.bytesize != block_size
 
         padded_cipher_size = get_padded_cipher_size(expected_plain_size, block_size)
-
         shard_cipher = reader.read(padded_cipher_size)
-        if shard_cipher.nil? || shard_cipher.bytesize != padded_cipher_size
-          raise InvalidPayloadError, "Unexpected end of data while reading ciphertext for shard #{shard_index}."
-        end
+        raise InvalidPayloadError, "Unexpected end of data while reading ciphertext for shard #{shard_index}." if shard_cipher.nil? || shard_cipher.bytesize != padded_cipher_size
 
         cipher = OpenSSL::Cipher.new("AES-256-CBC")
         cipher.decrypt
@@ -145,14 +128,9 @@ module CRP56
         cipher.iv = iv
 
         shard_plain = cipher.update(shard_cipher) + cipher.final
-
-        if shard_plain.bytesize != expected_plain_size
-          raise DecryptionError,
-                "Decrypted shard #{shard_index} has unexpected length. Data may be corrupted or password is incorrect."
-        end
+        raise DecryptionError, "Decrypted shard #{shard_index} has unexpected length. Data may be corrupted or password is incorrect." if shard_plain.bytesize != expected_plain_size
 
         plain_parts << shard_plain
-
         progress&.call(shard_index + 1, header.total_shards)
       end
 
@@ -171,19 +149,16 @@ module CRP56
       total_shards = (total_plain_bytes + shard_plain_size - 1) / shard_plain_size
       last_shard_plain_size = total_plain_bytes % shard_plain_size
       last_shard_plain_size = shard_plain_size if last_shard_plain_size.zero?
-
       [total_shards, last_shard_plain_size]
     end
 
     def get_padded_cipher_size(plain_size, block_size)
       raise ArgumentError, "Block size must be positive." unless block_size.positive?
-
       ((plain_size + block_size) / block_size) * block_size
     end
 
     def constant_time_equals?(a, b)
       return false if a.nil? || b.nil? || a.bytesize != b.bytesize
-
       diff = 0
       a.bytes.zip(b.bytes) { |x, y| diff |= (x ^ y) }
       diff.zero?

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
+
 require "openssl"
+require_relative "constants"
 
 module CRP56
   module Kdf

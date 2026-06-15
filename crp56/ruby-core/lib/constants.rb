@@ -58,18 +58,30 @@ module CRP56
     #
     # @raise [ArgumentError] if any size/count setting is invalid
     # @raise [ArgumentError] if the compression mode is not recognized
-
-
     def validate!
       raise ArgumentError, "Shard size must be positive." unless shard_plain_size.positive?
       raise ArgumentError, "Salt size must be positive." unless salt_size.positive?
       raise ArgumentError, "KDF iterations must be positive." unless kdf_iterations.positive?
 
-      valid_modes = [Constants::COMPRESSION_NONE, Constants::COMPRESSION_ZSTD, Constants::COMPRESSION_LZ4]
+      unless [true, false].include?(use_hmac)
+        raise ArgumentError, "use_hmac must be true or false."
+      end
 
-      return if valid_modes.include?(compression_mode)
+      unless [true, false].include?(use_compression)
+        raise ArgumentError, "use_compression must be true or false."
+      end
 
-      raise ArgumentError, format("Unknown compression mode: 0x%02X", compression_mode)
+      valid_modes = [
+        Constants::COMPRESSION_NONE,
+        Constants::COMPRESSION_ZSTD,
+        Constants::COMPRESSION_LZ4
+      ]
+
+      unless valid_modes.include?(compression_mode)
+        raise ArgumentError, format("Unknown compression mode: 0x%02X", compression_mode)
+      end
+
+      true
     end
   end
 end
