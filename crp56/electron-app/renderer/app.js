@@ -16,12 +16,15 @@ const MASTER_VOL_STORAGE_KEY = 'crp56-master-volume';
 const MUTE_STORAGE_KEY = 'crp56-muted';
 
 let selectedFiles = [];
-let selectedFolder = null;
+let selectedEncryptedFolder = null;
+let selectedFolderOutput = null;
 let progressResetTimer = null;
 let particlesEnabled = true;
 
 const SFX_THROTTLE_MS = 60;
 const lastSfxAt = {};
+
+/* SFX bridge with simple throttling. */
 function playSfx(category)
 {
     if (!window.sfx || typeof window.sfx.play !== 'function')
@@ -232,13 +235,15 @@ async function runAction(label, fn)
         show(result);
         playSfx(result && result.ok === false ? 'error' : 'confirm');
         return result;
-    } catch (err)
+    }
+    catch (err)
     {
         const payload = { ok: false, error: `${err.name}: ${err.message}` };
         show(payload);
         playSfx('error');
         return payload;
-    } finally
+    }
+    finally
     {
         finishProgress();
     }
@@ -305,14 +310,14 @@ function bindSelectionZones()
         {
             const result = await window.crp56.pickFolder();
             if (result.canceled) return;
-            selectedFolder = result.filePaths[0];
+            selectedEncryptedFolder = result.filePaths[0];
             if (folderList)
             {
                 folderList.style.display = 'block';
-                folderList.innerText = `📂 ${selectedFolder}`;
+                folderList.innerText = `📂 ${selectedEncryptedFolder}`;
             }
             playSfx('cursor');
-            log('Folder selected:', selectedFolder);
+            log('Encrypted folder selected:', selectedEncryptedFolder);
         });
     }
 }
@@ -360,10 +365,11 @@ function bindPageActions()
             }
             else if (activeTab === 'folder')
             {
-                if (!selectedFolder) { playSfx('error'); return show({ ok: false, error: 'No folder selected' }); }
+                if (!selectedEncryptedFolder) { playSfx('error'); return show({ ok: false, error: 'No folder selected' }); }
                 const saveRes = await window.crp56.pickFolder({ title: 'Select Output Folder for Encrypted Files', properties: ['openDirectory', 'createDirectory'] });
                 if (saveRes.canceled) return;
-                await runAction('encrypt_folder', () => window.crp56.encryptFolder(passphrase, selectedFolder, saveRes.filePaths[0]));
+                selectedFolderOutput = saveRes.filePaths[0];
+                await runAction('encrypt_folder', () => window.crp56.encryptFolder(passphrase, selectedEncryptedFolder, selectedFolderOutput));
             }
         });
     }
@@ -391,10 +397,11 @@ function bindPageActions()
             }
             else if (activeTab === 'folder')
             {
-                if (!selectedFolder) { playSfx('error'); return show({ ok: false, error: 'No folder selected' }); }
+                if (!selectedEncryptedFolder) { playSfx('error'); return show({ ok: false, error: 'No encrypted folder selected' }); }
                 const saveRes = await window.crp56.pickFolder({ title: 'Select Output Folder for Decrypted Files', properties: ['openDirectory', 'createDirectory'] });
                 if (saveRes.canceled) return;
-                await runAction('decrypt_folder', () => window.crp56.decryptFolder(passphrase, selectedFolder, saveRes.filePaths[0]));
+                selectedFolderOutput = saveRes.filePaths[0];
+                await runAction('decrypt_folder', () => window.crp56.decryptFolder(passphrase, selectedEncryptedFolder, selectedFolderOutput));
             }
         });
     }
@@ -446,7 +453,8 @@ function savedParticlesEnabled()
     try
     {
         return localStorage.getItem(PARTICLE_STORAGE_KEY) !== 'off';
-    } catch (_)
+    }
+    catch (_)
     {
         return true;
     }
@@ -564,11 +572,13 @@ function drawParticles()
 {
     if (!canvas || !ctx) return;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
     if (!particlesEnabled)
     {
         requestAnimationFrame(drawParticles);
         return;
     }
+
     particles.forEach((p, i) =>
     {
         p.x += p.vx; p.y += p.vy; p.twinkle += 0.03;
@@ -587,6 +597,7 @@ function drawParticles()
             const dx = p.x - q.x;
             const dy = p.y - q.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
+
             if (dist < 128)
             {
                 ctx.strokeStyle = hexToRgba(p.color, (1 - dist / 128) * 0.12);
@@ -617,11 +628,13 @@ window.addEventListener('DOMContentLoaded', () =>
     resizeCanvas();
     drawParticles();
     applySavedVolumes();
+
     if (!window.crp56)
     {
         show({ ok: false, error: 'window.crp56 is missing.' });
         return;
     }
+
     bindSelectionZones();
     bindPageActions();
     bindProgressEvents();

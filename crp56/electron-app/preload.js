@@ -1,4 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron');
+
+/**
+ * Whitelisted IPC channels for CRP56 main-process requests.
+ * Only these channels may be invoked from the renderer.
+ */
 const ALLOWED_CHANNELS = new Set([
     'crp56:ping',
     'crp56:version',
@@ -13,6 +18,13 @@ const ALLOWED_CHANNELS = new Set([
     'dialog:pick-save-file',
 ]);
 
+/**
+ * Invokes a whitelisted IPC channel in the main process.
+ *
+ * @param {string} channel - Allowed IPC channel name.
+ * @param {object} [payload] - Optional payload sent to the main process.
+ * @returns {Promise<any>} IPC response promise.
+ */
 function invoke(channel, payload)
 {
     if (!ALLOWED_CHANNELS.has(channel))
@@ -23,6 +35,10 @@ function invoke(channel, payload)
     return payload !== undefined ? ipcRenderer.invoke(channel, payload) : ipcRenderer.invoke(channel);
 }
 
+/**
+ * Exposes the CRP56 API to the renderer.
+ * This keeps the renderer isolated from direct Electron internals.
+ */
 contextBridge.exposeInMainWorld('crp56', {
     // System
     ping: () => invoke('crp56:ping'),
@@ -45,7 +61,7 @@ contextBridge.exposeInMainWorld('crp56', {
     pickFolder: (options) => invoke('dialog:pick-folder', options ?? {}),
     pickSaveFile: (options) => invoke('dialog:pick-save-file', options ?? {}),
 
-    // Live progress events from the Ruby core (per shard / per file).
+    // Live progress events from the Ruby core.
     // Returns an unsubscribe function.
     onProgress: (callback) =>
     {
@@ -55,22 +71,19 @@ contextBridge.exposeInMainWorld('crp56', {
     },
 });
 
-// ---------------------------------------------------------------------------
-// FMOD sound effects bridge (fire-and-forget; no response needed).
-// Kept separate from the crp56 invoke() allowlist on purpose.
-// ---------------------------------------------------------------------------
+/**
+ * FMOD sound effects bridge.
+ * Kept separate from the CRP56 IPC allowlist by design.
+ */
 const ALLOWED_SFX = new Set(['confirm', 'cursor', 'back', 'error']);
 
 contextBridge.exposeInMainWorld('sfx', {
     play: (category) => { if (!ALLOWED_SFX.has(category)) return; ipcRenderer.send('sfx:play', category); },
     any: () => ipcRenderer.send('sfx:any'),
-    // volumes (0..1)
     setVolume: (v) => ipcRenderer.send('sfx:volume', v),
     setMusicVolume: (v) => ipcRenderer.send('music:volume', v),
     setMasterVolume: (v) => ipcRenderer.send('master:volume', v),
-    // mute
     setMuteAll: (muted) => ipcRenderer.send('audio:mute', muted),
-    // music transport
     playMusic: (name) => ipcRenderer.send('music:play', name),
     stopMusic: () => ipcRenderer.send('music:stop'),
     listMusic: () => ipcRenderer.invoke('music:list'),
