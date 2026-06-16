@@ -456,6 +456,56 @@ function bindDataSfx()
     });
 }
 
+async function bindMusicTrackSelect()
+{
+    const select = document.getElementById('musicTrackSelect');
+    const playBtn = document.getElementById('musicTrackPlay');
+    if (!select || !playBtn || !window.sfx?.listMusic) return;
+
+    try
+    {
+        const tracks = await window.sfx.listMusic();
+        select.innerHTML = '';
+
+        const autoOpt = document.createElement('option');
+        autoOpt.value = '';
+        autoOpt.textContent = 'Auto';
+        select.appendChild(autoOpt);
+
+        for (const track of tracks)
+        {
+            const opt = document.createElement('option');
+            opt.value = track;
+            opt.textContent = track;
+            select.appendChild(opt);
+        }
+
+        select.value = localStorage.getItem('crp56-music-track') || '';
+
+        playBtn.addEventListener('click', () =>
+        {
+            const track = select.value;
+            if (track)
+            {
+                window.sfx.playMusic(track);
+                localStorage.setItem('crp56-music-track', track);
+                log('Manual BG music selected:', track);
+            }
+            else if (tracks.length > 0)
+            {
+                const pick = tracks[Math.floor(Math.random() * tracks.length)];
+                window.sfx.playMusic(pick);
+                localStorage.removeItem('crp56-music-track');
+                log('Manual BG music auto-picked:', pick);
+            }
+        });
+    }
+    catch (e)
+    {
+        console.error('[CRP56] Failed to load music tracks:', e);
+    }
+}
+
 function setParticlesEnabled(enabled, { persist = true } = {})
 {
     particlesEnabled = !!enabled;
@@ -497,14 +547,19 @@ function bindVolumeSliders()
     const savedSfx = Number(localStorage.getItem(SFX_VOL_STORAGE_KEY) ?? 80);
     const savedMusic = Number(localStorage.getItem(MUSIC_VOL_STORAGE_KEY) ?? 60);
 
+    const sync = (slider, label, pct) =>
+    {
+        if (slider) slider.value = String(pct);
+        if (label) label.textContent = `${pct}%`;
+    };
+
     if (sfxSlider)
     {
-        sfxSlider.value = savedSfx;
-        if (sfxLabel) sfxLabel.textContent = `${savedSfx}%`;
+        sync(sfxSlider, sfxLabel, savedSfx);
         sfxSlider.addEventListener('input', () =>
         {
             const pct = Number(sfxSlider.value);
-            if (sfxLabel) sfxLabel.textContent = `${pct}%`;
+            sync(sfxSlider, sfxLabel, pct);
             if (window.sfx) window.sfx.setVolume(pct / 100);
             try { localStorage.setItem(SFX_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
         });
@@ -513,12 +568,11 @@ function bindVolumeSliders()
 
     if (musicSlider)
     {
-        musicSlider.value = savedMusic;
-        if (musicLabel) musicLabel.textContent = `${savedMusic}%`;
+        sync(musicSlider, musicLabel, savedMusic);
         musicSlider.addEventListener('input', () =>
         {
             const pct = Number(musicSlider.value);
-            if (musicLabel) musicLabel.textContent = `${pct}%`;
+            sync(musicSlider, musicLabel, pct);
             if (window.sfx) window.sfx.setMusicVolume(pct / 100);
             try { localStorage.setItem(MUSIC_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
         });
@@ -527,14 +581,39 @@ function bindVolumeSliders()
 
 function applySavedVolumes()
 {
+    const sfxSlider = document.getElementById('sfxVolume');
+    const sfxLabel = document.getElementById('sfxVolumeLabel');
+    const musicSlider = document.getElementById('musicVolume');
+    const musicLabel = document.getElementById('musicVolumeLabel');
+    const masterSlider = document.getElementById('masterVolume');
+    const masterLabel = document.getElementById('masterVolumeLabel');
+
+    const readVol = (key, fb) =>
+    {
+        const raw = localStorage.getItem(key);
+        const n = Number(raw);
+        return Number.isFinite(n) ? n : fb;
+    };
+
+    const master = readVol(MASTER_VOL_STORAGE_KEY, 100);
+    const sfxVol = readVol(SFX_VOL_STORAGE_KEY, 80);
+    const musicVol = readVol(MUSIC_VOL_STORAGE_KEY, 60);
+
+    if (masterSlider) masterSlider.value = String(master);
+    if (masterLabel) masterLabel.textContent = `${master}%`;
+
+    if (sfxSlider) sfxSlider.value = String(sfxVol);
+    if (sfxLabel) sfxLabel.textContent = `${sfxVol}%`;
+
+    if (musicSlider) musicSlider.value = String(musicVol);
+    if (musicLabel) musicLabel.textContent = `${musicVol}%`;
+
     if (!window.sfx) return;
-    const readVol = (key, fb) => isNaN(localStorage.getItem(key)) ? fb : +localStorage.getItem(key);
-    const master = readVol(MASTER_VOL_STORAGE_KEY, 100) / 100;
-    const sfxVol = readVol(SFX_VOL_STORAGE_KEY, 80) / 100;
-    const musicVol = readVol(MUSIC_VOL_STORAGE_KEY, 60) / 100;
-    window.sfx.setMasterVolume(master);
-    window.sfx.setVolume(sfxVol);
-    window.sfx.setMusicVolume(musicVol);
+
+    window.sfx.setMasterVolume(master / 100);
+    window.sfx.setVolume(sfxVol / 100);
+    window.sfx.setMusicVolume(musicVol / 100);
+
     const muted = localStorage.getItem(MUTE_STORAGE_KEY) === 'on';
     window.sfx.setMuteAll(muted);
 }
@@ -633,7 +712,7 @@ function drawParticles()
     requestAnimationFrame(drawParticles);
 }
 
-window.addEventListener('DOMContentLoaded', () =>
+window.addEventListener('DOMContentLoaded', async () =>
 {
     bindThemeToggle();
     bindThemeButtons();
@@ -659,8 +738,27 @@ window.addEventListener('DOMContentLoaded', () =>
     bindSelectionZones();
     bindPageActions();
     bindProgressEvents();
+    await bindMusicTrackSelect();
     const page = body?.dataset?.page;
     if (page) show({ ok: true, status: `${page.charAt(0).toUpperCase() + page.slice(1)} page ready.` });
+
+    if (window.sfx?.listMusic && window.sfx?.playMusic)
+    {
+        try
+        {
+            const tracks = await window.sfx.listMusic();
+            if (tracks.length > 0)
+            {
+                const pick = tracks[Math.floor(Math.random() * tracks.length)];
+                window.sfx.playMusic(pick);
+                log('BG music started:', pick);
+            }
+        }
+        catch (e)
+        {
+            console.error('[CRP56] BG music start failed:', e);
+        }
+    }
 });
 
 window.addEventListener('resize', resizeCanvas);

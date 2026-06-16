@@ -137,7 +137,7 @@ function nextFile(cat)
     return file;
 }
 
-const MUSIC_DIR = path.join(__dirname, 'music');
+const MUSIC_DIR = path.join(__dirname, 'audiofiles', 'Friday_Magic');
 let musicTracks = [];
 let currentMusicChannel = null;
 let currentMusicSound = null;
@@ -151,7 +151,7 @@ function loadMusicList()
     log('Scanning music directory:', MUSIC_DIR);
     if (!fs.existsSync(MUSIC_DIR))
     {
-        warn('No music dir (create electron-app/music) at', MUSIC_DIR);
+        warn('No music dir (create electron-app/audiofiles/Friday_Magic) at', MUSIC_DIR);
         return;
     }
     const exts = ['.mp3', '.ogg', '.wav', '.flac'];
