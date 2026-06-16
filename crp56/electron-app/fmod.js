@@ -397,7 +397,7 @@ function playMusic(name, { fadeMs = 1200 } = {})
 
     log(`playMusic(${name}) -> resolved ${track.name}`);
     const soundOut = [null];
-    check(FMOD_System_CreateSound(system, track.path, FMOD_2D | FMOD_LOOP_NORMAL, null, soundOut), 'CreateSound(music)');
+    check(FMOD_System_CreateSound(system, track.path, FMOD_2D | FMOD_LOOP_OFF, null, soundOut), 'CreateSound(music)');
     const newSound = soundOut[0];
     log('music sound ptr ->', ptrLabel(newSound));
 
@@ -419,6 +419,7 @@ function playMusic(name, { fadeMs = 1200 } = {})
     crossfade(oldChannel, oldSound, newChannel, fadeMs);
     dumpMixerState(`after playMusic(${track.name})`);
     log('playing music:', track.name);
+    startMusicEndWatcher();
 }
 
 function stopMusic({ fadeMs = 800 } = {})
@@ -506,6 +507,31 @@ function setMuteAll(muted)
 function categories()
 {
     return Object.keys(library).map(c => ({ category: c, count: library[c].length }));
+}
+
+function startMusicEndWatcher()
+{
+    if (!currentMusicChannel) return;
+    const watchChannel = currentMusicChannel;
+    const poll = setInterval(() =>
+    {
+        if (!system || watchChannel !== currentMusicChannel)
+        {
+            clearInterval(poll);
+            return;
+        }
+        const out = [0];
+        const rc = FMOD_Channel_IsPlaying(watchChannel, out);
+        if (rc !== 0 || out[0] !== 1)
+        {
+            clearInterval(poll);
+            log('Track ended, picking next track...');
+            const available = musicTracks.filter(t => t.name !== currentTrackName);
+            const pool = available.length > 0 ? available : musicTracks;
+            const next = pool[Math.floor(Math.random() * pool.length)];
+            if (next) playMusic(next.name);
+        }
+    }, 500);
 }
 
 function shutdown()

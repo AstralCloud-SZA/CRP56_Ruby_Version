@@ -20,6 +20,7 @@ let selectedEncryptedFolder = null;
 let selectedFolderOutput = null;
 let progressResetTimer = null;
 let particlesEnabled = true;
+let bgMusicStarted = false;
 
 const SFX_THROTTLE_MS = 60;
 const lastSfxAt = {};
@@ -489,6 +490,7 @@ async function bindMusicTrackSelect()
             {
                 window.sfx.playMusic(track);
                 localStorage.setItem('crp56-music-track', track);
+                bgMusicStarted = true;
                 log('Manual BG music selected:', track);
             }
             else if (tracks.length > 0)
@@ -496,6 +498,7 @@ async function bindMusicTrackSelect()
                 const pick = tracks[Math.floor(Math.random() * tracks.length)];
                 window.sfx.playMusic(pick);
                 localStorage.removeItem('crp56-music-track');
+                bgMusicStarted = true;
                 log('Manual BG music auto-picked:', pick);
             }
         });
@@ -503,6 +506,28 @@ async function bindMusicTrackSelect()
     catch (e)
     {
         console.error('[CRP56] Failed to load music tracks:', e);
+    }
+}
+
+async function startBackgroundMusicOnce()
+{
+    if (bgMusicStarted) return;
+    if (!window.sfx?.listMusic || !window.sfx?.playMusic) return;
+
+    try
+    {
+        const tracks = await window.sfx.listMusic();
+        if (tracks.length > 0)
+        {
+            const pick = tracks[Math.floor(Math.random() * tracks.length)];
+            window.sfx.playMusic(pick);
+            bgMusicStarted = true;
+            log('BG music started:', pick);
+        }
+    }
+    catch (e)
+    {
+        console.error('[CRP56] BG music start failed:', e);
     }
 }
 
@@ -739,26 +764,10 @@ window.addEventListener('DOMContentLoaded', async () =>
     bindPageActions();
     bindProgressEvents();
     await bindMusicTrackSelect();
+    await startBackgroundMusicOnce();
+
     const page = body?.dataset?.page;
     if (page) show({ ok: true, status: `${page.charAt(0).toUpperCase() + page.slice(1)} page ready.` });
-
-    if (window.sfx?.listMusic && window.sfx?.playMusic)
-    {
-        try
-        {
-            const tracks = await window.sfx.listMusic();
-            if (tracks.length > 0)
-            {
-                const pick = tracks[Math.floor(Math.random() * tracks.length)];
-                window.sfx.playMusic(pick);
-                log('BG music started:', pick);
-            }
-        }
-        catch (e)
-        {
-            console.error('[CRP56] BG music start failed:', e);
-        }
-    }
 });
 
 window.addEventListener('resize', resizeCanvas);
