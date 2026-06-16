@@ -401,31 +401,21 @@ function crossfade(oldChannel, oldSound, newChannel, fadeMs)
 function playMusic(name, { fadeMs = 1200 } = {})
 {
     if (!system) { warn('playMusic() called but system is null'); return; }
-
-    if (musicEndWatcher)
-    {
-        clearInterval(musicEndWatcher);
-        musicEndWatcher = null;
-        log('[music] cleared previous end watcher');
-    }
-
-    log('[music] playMusic called with:', name);
-    log('[music] available tracks:', musicTracks.map(t => t.name));
-
     const track = musicTracks.find(t => t.name === name) || musicTracks[0];
-    if (!track) { warn('[music] No music tracks available'); return; }
-
-    log('[music] resolved track:', { name: track.name, path: track.path });
+    if (!track) { warn('No music tracks available'); return; }
 
     if (currentTrackName === track.name && isMusicPlaying())
     {
-        log(`[music] playMusic(${track.name}) ignored; already playing`);
+        log(`playMusic(${track.name}) ignored; already playing`);
         return;
     }
 
+    log(`[music] playMusic called with: ${name}`);
+    log('[music] resolved track:', { name: track.name, path: track.path });
+
     const soundOut = [null];
     const createRc = FMOD_System_CreateSound(system, track.path, FMOD_2D | FMOD_LOOP_OFF, null, soundOut);
-    log('[music] CreateSound rc:', createRc, 'path:', track.path);
+    log('[music] CreateSound rc:', createRc);
     check(createRc, 'CreateSound(music)');
     const newSound = soundOut[0];
     log('[music] sound ptr ->', ptrLabel(newSound));
@@ -437,6 +427,8 @@ function playMusic(name, { fadeMs = 1200 } = {})
     const newChannel = chanOut[0];
     log('[music] channel ptr ->', ptrLabel(newChannel));
 
+    FMOD_Channel_SetVolume(newChannel, 0.0);
+
     const oldChannel = currentMusicChannel;
     const oldSound = currentMusicSound;
 
@@ -444,16 +436,10 @@ function playMusic(name, { fadeMs = 1200 } = {})
     currentMusicSound = newSound;
     currentTrackName = track.name;
 
-    log('[music] state before fade:', {oldChannel: ptrLabel(oldChannel), oldSound: ptrLabel(oldSound), newChannel: ptrLabel(newChannel), currentTrackNam});
-
-    FMOD_Channel_SetVolume(newChannel, 0.0);
     newChannelSetPaused(newChannel, false);
-
     crossfade(oldChannel, oldSound, newChannel, fadeMs);
     dumpMixerState(`after playMusic(${track.name})`);
-    dumpMusicState(`after playMusic(${track.name})`);
     log('[music] playing music:', track.name);
-
     startMusicEndWatcher();
 }
 
@@ -594,8 +580,7 @@ function startMusicEndWatcher()
 
         if (watchChannel !== currentMusicChannel || watchTrack !== currentTrackName)
         {
-            log('[music watcher] track/channel changed; stopping watcher', {watchTrack,
-                currentTrackName, watchChannel: ptrLabel(watchChannel), currentChannel: ptrLabel(currentMusicChannel)});
+            log('[music watcher] track/channel changed; stopping watcher');
             clearInterval(musicEndWatcher);
             musicEndWatcher = null;
             return;
@@ -603,7 +588,7 @@ function startMusicEndWatcher()
 
         const out = [0];
         const rc = FMOD_Channel_IsPlaying(watchChannel, out);
-        log('[music watcher] poll', {track: watchTrack, rc, playing: out[0], channel: ptrLabel(watchChannel)});
+        log('[music watcher] poll', { track: watchTrack, rc, playing: out[0] });
 
         if (rc !== 0)
         {
@@ -620,7 +605,6 @@ function startMusicEndWatcher()
             log('[music watcher] track ended, picking next track...');
             const available = musicTracks.filter(t => t.name !== watchTrack);
             const pool = available.length > 0 ? available : musicTracks;
-            log('[music watcher] next pool:', pool.map(t => t.name));
             const next = pool[Math.floor(Math.random() * pool.length)];
             log('[music watcher] next track selected:', next ? next.name : null);
             if (next) playMusic(next.name);
