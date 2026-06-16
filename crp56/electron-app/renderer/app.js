@@ -754,7 +754,18 @@ window.addEventListener('DOMContentLoaded', async () =>
     drawParticles();
     applySavedVolumes();
     await bindMusicTrackSelect();
-    await startBackgroundMusicOnce();
+
+    setTimeout(async () =>
+    {
+        try
+        {
+            await startBackgroundMusicOnce();
+        }
+        catch (e)
+        {
+            console.error('[CRP56] Delayed BG music start failed:', e);
+        }
+    }, 500);
 
     if (!window.crp56)
     {
