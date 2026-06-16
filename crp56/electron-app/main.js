@@ -4,33 +4,11 @@ const path = require('path');
 const readline = require('readline');
 const fmod = require('./fmod');
 
-/**
- * Main application window reference.
- * Set when the BrowserWindow is created and cleared on close.
- */
 let mainWindow = null;
-
-/**
- * Child process handle for the Ruby backend server.
- * This process handles encryption, decryption, and other backend commands.
- */
 let rubyProcess = null;
-
-/**
- * Tracks pending JSON-RPC style requests sent to the Ruby process.
- * Each request is stored by id until a response arrives or times out.
- */
 const pendingRequests = new Map();
-
-/**
- * Monotonic request counter used to assign unique ids to outbound Ruby calls.
- */
 let requestCounter = 0;
 
-/**
- * Command-specific timeout values in milliseconds.
- * Long-running folder operations get more time than simple file operations.
- */
 const COMMAND_TIMEOUTS = {
     encrypt_folder: 600000,
     decrypt_folder: 600000,
@@ -38,15 +16,8 @@ const COMMAND_TIMEOUTS = {
     decrypt_file: 120000
 };
 
-/**
- * Default timeout for commands that do not have a custom timeout value.
- */
 const DEFAULT_TIMEOUT = 30000;
 
-/**
- * Global crash handler for unexpected exceptions in the Electron main process.
- * Shows a native error dialog and logs the stack trace for debugging.
- */
 process.on('uncaughtException', (err) =>
 {
     console.error('[uncaughtException]', err);
@@ -56,23 +27,11 @@ process.on('uncaughtException', (err) =>
     } catch (_) {}
 });
 
-/**
- * Global rejection handler for unhandled promise rejections.
- * Keeps backend failures visible in the main process logs.
- */
-process.on('unhandledRejection', (reason) => {console.error('[unhandledRejection]', reason);});
+process.on('unhandledRejection', (reason) => { console.error('[unhandledRejection]', reason); });
 
-/**
- * Convenience logger for app-level main process messages.
- */
-function log(...args) {console.log('[CRP56 main]', ...args);}
+function log(...args) { console.log('[CRP56 main]', ...args); }
+function musicLog(...args) { console.log('[CRP56 music]', ...args); }
 
-/**
- * Resets the timeout timer for a pending Ruby request.
- * If the request stays active past its timeout, it is rejected and removed.
- *
- * @param {string} id - Request id previously assigned in sendToRuby().
- */
 function armTimeout(id)
 {
     const pending = pendingRequests.get(id);
@@ -89,13 +48,6 @@ function armTimeout(id)
     }, pending.timeoutMs);
 }
 
-/**
- * Starts the Ruby backend server as a child process.
- *
- * The Electron main process spawns `ruby main.rb server` in the ruby-core
- * directory and communicates with it over stdin/stdout using newline-delimited
- * JSON messages.
- */
 function startRubyServer()
 {
     const rubyCorePath = path.join(__dirname, '..', 'ruby-core');
@@ -114,8 +66,8 @@ function startRubyServer()
         shell: isWin
     });
 
-    rubyProcess.on('spawn', () => {log('Ruby process spawned successfully');});
-    rubyProcess.on('error', (err) => {console.error('[Ruby spawn error]', err);});
+    rubyProcess.on('spawn', () => { log('Ruby process spawned successfully'); });
+    rubyProcess.on('error', (err) => { console.error('[Ruby spawn error]', err); });
 
     const rl = readline.createInterface({ input: rubyProcess.stdout, crlfDelay: Infinity });
 
@@ -131,6 +83,7 @@ function startRubyServer()
 
             if (msg.event === 'progress')
             {
+                log('Ruby progress:', msg);
                 if (pendingRequests.has(msg.id)) armTimeout(msg.id);
                 if (mainWindow && !mainWindow.isDestroyed())
                 {
@@ -179,10 +132,6 @@ function startRubyServer()
     });
 }
 
-/**
- * Stops the Ruby backend process if it is currently running.
- * This is called during app shutdown and before quit.
- */
 function stopRubyServer()
 {
     if (!rubyProcess) return;
@@ -193,13 +142,6 @@ function stopRubyServer()
     rubyProcess = null;
 }
 
-/**
- * Sends a command to the Ruby backend and returns a promise for the response.
- *
- * @param {string} command - Ruby backend command name.
- * @param {object} params - JSON-serializable command parameters.
- * @returns {Promise<object>} parsed Ruby response.
- */
 function sendToRuby(command, params = {})
 {
     return new Promise((resolve, reject) =>
@@ -234,14 +176,6 @@ function sendToRuby(command, params = {})
     });
 }
 
-/**
- * Wrapper around sendToRuby() that converts thrown errors into a structured
- * failure response instead of rejecting the IPC handler.
- *
- * @param {string} command - Ruby backend command name.
- * @param {object} params - JSON-serializable command parameters.
- * @returns {Promise<object>} success or error payload
- */
 async function safeInvoke(command, params = {})
 {
     try
@@ -255,118 +189,56 @@ async function safeInvoke(command, params = {})
     }
 }
 
-/**
- * Simple health check handler for the renderer.
- */
 ipcMain.handle('crp56:ping', async () => safeInvoke('ping'));
-
-/**
- * Returns the backend version or build info.
- */
 ipcMain.handle('crp56:version', async () => safeInvoke('version'));
 
-/**
- * Encrypts plain text via the Ruby backend.
- *
- * Expected renderer payload:
- * { passphrase, plainText }
- */
 ipcMain.handle('crp56:encrypt-text', async (_event, { passphrase, plainText }) =>
 {
     return safeInvoke('encrypt_text', { passphrase, plain_text: plainText });
 });
 
-/**
- * Decrypts Base64 text via the Ruby backend.
- *
- * Expected renderer payload:
- * { passphrase, cipherTextBase64 }
- */
 ipcMain.handle('crp56:decrypt-text', async (_event, { passphrase, cipherTextBase64 }) =>
 {
     return safeInvoke('decrypt_text', { passphrase, cipher_text_base64: cipherTextBase64 });
 });
 
-/**
- * Encrypts a single file via the Ruby backend.
- *
- * Expected renderer payload:
- * { passphrase, sourceFile, outputFile }
- */
 ipcMain.handle('crp56:encrypt-file', async (_event, { passphrase, sourceFile, outputFile }) =>
 {
     return safeInvoke('encrypt_file', { passphrase, source_file: sourceFile, output_file: outputFile });
 });
 
-/**
- * Decrypts a single file via the Ruby backend.
- *
- * Expected renderer payload:
- * { passphrase, sourceFile, outputFile }
- */
 ipcMain.handle('crp56:decrypt-file', async (_event, { passphrase, sourceFile, outputFile }) =>
 {
     return safeInvoke('decrypt_file', { passphrase, source_file: sourceFile, output_file: outputFile });
 });
 
-/**
- * Encrypts a folder via the Ruby backend.
- *
- * Expected renderer payload:
- * { passphrase, sourceFolder, outputFolder }
- */
 ipcMain.handle('crp56:encrypt-folder', async (_event, { passphrase, sourceFolder, outputFolder }) =>
 {
     return safeInvoke('encrypt_folder', { passphrase, source_folder: sourceFolder, output_folder: outputFolder });
 });
 
-/**
- * Decrypts encrypted folder containers via the Ruby backend.
- *
- * Expected renderer payload:
- * { passphrase, sourceFolder, outputFolder }
- */
 ipcMain.handle('crp56:decrypt-folder', async (_event, { passphrase, sourceFolder, outputFolder }) =>
 {
-    return safeInvoke('decrypt_folder', {passphrase, source: sourceFolder, output_folder: outputFolder});
+    return safeInvoke('decrypt_folder', { passphrase, source: sourceFolder, output_folder: outputFolder });
 });
 
-/**
- * Opens a native file picker dialog.
- *
- * Default behavior:
- * - openFile
- * - multiSelections
- */
 ipcMain.handle('dialog:pick-file', async (_event, options = {}) =>
 {
     const defaultOptions = { properties: ['openFile', 'multiSelections'], ...options };
     return dialog.showOpenDialog(mainWindow, defaultOptions);
 });
 
-/**
- * Opens a native folder picker dialog.
- *
- * Default behavior:
- * - openDirectory
- */
 ipcMain.handle('dialog:pick-folder', async (_event, options = {}) =>
 {
     const defaultOptions = { properties: ['openDirectory'], ...options };
     return dialog.showOpenDialog(mainWindow, defaultOptions);
 });
 
-/**
- * Opens a native save-file dialog.
- */
 ipcMain.handle('dialog:pick-save-file', async (_event, options = {}) =>
 {
     return dialog.showSaveDialog(mainWindow, options);
 });
 
-/**
- * Plays an FMOD sound effect by category.
- */
 ipcMain.on('sfx:play', (_event, category) =>
 {
     console.log('[CRP56 main] sfx:play ->', category);
@@ -379,18 +251,36 @@ ipcMain.on('sfx:volume', (_event, v) => fmod.setSfxVolume(v));
 ipcMain.on('music:volume', (_event, v) => fmod.setMusicVolume(v));
 ipcMain.on('master:volume', (_e, v) => fmod.setMasterVolume(v));
 ipcMain.on('audio:mute', (_e, muted) => fmod.setMuteAll(muted));
-ipcMain.on('music:play', (_e, name) => fmod.playMusic(name));
-ipcMain.on('music:stop', () => fmod.stopMusic());
-ipcMain.handle('music:list', () => fmod.listMusic());
 
-/**
- * Creates the main BrowserWindow and loads the renderer entry point.
- *
- * Security settings:
- * - contextIsolation enabled
- * - nodeIntegration disabled
- * - preload script used for safe renderer API exposure
- */
+ipcMain.on('music:play', (_e, name) =>
+{
+    musicLog('music:play ->', name);
+    try
+    {
+        musicLog('dispatching to fmod.playMusic');
+        fmod.playMusic(name);
+        musicLog('music:play dispatched to fmod');
+    }
+    catch (e)
+    {
+        console.error('[CRP56 main] music:play FAILED:', e.message);
+    }
+});
+
+ipcMain.on('music:stop', () =>
+{
+    musicLog('music:stop');
+    try { fmod.stopMusic(); }
+    catch (e) { console.error('[CRP56 main] music:stop FAILED:', e.message); }
+});
+
+ipcMain.handle('music:list', () =>
+{
+    const list = fmod.listMusic();
+    musicLog('music:list ->', list);
+    return list;
+});
+
 function createWindow()
 {
     mainWindow = new BrowserWindow({
@@ -415,20 +305,23 @@ function createWindow()
     const rendererPath = path.join(__dirname, 'renderer', 'index.html');
     mainWindow.loadFile(rendererPath);
 
+    mainWindow.webContents.on('did-finish-load', () =>
+    {
+        log('Renderer finished load');
+    });
+
     mainWindow.on('closed', () => { mainWindow = null; });
 }
 
-/**
- * App startup sequence.
- * Initializes audio, creates the main window, and starts the Ruby backend.
- */
 app.whenReady().then(() =>
 {
     log('Electron app ready');
 
     try
     {
+        log('Initializing FMOD...');
         fmod.init();
+        log('FMOD init complete');
     }
     catch (err)
     {
@@ -447,9 +340,6 @@ app.whenReady().then(() =>
     }
 });
 
-/**
- * Closes the app when all windows are closed on non-macOS platforms.
- */
 app.on('window-all-closed', () =>
 {
     stopRubyServer();
@@ -459,18 +349,12 @@ app.on('window-all-closed', () =>
     }
 });
 
-/**
- * Ensures the Ruby backend and audio subsystem are shut down before exit.
- */
 app.on('before-quit', () =>
 {
     stopRubyServer();
     try { fmod.shutdown(); } catch (_) {}
 });
 
-/**
- * Recreates the main window when the app is reactivated on macOS.
- */
 app.on('activate', () =>
 {
     if (BrowserWindow.getAllWindows().length === 0)

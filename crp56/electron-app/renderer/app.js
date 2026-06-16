@@ -21,11 +21,11 @@ let selectedFolderOutput = null;
 let progressResetTimer = null;
 let particlesEnabled = true;
 let bgMusicStarted = false;
+let loadedMusicTracks = [];
 
 const SFX_THROTTLE_MS = 60;
 const lastSfxAt = {};
 
-/* SFX bridge with simple throttling. */
 function playSfx(category)
 {
     if (!window.sfx || typeof window.sfx.play !== 'function')
@@ -36,6 +36,7 @@ function playSfx(category)
     const now = Date.now();
     if (now - (lastSfxAt[category] || 0) < SFX_THROTTLE_MS) return;
     lastSfxAt[category] = now;
+    console.log('[CRP56 renderer] sfx:play ->', category);
     window.sfx.play(category);
 }
 
@@ -53,6 +54,7 @@ function bindMasterAndMusic()
         {
             const pct = Number(masterSlider.value);
             if (masterLabel) masterLabel.textContent = `${pct}%`;
+            console.log('[CRP56 renderer] master volume input ->', pct);
             if (window.sfx) window.sfx.setMasterVolume(pct / 100);
             try { localStorage.setItem(MASTER_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
         });
@@ -69,6 +71,7 @@ function bindMasterAndMusic()
         muteBtn.addEventListener('click', () =>
         {
             muted = !muted;
+            console.log('[CRP56 renderer] mute toggle ->', muted);
             if (window.sfx) window.sfx.setMuteAll(muted);
             try { localStorage.setItem(MUTE_STORAGE_KEY, muted ? 'on' : 'off'); } catch (_) {}
             render();
@@ -215,9 +218,16 @@ function finishProgress()
 
 function bindProgressEvents()
 {
-    if (!window.crp56 || typeof window.crp56.onProgress !== 'function') return;
+    if (!window.crp56 || typeof window.crp56.onProgress !== 'function')
+    {
+        console.log('[CRP56 renderer] progress bridge missing');
+        return;
+    }
+
+    console.log('[CRP56 renderer] progress bridge attached');
     window.crp56.onProgress((msg) =>
     {
+        console.log('[CRP56 renderer] progress event:', msg);
         if (!msg || msg.event !== 'progress' || !msg.total) return;
         const percent = Math.round((msg.current / msg.total) * 100);
         setProgress(percent);
@@ -255,6 +265,7 @@ function bindThemeToggle()
     if (!themeToggle) return;
     themeToggle.addEventListener('click', () =>
     {
+        console.log('[CRP56 renderer] theme toggle');
         playSfx('confirm');
         const next = html.dataset.theme === 'primordial-gold' ? 'hellflare-gold' : 'primordial-gold';
         setTheme(next);
@@ -312,8 +323,6 @@ function bindSelectionZones()
             let result;
             if (isDecryptPage)
             {
-                // WinRAR-style: on the decrypt page the folder tab selects the
-                // single encrypted ARCHIVE FILE (.crp56) to extract, not a directory.
                 result = await window.crp56.pickFile({
                     title: 'Select Encrypted Archive to Extract',
                     properties: ['openFile'],
@@ -325,7 +334,6 @@ function bindSelectionZones()
             }
             else
             {
-                // Encrypt page: select the SOURCE folder to archive.
                 result = await window.crp56.pickFolder();
             }
             if (result.canceled) return;
@@ -417,8 +425,6 @@ function bindPageActions()
             }
             else if (activeTab === 'folder')
             {
-                // WinRAR-style: selectedEncryptedFolder holds the .crp56 ARCHIVE FILE
-                // chosen via the file picker. The Ruby backend extracts the full tree.
                 if (!selectedEncryptedFolder) { playSfx('error'); return show({ ok: false, error: 'No encrypted archive (.crp56) selected' }); }
                 const saveRes = await window.crp56.pickFolder({ title: 'Select Output Folder to Extract Into', properties: ['openDirectory', 'createDirectory'] });
                 if (saveRes.canceled) return;
@@ -461,11 +467,19 @@ async function bindMusicTrackSelect()
 {
     const select = document.getElementById('musicTrackSelect');
     const playBtn = document.getElementById('musicTrackPlay');
-    if (!select || !playBtn || !window.sfx?.listMusic) return;
+    if (!select || !playBtn || !window.sfx?.listMusic)
+    {
+        console.log('[CRP56 renderer] music UI missing or bridge missing');
+        return;
+    }
 
     try
     {
+        console.log('[CRP56 renderer] requesting music list...');
         const tracks = await window.sfx.listMusic();
+        loadedMusicTracks = tracks.slice();
+        console.log('[CRP56 renderer] music list loaded:', tracks);
+
         select.innerHTML = '';
 
         const autoOpt = document.createElement('option');
@@ -486,8 +500,15 @@ async function bindMusicTrackSelect()
         playBtn.addEventListener('click', () =>
         {
             const track = select.value;
+            console.log('[CRP56 renderer] music play click', {
+                selected: track,
+                tracksLoaded: loadedMusicTracks,
+                bgMusicStarted
+            });
+
             if (track)
             {
+                console.log('[CRP56 renderer] sending music:play ->', track);
                 window.sfx.playMusic(track);
                 localStorage.setItem('crp56-music-track', track);
                 bgMusicStarted = true;
@@ -496,10 +517,15 @@ async function bindMusicTrackSelect()
             else if (tracks.length > 0)
             {
                 const pick = tracks[Math.floor(Math.random() * tracks.length)];
+                console.log('[CRP56 renderer] auto-picked music ->', pick);
                 window.sfx.playMusic(pick);
                 localStorage.removeItem('crp56-music-track');
                 bgMusicStarted = true;
                 log('Manual BG music auto-picked:', pick);
+            }
+            else
+            {
+                console.log('[CRP56 renderer] no tracks available to play');
             }
         });
     }
@@ -511,18 +537,33 @@ async function bindMusicTrackSelect()
 
 async function startBackgroundMusicOnce()
 {
+    console.log('[CRP56 renderer] startBackgroundMusicOnce called', {
+        bgMusicStarted,
+        hasBridge: !!window.sfx,
+        hasListMusic: !!window.sfx?.listMusic,
+        hasPlayMusic: !!window.sfx?.playMusic
+    });
+
     if (bgMusicStarted) return;
     if (!window.sfx?.listMusic || !window.sfx?.playMusic) return;
 
     try
     {
         const tracks = await window.sfx.listMusic();
+        console.log('[CRP56 renderer] autoplay tracks:', tracks);
+        loadedMusicTracks = tracks.slice();
+
         if (tracks.length > 0)
         {
             const pick = tracks[Math.floor(Math.random() * tracks.length)];
+            console.log('[CRP56 renderer] autoplay music ->', pick);
             window.sfx.playMusic(pick);
             bgMusicStarted = true;
             log('BG music started:', pick);
+        }
+        else
+        {
+            console.log('[CRP56 renderer] autoplay skipped; no tracks');
         }
     }
     catch (e)
@@ -585,6 +626,7 @@ function bindVolumeSliders()
         {
             const pct = Number(sfxSlider.value);
             sync(sfxSlider, sfxLabel, pct);
+            console.log('[CRP56 renderer] sfx volume input ->', pct);
             if (window.sfx) window.sfx.setVolume(pct / 100);
             try { localStorage.setItem(SFX_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
         });
@@ -598,6 +640,7 @@ function bindVolumeSliders()
         {
             const pct = Number(musicSlider.value);
             sync(musicSlider, musicLabel, pct);
+            console.log('[CRP56 renderer] music volume input ->', pct);
             if (window.sfx) window.sfx.setMusicVolume(pct / 100);
             try { localStorage.setItem(MUSIC_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
         });
@@ -634,6 +677,8 @@ function applySavedVolumes()
     if (musicLabel) musicLabel.textContent = `${musicVol}%`;
 
     if (!window.sfx) return;
+
+    console.log('[CRP56 renderer] applying saved volumes', { master, sfxVol, musicVol });
 
     window.sfx.setMasterVolume(master / 100);
     window.sfx.setVolume(sfxVol / 100);
@@ -739,6 +784,7 @@ function drawParticles()
 
 window.addEventListener('DOMContentLoaded', async () =>
 {
+    console.log('[CRP56 renderer] DOMContentLoaded');
     bindThemeToggle();
     bindThemeButtons();
     bindTabButtons();
@@ -753,12 +799,15 @@ window.addEventListener('DOMContentLoaded', async () =>
     resizeCanvas();
     drawParticles();
     applySavedVolumes();
+
+    console.log('[CRP56 renderer] awaiting music track binding');
     await bindMusicTrackSelect();
 
     setTimeout(async () =>
     {
         try
         {
+            console.log('[CRP56 renderer] delayed autoplay firing');
             await startBackgroundMusicOnce();
         }
         catch (e)
