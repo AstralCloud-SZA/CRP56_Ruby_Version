@@ -158,13 +158,15 @@ contextBridge.exposeInMainWorld('sfx', {
     },
     playMusic: (name) =>
     {
-        log('sfx.playMusic()', name);
+        log('sfx.playMusic() sending music:play', name);
         ipcRenderer.send('music:play', name);
+        log('sfx.playMusic() sent music:play', name);
     },
     stopMusic: () =>
     {
-        log('sfx.stopMusic()');
+        log('sfx.stopMusic() sending music:stop');
         ipcRenderer.send('music:stop');
+        log('sfx.stopMusic() sent music:stop');
     },
     listMusic: () =>
     {

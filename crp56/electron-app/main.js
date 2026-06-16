@@ -254,7 +254,7 @@ ipcMain.on('audio:mute', (_e, muted) => fmod.setMuteAll(muted));
 
 ipcMain.on('music:play', (_e, name) =>
 {
-    musicLog('music:play ->', name);
+    musicLog('music:play listener fired with:', name);
     try
     {
         musicLog('dispatching to fmod.playMusic');
@@ -266,7 +266,6 @@ ipcMain.on('music:play', (_e, name) =>
         console.error('[CRP56 main] music:play FAILED:', e.message);
     }
 });
-
 ipcMain.on('music:stop', () =>
 {
     musicLog('music:stop');
