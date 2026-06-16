@@ -4,14 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="small decryption TWEAK" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="small decryption TWEAK 2">
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/audiofiles/Friday_Magic/1. Fantasy.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/audiofiles/Friday_Magic/10. 2時までのシンデレラ.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/audiofiles/Friday_Magic/2. ジゴロ.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/audiofiles/Friday_Magic/3. ココナッツの片想い.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/audiofiles/Friday_Magic/4. パールのマニキュア.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/audiofiles/Friday_Magic/5. Go Away.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/audiofiles/Friday_Magic/6. FRIDAY MAGIC.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/audiofiles/Friday_Magic/7. 恋の余韻.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/audiofiles/Friday_Magic/8. ステキなじゃじゃ馬ならし.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/audiofiles/Friday_Magic/9. ダイヤルまわして….mp3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="89" />
+    <option name="cachedIndexableFilesCount" value="90" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -44,61 +56,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0334930605170802" />
-      <entry key="MS500" value="1.5499498855142064" />
-      <entry key="S2" value="2.653491428639237" />
-      <entry key="S5" value="4.167223344944954" />
-      <entry key="S10" value="5.268917901752457" />
-      <entry key="S30" value="6.332460292755327" />
-      <entry key="S60" value="6.653311879646678" />
-      <entry key="M2" value="6.823293766480358" />
-      <entry key="M5" value="6.970634708006611" />
-      <entry key="M10" value="8.544378784494707" />
-      <entry key="M15" value="12.773016842148682" />
-      <entry key="M30" value="31.446113626332725" />
-      <entry key="H1" value="75.73567552985884" />
-      <entry key="H2" value="173.3290478689515" />
-      <entry key="H4" value="331.50356771792167" />
-      <entry key="D1" value="704.6651401298446" />
-      <entry key="W1" value="822.7846959779058" />
+      <entry key="MS100" value="1.3565952625261635" />
+      <entry key="MS500" value="2.3438739550741152" />
+      <entry key="S2" value="4.707700887535481" />
+      <entry key="S5" value="6.298124483941058" />
+      <entry key="S10" value="7.155011243734537" />
+      <entry key="S30" value="8.327375227517818" />
+      <entry key="S60" value="9.698141612904383" />
+      <entry key="M2" value="11.62366883937697" />
+      <entry key="M5" value="13.83150780760585" />
+      <entry key="M10" value="16.138123902134517" />
+      <entry key="M15" value="20.351403578407677" />
+      <entry key="M30" value="38.674301501073835" />
+      <entry key="H1" value="82.58484839833463" />
+      <entry key="H2" value="179.856285240185" />
+      <entry key="H4" value="338.13257206135376" />
+      <entry key="D1" value="712.8230790895535" />
+      <entry key="W1" value="831.6441745837893" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
-      <entry key="S5" value="6.241734848881409E-201" />
-      <entry key="S10" value="7.900465496275266E-101" />
-      <entry key="S30" value="4.32595080283082E-34" />
-      <entry key="S60" value="2.430048423111181E-17" />
-      <entry key="M2" value="8.285400458723613E-9" />
-      <entry key="M5" value="0.0014342150084843404" />
-      <entry key="M10" value="0.08382504576060479" />
-      <entry key="M15" value="0.3268741058652843" />
-      <entry key="M30" value="1.2874934390551551" />
-      <entry key="H1" value="2.6970650522595463" />
-      <entry key="H2" value="4.45321467100778" />
-      <entry key="H4" value="7.085229059667119" />
-      <entry key="D1" value="15.288567386783601" />
-      <entry key="W1" value="18.393902172288705" />
+      <entry key="S5" value="6.70250284388419E-210" />
+      <entry key="S10" value="2.588919378675053E-105" />
+      <entry key="S30" value="1.3843211619441995E-35" />
+      <entry key="S60" value="4.3470293127382496E-18" />
+      <entry key="M2" value="3.5043084389787044E-9" />
+      <entry key="M5" value="0.0010165524492985682" />
+      <entry key="M10" value="0.0705718598989678" />
+      <entry key="M15" value="0.2914421492522019" />
+      <entry key="M30" value="1.2157126786156267" />
+      <entry key="H1" value="2.6208030306524694" />
+      <entry key="H2" value="4.389803814179858" />
+      <entry key="H4" value="7.034603687564737" />
+      <entry key="D1" value="15.270306301775012" />
+      <entry key="W1" value="18.39076196700108" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9920679026239999" />
-      <entry key="MS500" value="1.5393835244616998" />
-      <entry key="S2" value="2.64948086915452" />
-      <entry key="S5" value="4.164679486770456" />
-      <entry key="S10" value="5.267283786419727" />
-      <entry key="S30" value="6.331796525047341" />
-      <entry key="S60" value="6.652961865073721" />
-      <entry key="M2" value="6.823113951307775" />
-      <entry key="M5" value="6.97199061613351" />
-      <entry key="M10" value="8.62801236552011" />
-      <entry key="M15" value="13.099455192201532" />
-      <entry key="M30" value="32.7327453972709" />
-      <entry key="H1" value="78.43175770304359" />
-      <entry key="H2" value="177.78129527583488" />
-      <entry key="H4" value="338.58790253263436" />
-      <entry key="D1" value="719.9533657098077" />
-      <entry key="W1" value="841.1785396968156" />
+      <entry key="MS100" value="1.3219071331548606" />
+      <entry key="MS500" value="2.3316855442303956" />
+      <entry key="S2" value="4.701194060485897" />
+      <entry key="S5" value="6.294627769889282" />
+      <entry key="S10" value="7.153025429400464" />
+      <entry key="S30" value="8.326602795035367" />
+      <entry key="S60" value="9.697685766860957" />
+      <entry key="M2" value="11.623390880255398" />
+      <entry key="M5" value="13.832386685137502" />
+      <entry key="M10" value="16.208493234928092" />
+      <entry key="M15" value="20.642429594091087" />
+      <entry key="M30" value="39.8891867172154" />
+      <entry key="H1" value="85.20468941742168" />
+      <entry key="H2" value="184.24513209950393" />
+      <entry key="H4" value="345.16628616110285" />
+      <entry key="D1" value="728.0930437039724" />
+      <entry key="W1" value="850.0348780661323" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -110,41 +122,43 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.ruby.rubocop.migration.global.runOnSaveToExternalFormatter": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP": "1781547190649",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "master",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "S:/CRP_56_EncryptionAPP/CRP56_MK2/crp56/electron-app/soundengine",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ruby.structure.view.model.defaults.configured": "true",
-    "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "S:\\JetBrains\\RubyMine 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ruby.rubocop.migration.global.runOnSaveToExternalFormatter&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP&quot;: &quot;1781547190649&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;S:/CRP_56_EncryptionAPP/CRP56_MK2/crp56/electron-app/soundengine&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ruby.structure.view.model.defaults.configured&quot;: &quot;true&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;S:\\JetBrains\\RubyMine 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\soundengine" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\ruby-core" />
+      <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\audiofiles\Friday_Magic" />
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\audiofiles" />
+      <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app" />
+      <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\ruby-core" />
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\BG_images" />
     </key>
   </component>
@@ -173,7 +187,8 @@
       <workItem from="1781289788961" duration="2674000" />
       <workItem from="1781356918690" duration="706000" />
       <workItem from="1781370031836" duration="6122000" />
-      <workItem from="1781547132681" duration="13427000" />
+      <workItem from="1781547132681" duration="15198000" />
+      <workItem from="1781610406181" duration="2132000" />
     </task>
     <task id="LOCAL-00001" summary="Base push for the Redo version of my Carrera themed Ecryption and compression desktop app that i made in C# but i am converting it into a electron front-ended APP that uses ruby to handle the crypto and compression work">
       <option name="closed" value="true" />
@@ -511,7 +526,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781562455972</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="small decryption TWEAK 2">
+      <option name="closed" value="true" />
+      <created>1781562570577</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1781562570577</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -529,7 +552,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Updated and fixes made by the claude flame model 2" />
     <MESSAGE value="Updated and fixes made by the claude flame model 3" />
     <MESSAGE value="BG system work" />
     <MESSAGE value="BG system work 2" />
@@ -554,6 +576,7 @@
     <MESSAGE value="testing file" />
     <MESSAGE value="path and requirement patches" />
     <MESSAGE value="small decryption TWEAK" />
-    <option name="LAST_COMMIT_MESSAGE" value="small decryption TWEAK" />
+    <MESSAGE value="small decryption TWEAK 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="small decryption TWEAK 2" />
   </component>
 </project>
