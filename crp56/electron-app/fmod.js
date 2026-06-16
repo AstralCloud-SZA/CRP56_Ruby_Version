@@ -41,6 +41,8 @@ const FMOD_LOOP_OFF = 0x00000001;
 const FMOD_LOOP_NORMAL = 0x00000002;
 const FMOD_2D = 0x00000008;
 
+let musicEndWatcher = null;
+
 function log(...args) { console.log('[fmod]', ...args); }
 function warn(...args) { console.warn('[fmod]', ...args); }
 function err(...args) { console.error('[fmod]', ...args); }
@@ -387,8 +389,16 @@ function crossfade(oldChannel, oldSound, newChannel, fadeMs)
 function playMusic(name, { fadeMs = 1200 } = {})
 {
     if (!system) { warn('playMusic() called but system is null'); return; }
+
+    if (musicEndWatcher)
+    {
+        clearInterval(musicEndWatcher);
+        musicEndWatcher = null;
+    }
+
     const track = musicTracks.find(t => t.name === name) || musicTracks[0];
     if (!track) { warn('No music tracks available'); return; }
+
     if (currentTrackName === track.name && isMusicPlaying())
     {
         log(`playMusic(${track.name}) ignored; already playing`);
@@ -424,6 +434,12 @@ function playMusic(name, { fadeMs = 1200 } = {})
 
 function stopMusic({ fadeMs = 800 } = {})
 {
+    if (musicEndWatcher)
+    {
+        clearInterval(musicEndWatcher);
+        musicEndWatcher = null;
+    }
+
     if (!currentMusicChannel) { log('stopMusic() ignored; no current music channel'); return; }
     const ch = currentMusicChannel;
     const snd = currentMusicSound;
@@ -511,22 +527,40 @@ function categories()
 
 function startMusicEndWatcher()
 {
+    if (musicEndWatcher)
+    {
+        clearInterval(musicEndWatcher);
+        musicEndWatcher = null;
+    }
+
     if (!currentMusicChannel) return;
     const watchChannel = currentMusicChannel;
-    const poll = setInterval(() =>
+    const watchTrack = currentTrackName;
+
+    musicEndWatcher = setInterval(() =>
     {
-        if (!system || watchChannel !== currentMusicChannel)
+        if (!system || watchChannel !== currentMusicChannel || watchTrack !== currentTrackName)
         {
-            clearInterval(poll);
+            clearInterval(musicEndWatcher);
+            musicEndWatcher = null;
             return;
         }
+
         const out = [0];
         const rc = FMOD_Channel_IsPlaying(watchChannel, out);
-        if (rc !== 0 || out[0] !== 1)
+        if (rc !== 0)
         {
-            clearInterval(poll);
+            clearInterval(musicEndWatcher);
+            musicEndWatcher = null;
+            return;
+        }
+
+        if (out[0] !== 1)
+        {
+            clearInterval(musicEndWatcher);
+            musicEndWatcher = null;
             log('Track ended, picking next track...');
-            const available = musicTracks.filter(t => t.name !== currentTrackName);
+            const available = musicTracks.filter(t => t.name !== watchTrack);
             const pool = available.length > 0 ? available : musicTracks;
             const next = pool[Math.floor(Math.random() * pool.length)];
             if (next) playMusic(next.name);
@@ -537,6 +571,7 @@ function startMusicEndWatcher()
 function shutdown()
 {
     log('shutdown() called');
+    if (musicEndWatcher) { clearInterval(musicEndWatcher); musicEndWatcher = null; }
     if (fadeTimer) { clearInterval(fadeTimer); fadeTimer = null; }
     if (diagTimer) { clearInterval(diagTimer); diagTimer = null; }
     if (updateTimer) { clearInterval(updateTimer); updateTimer = null; }

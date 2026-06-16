@@ -753,6 +753,8 @@ window.addEventListener('DOMContentLoaded', async () =>
     resizeCanvas();
     drawParticles();
     applySavedVolumes();
+    await bindMusicTrackSelect();
+    await startBackgroundMusicOnce();
 
     if (!window.crp56)
     {
@@ -763,8 +765,6 @@ window.addEventListener('DOMContentLoaded', async () =>
     bindSelectionZones();
     bindPageActions();
     bindProgressEvents();
-    await bindMusicTrackSelect();
-    await startBackgroundMusicOnce();
 
     const page = body?.dataset?.page;
     if (page) show({ ok: true, status: `${page.charAt(0).toUpperCase() + page.slice(1)} page ready.` });
