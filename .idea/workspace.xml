@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="bg music code debugging setup 3">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crp56/electron-app/fmod.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/fmod.js" afterDir="false" />
     </list>
@@ -47,61 +47,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="1.227143546065646E-110" />
-      <entry key="S5" value="1.6423414483266246E-44" />
-      <entry key="S10" value="1.8240712109924928E-22" />
-      <entry key="S30" value="1.3502178799431167E-7" />
-      <entry key="S60" value="0.001199656631418579" />
-      <entry key="M2" value="0.16677826859133724" />
-      <entry key="M5" value="4.668723934751936" />
-      <entry key="M10" value="17.119785866341296" />
-      <entry key="M15" value="28.59838187102004" />
-      <entry key="M30" value="56.65813428987628" />
-      <entry key="H1" value="104.72934493429453" />
-      <entry key="H2" value="200.73583593010108" />
-      <entry key="H4" value="366.04623337489846" />
-      <entry key="D1" value="798.5302208140826" />
-      <entry key="W1" value="944.2230375571745" />
-    </decayedCancelled>
-    <decayedSelected>
       <entry key="MS100" value="1.0" />
       <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0" />
-      <entry key="S30" value="1.000003242409674" />
-      <entry key="S60" value="1.0024140211494597" />
-      <entry key="M2" value="1.1022457316947554" />
-      <entry key="M5" value="2.327282851225082" />
-      <entry key="M10" value="4.373806868913382" />
-      <entry key="M15" value="5.657531765878187" />
-      <entry key="M30" value="7.608194781106591" />
-      <entry key="H1" value="9.55264026253367" />
-      <entry key="H2" value="11.902704742097521" />
-      <entry key="H4" value="15.07098378857112" />
-      <entry key="D1" value="24.567351731088493" />
-      <entry key="W1" value="28.269588624945442" />
+      <entry key="S2" value="1.0000000000000016" />
+      <entry key="S5" value="1.0000040203637506" />
+      <entry key="S10" value="1.005703464745983" />
+      <entry key="S30" value="1.896361180639332" />
+      <entry key="S60" value="5.1995475016608435" />
+      <entry key="M2" value="11.335069627238305" />
+      <entry key="M5" value="22.040291445867158" />
+      <entry key="M10" value="36.27707897152635" />
+      <entry key="M15" value="48.60050287638596" />
+      <entry key="M30" value="78.18801098442317" />
+      <entry key="H1" value="127.47576483074512" />
+      <entry key="H2" value="224.11400618306953" />
+      <entry key="H4" value="390.0892291419878" />
+      <entry key="D1" value="825.7666234933077" />
+      <entry key="W1" value="972.9259201328052" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="8.399360364214878E-163" />
+      <entry key="S2" value="3.027342470441635E-41" />
+      <entry key="S5" value="6.200470155319316E-17" />
+      <entry key="S10" value="7.874306417278486E-9" />
+      <entry key="S30" value="0.0019894766443324" />
+      <entry key="S60" value="0.044711151109496146" />
+      <entry key="M2" value="0.23278917703210056" />
+      <entry key="M5" value="1.2494615991030047" />
+      <entry key="M10" value="3.2047671045239263" />
+      <entry key="M15" value="4.598168856957711" />
+      <entry key="M30" value="6.858996479328191" />
+      <entry key="H1" value="9.070117262430761" />
+      <entry key="H2" value="11.598194832151288" />
+      <entry key="H4" value="14.876952361872114" />
+      <entry key="D1" value="24.514351292980372" />
+      <entry key="W1" value="28.26086806331885" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="4.943129693355802E-8" />
-      <entry key="MS500" value="0.0345780422841335" />
-      <entry key="S2" value="0.4312211964923722" />
-      <entry key="S5" value="0.7142989966787906" />
-      <entry key="S10" value="0.8451621126617015" />
-      <entry key="S30" value="0.9454708499504034" />
-      <entry key="S60" value="0.9758649430046094" />
-      <entry key="M2" value="1.2521028840845991" />
-      <entry key="M5" value="6.972853318097307" />
-      <entry key="M10" value="21.46818228400725" />
-      <entry key="M15" value="34.233221681470404" />
-      <entry key="M30" value="64.25084018498674" />
-      <entry key="H1" value="114.27263760395476" />
-      <entry key="H2" value="212.6330898800042" />
-      <entry key="H4" value="381.1139887013151" />
-      <entry key="D1" value="823.0968070457852" />
-      <entry key="W1" value="972.492505093355" />
+      <entry key="MS100" value="1.6107274301426915E-4" />
+      <entry key="MS500" value="0.17434295829380067" />
+      <entry key="S2" value="0.6461764153187476" />
+      <entry key="S5" value="0.8397355083923234" />
+      <entry key="S10" value="0.9220685565009334" />
+      <entry key="S30" value="1.8693799901907908" />
+      <entry key="S60" value="5.228224954862702" />
+      <entry key="M2" value="11.55665138276889" />
+      <entry key="M5" value="23.274158214485176" />
+      <entry key="M10" value="39.46161848361582" />
+      <entry key="M15" value="53.179149427973414" />
+      <entry key="M30" value="85.0325004906392" />
+      <entry key="H1" value="136.53673405301336" />
+      <entry key="H2" value="235.70675312076284" />
+      <entry key="H4" value="404.96292626892927" />
+      <entry key="D1" value="850.2801995400727" />
+      <entry key="W1" value="1001.1866655161734" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -181,15 +181,7 @@
       <workItem from="1781547132681" duration="15198000" />
       <workItem from="1781610406181" duration="2221000" />
       <workItem from="1781629918416" duration="5977000" />
-      <workItem from="1781716095216" duration="4419000" />
-    </task>
-    <task id="LOCAL-00003" summary="File conversion work main file work nearly done">
-      <option name="closed" value="true" />
-      <created>1780843471816</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1780843471816</updated>
+      <workItem from="1781716095216" duration="4750000" />
     </task>
     <task id="LOCAL-00004" summary="File conversion work continued ruby backend file conversion work">
       <option name="closed" value="true" />
@@ -575,7 +567,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781635814366</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM">
+      <option name="closed" value="true" />
+      <created>1781721427811</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1781721427811</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -593,7 +593,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="audio system integration to the apps html pages" />
     <MESSAGE value="audio system integration to the apps html pages slight adjustemnts" />
     <MESSAGE value="fmod debugging work" />
     <MESSAGE value="index.html debugging" />
@@ -618,6 +617,7 @@
     <MESSAGE value="bg music code debugging setup" />
     <MESSAGE value="bg music code debugging setup 2" />
     <MESSAGE value="bg music code debugging setup 3" />
-    <option name="LAST_COMMIT_MESSAGE" value="bg music code debugging setup 3" />
+    <MESSAGE value=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM" />
+    <option name="LAST_COMMIT_MESSAGE" value=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM" />
   </component>
 </project>

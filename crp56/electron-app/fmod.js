@@ -590,9 +590,8 @@ function startMusicEndWatcher()
     }
 
     const watchChannel  = currentMusicChannel;
-    const watchSound    = currentMusicSound;
     const watchTrack    = currentTrackName;
-    const watchLengthMs = currentTrackLengthMs;
+    const watchLengthMs = currentTrackLength_MS;
 
     log('[music watcher] started for track:', watchTrack,
         'channel:', ptrLabel(watchChannel),
