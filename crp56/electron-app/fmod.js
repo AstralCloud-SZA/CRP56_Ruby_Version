@@ -31,11 +31,16 @@ const FMOD_Channel_Stop = lib.func('FMOD_Channel_Stop', 'int', [FMOD_CHANNEL]);
 const FMOD_Channel_IsPlaying = lib.func('FMOD_Channel_IsPlaying', 'int', [FMOD_CHANNEL, '_Out_ int *']);
 const FMOD_Sound_Release = lib.func('FMOD_Sound_Release', 'int', [FMOD_SOUND]);
 
+const FMOD_Sound_GetLength     = lib.func('FMOD_Sound_GetLength',     'int', [FMOD_SOUND,   '_Out_ uint *', 'uint']);
+const FMOD_Channel_GetPosition = lib.func('FMOD_Channel_GetPosition', 'int', [FMOD_CHANNEL, '_Out_ uint *', 'uint']);
+
 const FMOD_VERSION = 0x00020314;
 const FMOD_INIT_NORMAL = 0x00000000;
 const FMOD_LOOP_OFF = 0x00000001;
 const FMOD_LOOP_NORMAL = 0x00000002;
 const FMOD_2D = 0x00000008;
+const FMOD_TIMEUNIT_MS  = 0x00000002;
+const FMOD_ACCURATETIME = 0x00004000;
 
 let musicEndWatcher = null;
 
@@ -136,12 +141,14 @@ function nextFile(cat)
 }
 
 const MUSIC_DIR = path.join(__dirname, 'audiofiles', 'Friday_Magic');
+
 let musicTracks = [];
 let currentMusicChannel = null;
 let currentMusicSound = null;
 let currentTrackName = null;
 let fadeTimer = null;
 let targetMusicVolume = 1.0;
+let currentTrackLength_MS =0;
 
 function dumpMusicState(context = 'snapshot')
 {
@@ -151,6 +158,7 @@ function dumpMusicState(context = 'snapshot')
     log('current music channel:', ptrLabel(currentMusicChannel));
     log('current music sound:', ptrLabel(currentMusicSound));
     log('current track name:', currentTrackName);
+    log('current track length (ms):', currentTrackLength_MS);
     log('music tracks:', musicTracks.map(t => t.name));
     log('musicEndWatcher:', musicEndWatcher ? 'active' : 'null');
     log('==============================');
@@ -414,12 +422,27 @@ function playMusic(name, { fadeMs = 1200 } = {})
     log('[music] resolved track:', { name: track.name, path: track.path });
 
     const soundOut = [null];
-    const createRc = FMOD_System_CreateSound(system, track.path, FMOD_2D | FMOD_LOOP_OFF, null, soundOut);
+    const createRc = FMOD_System_CreateSound(system, track.path, FMOD_2D | FMOD_LOOP_OFF | FMOD_ACCURATETIME, null, soundOut);
     log('[music] CreateSound rc:', createRc);
     check(createRc, 'CreateSound(music)');
     const newSound = soundOut[0];
     log('[music] sound ptr ->', ptrLabel(newSound));
 
+    const lenOut = [0];
+    const lenRc = FMOD_Sound_GetLength(newSound,lenOut,FMOD_TIMEUNIT_MS);
+
+    let trackLengthMs;
+    if (lenRc === 0)
+    {
+        trackLengthMs = lenOut[0];
+    }
+    else
+    {
+        trackLengthMs = 0;
+        warn('[music] GetLength failed rc:', lenRc, '-> track length unknown, watcher will use IsPlaying fallback');
+    }
+
+    log('[music] track length ms:', trackLengthMs, '(rc:', lenRc + ')');
     const chanOut = [null];
     const playRc = FMOD_System_PlaySound(system, newSound, musicGroup, 1, chanOut);
     log('[music] PlaySound rc:', playRc);
@@ -435,6 +458,7 @@ function playMusic(name, { fadeMs = 1200 } = {})
     currentMusicChannel = newChannel;
     currentMusicSound = newSound;
     currentTrackName = track.name;
+    currentTrackLength_MS = trackLengthMs;
 
     newChannelSetPaused(newChannel, false);
     crossfade(oldChannel, oldSound, newChannel, fadeMs);
@@ -549,6 +573,7 @@ function categories()
     return Object.keys(library).map(c => ({ category: c, count: library[c].length }));
 }
 
+
 function startMusicEndWatcher()
 {
     if (musicEndWatcher)
@@ -564,9 +589,14 @@ function startMusicEndWatcher()
         return;
     }
 
-    const watchChannel = currentMusicChannel;
-    const watchTrack = currentTrackName;
-    log('[music watcher] started for track:', watchTrack, 'channel:', ptrLabel(watchChannel));
+    const watchChannel  = currentMusicChannel;
+    const watchSound    = currentMusicSound;
+    const watchTrack    = currentTrackName;
+    const watchLengthMs = currentTrackLengthMs;
+
+    log('[music watcher] started for track:', watchTrack,
+        'channel:', ptrLabel(watchChannel),
+        'length:', watchLengthMs + 'ms');
 
     musicEndWatcher = setInterval(() =>
     {
@@ -586,31 +616,83 @@ function startMusicEndWatcher()
             return;
         }
 
-        const out = [0];
-        const rc = FMOD_Channel_IsPlaying(watchChannel, out);
-        log('[music watcher] poll', { track: watchTrack, rc, playing: out[0] });
-
-        if (rc !== 0)
+        // --- primary check: position vs length ---
+        if (watchLengthMs > 0)
         {
-            log('[music watcher] FMOD_Channel_IsPlaying returned non-zero; stopping watcher');
-            clearInterval(musicEndWatcher);
-            musicEndWatcher = null;
+            const posOut = [0];
+            const posRc  = FMOD_Channel_GetPosition(watchChannel, posOut, FMOD_TIMEUNIT_MS);
+            const posMs  = posOut[0];
+
+            log('[music watcher] poll', { track: watchTrack, posMs, watchLengthMs, posRc });
+
+            if (posRc !== 0)
+            {
+                // Channel is gone (returns ERR_INVALID_HANDLE when finished)
+                log('[music watcher] GetPosition returned non-zero (rc=' + posRc + '); track likely ended');
+                clearInterval(musicEndWatcher);
+                musicEndWatcher = null;
+                advanceToNextTrack(watchTrack);
+                return;
+            }
+
+            // Only advance when within 500ms of the end
+            // This gives the crossfade time to start before the channel dies
+            const fadeLeadMs = 1300; // slightly more than your fadeMs default of 1200
+            if (posMs >= watchLengthMs - fadeLeadMs)
+            {
+                log('[music watcher] near end -> pos:', posMs, '/ length:', watchLengthMs, '-> advancing');
+                clearInterval(musicEndWatcher);
+                musicEndWatcher = null;
+                advanceToNextTrack(watchTrack);
+            }
+
             return;
         }
 
-        if (out[0] !== 1)
+        // --- fallback: IsPlaying (if length query failed) ---
+        const out = [0];
+        const rc  = FMOD_Channel_IsPlaying(watchChannel, out);
+        log('[music watcher] fallback poll', { track: watchTrack, rc, playing: out[0] });
+
+        if (rc !== 0 || out[0] !== 1)
         {
             clearInterval(musicEndWatcher);
             musicEndWatcher = null;
-            log('[music watcher] track ended, picking next track...');
-            const available = musicTracks.filter(t => t.name !== watchTrack);
-            const pool = available.length > 0 ? available : musicTracks;
-            const next = pool[Math.floor(Math.random() * pool.length)];
-            log('[music watcher] next track selected:', next ? next.name : null);
-            if (next) playMusic(next.name);
+            log('[music watcher] fallback: track ended');
+            advanceToNextTrack(watchTrack);
         }
+
     }, 500);
 }
+
+function advanceToNextTrack(fromTrackName)
+{
+    let nextTrack = null;
+
+    if (musicTracks.length === 1)
+    {
+        nextTrack = musicTracks[0];
+    }
+    else
+    {
+        for (const track of musicTracks)
+        {
+            if (track.name !== fromTrackName)
+            {
+                nextTrack = track;
+                break;
+            }
+        }
+    }
+
+    log('[music watcher] next track selected:', nextTrack ? nextTrack.name : null);
+
+    if (nextTrack)
+    {
+        playMusic(nextTrack.name);
+    }
+}
+
 
 function shutdown()
 {
