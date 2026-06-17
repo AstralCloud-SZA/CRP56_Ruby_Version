@@ -449,23 +449,15 @@ function categories()
 
 function advanceToNextTrack(fromTrackName)
 {
-    let nextTrack = null;
+    if (!musicTracks.length)
+    {
+        warn('[music watcher] no tracks available to advance to');
+        return;
+    }
 
-    if (musicTracks.length === 1)
-    {
-        nextTrack = musicTracks[0];
-    }
-    else
-    {
-        for (const track of musicTracks)
-        {
-            if (track.name !== fromTrackName)
-            {
-                nextTrack = track;
-                break;
-            }
-        }
-    }
+    const available = musicTracks.filter(t => t.name !== fromTrackName);
+    const pool = available.length > 0 ? available : musicTracks;
+    const nextTrack = pool[Math.floor(Math.random() * pool.length)];
 
     log('[music watcher] next track selected:', nextTrack ? nextTrack.name : null);
 
@@ -492,7 +484,8 @@ function startMusicEndWatcher()
 
     const watchChannel = currentMusicChannel;
     const watchTrack = currentTrackName;
-    const watchLengthMs = currentTrackLength_MS;
+    const watchLengthMs = Number(currentTrackLength_MS) || 0;
+    let notPlayingCount = 0;
 
     log('[music watcher] started for track:', watchTrack, 'channel:', ptrLabel(watchChannel), 'length:', watchLengthMs + 'ms');
 
@@ -514,46 +507,48 @@ function startMusicEndWatcher()
             return;
         }
 
-        if (watchLengthMs > 0)
+        const posOut = [0];
+        const posRc = FMOD_Channel_GetPosition(watchChannel, posOut, FMOD_TIMEUNIT_MS);
+        const posMs = Number(posOut[0]) || 0;
+
+        if (posRc === 0 && watchLengthMs > 0)
         {
-            const posOut = [0];
-            const posRc = FMOD_Channel_GetPosition(watchChannel, posOut, FMOD_TIMEUNIT_MS);
-            const posMs = posOut[0];
+            const safeLead = Math.min(1300, Math.max(250, Math.floor(watchLengthMs * 0.05)));
+            const endThreshold = Math.max(0, watchLengthMs - safeLead);
+            log('[music watcher] poll', { track: watchTrack, posMs, watchLengthMs, endThreshold, posRc });
 
-            log('[music watcher] poll', { track: watchTrack, posMs, watchLengthMs, posRc });
-
-            if (posRc !== 0)
+            if (posMs >= endThreshold)
             {
-                log('[music watcher] GetPosition returned non-zero (rc=' + posRc + '); track likely ended');
+                log('[music watcher] near end -> pos:', posMs, '/ length:', watchLengthMs, '-> advancing');
                 clearInterval(musicEndWatcher);
                 musicEndWatcher = null;
                 advanceToNextTrack(watchTrack);
                 return;
             }
 
-            const fadeLeadMs = 1300;
-            if (posMs >= watchLengthMs - fadeLeadMs)
-            {
-                log('[music watcher] near end -> pos:', posMs, '/ length:', watchLengthMs, '-> advancing');
-                clearInterval(musicEndWatcher);
-                musicEndWatcher = null;
-                advanceToNextTrack(watchTrack);
-            }
-
+            notPlayingCount = 0;
             return;
         }
 
         const out = [0];
         const rc = FMOD_Channel_IsPlaying(watchChannel, out);
-        log('[music watcher] fallback poll', { track: watchTrack, rc, playing: out[0] });
+        const playing = out[0] === 1;
 
-        if (rc !== 0 || out[0] !== 1)
+        log('[music watcher] fallback poll', { track: watchTrack, posRc, rc, playing, notPlayingCount });
+
+        if (rc === 0 && playing)
         {
-            clearInterval(musicEndWatcher);
-            musicEndWatcher = null;
-            log('[music watcher] fallback: track ended');
-            advanceToNextTrack(watchTrack);
+            notPlayingCount = 0;
+            return;
         }
+
+        notPlayingCount += 1;
+        if (notPlayingCount < 3) return;
+
+        clearInterval(musicEndWatcher);
+        musicEndWatcher = null;
+        log('[music watcher] fallback: track ended');
+        advanceToNextTrack(watchTrack);
 
     }, 500);
 }

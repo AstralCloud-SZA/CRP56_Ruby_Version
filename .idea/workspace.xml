@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM 2">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="FMOD File rearrangement">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crp56/electron-app/fmod.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/fmod.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -187,15 +188,7 @@
       <workItem from="1781723335240" duration="184000" />
       <workItem from="1781723529454" duration="99000" />
       <workItem from="1781723637823" duration="185000" />
-      <workItem from="1781723832198" duration="224000" />
-    </task>
-    <task id="LOCAL-00005" summary="Finished up ruby backend changes and started on Electron frontend work">
-      <option name="closed" value="true" />
-      <created>1781005237066</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1781005237066</updated>
+      <workItem from="1781723832198" duration="1630000" />
     </task>
     <task id="LOCAL-00006" summary="Finished up ruby backend changes and started on Electron frontend work">
       <option name="closed" value="true" />
@@ -581,7 +574,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781721681547</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="FMOD File rearrangement">
+      <option name="closed" value="true" />
+      <created>1781724227998</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1781724227999</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -599,7 +600,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fmod debugging work" />
     <MESSAGE value="index.html debugging" />
     <MESSAGE value="app.js fixes and reowrk" />
     <MESSAGE value="fmod.js diagnostic update and file rework" />
@@ -624,6 +624,7 @@
     <MESSAGE value="bg music code debugging setup 3" />
     <MESSAGE value=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM" />
     <MESSAGE value=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM 2" />
-    <option name="LAST_COMMIT_MESSAGE" value=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM 2" />
+    <MESSAGE value="FMOD File rearrangement" />
+    <option name="LAST_COMMIT_MESSAGE" value="FMOD File rearrangement" />
   </component>
 </project>

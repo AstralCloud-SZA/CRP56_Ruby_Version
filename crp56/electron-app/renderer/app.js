@@ -22,6 +22,8 @@ let progressResetTimer = null;
 let particlesEnabled = true;
 let bgMusicStarted = false;
 let loadedMusicTracks = [];
+let musicUiBound = false;
+
 
 const SFX_THROTTLE_MS = 60;
 const lastSfxAt = {};
@@ -467,11 +469,14 @@ async function bindMusicTrackSelect()
 {
     const select = document.getElementById('musicTrackSelect');
     const playBtn = document.getElementById('musicTrackPlay');
-    if (!select || !playBtn || !window.sfx?.listMusic)
+    if (!select || !playBtn || !window.sfx?.listMusic || !window.sfx?.playMusic)
     {
         console.log('[CRP56 renderer] music UI missing or bridge missing');
         return;
     }
+
+    if (musicUiBound) return;
+    musicUiBound = true;
 
     try
     {
@@ -495,76 +500,50 @@ async function bindMusicTrackSelect()
             select.appendChild(opt);
         }
 
-        select.value = localStorage.getItem('crp56-music-track') || '';
+        const saved = localStorage.getItem('crp56-music-track') || '';
+        select.value = tracks.includes(saved) ? saved : '';
 
         playBtn.addEventListener('click', () =>
         {
-            const track = select.value;
-            console.log('[CRP56 renderer] music play click', {
-                selected: track,
-                tracksLoaded: loadedMusicTracks,
-                bgMusicStarted
-            });
-
-            if (track)
-            {
-                console.log('[CRP56 renderer] sending music:play ->', track);
-                window.sfx.playMusic(track);
-                localStorage.setItem('crp56-music-track', track);
-                bgMusicStarted = true;
-                log('Manual BG music selected:', track);
-            }
-            else if (tracks.length > 0)
-            {
-                const pick = tracks[Math.floor(Math.random() * tracks.length)];
-                console.log('[CRP56 renderer] auto-picked music ->', pick);
-                window.sfx.playMusic(pick);
-                localStorage.removeItem('crp56-music-track');
-                bgMusicStarted = true;
-                log('Manual BG music auto-picked:', pick);
-            }
-            else
+            const track = select.value || (tracks.length ? tracks[Math.floor(Math.random() * tracks.length)] : '');
+            if (!track)
             {
                 console.log('[CRP56 renderer] no tracks available to play');
+                return;
             }
+
+            console.log('[CRP56 renderer] sending music:play ->', track);
+            bgMusicStarted = true;
+            localStorage.setItem('crp56-music-track', track);
+            window.sfx.playMusic(track);
+            log('Manual BG music selected:', track);
         });
     }
     catch (e)
     {
+        musicUiBound = false;
         console.error('[CRP56] Failed to load music tracks:', e);
     }
 }
 
 async function startBackgroundMusicOnce()
 {
-    console.log('[CRP56 renderer] startBackgroundMusicOnce called', {
-        bgMusicStarted,
-        hasBridge: !!window.sfx,
-        hasListMusic: !!window.sfx?.listMusic,
-        hasPlayMusic: !!window.sfx?.playMusic
-    });
-
     if (bgMusicStarted) return;
     if (!window.sfx?.listMusic || !window.sfx?.playMusic) return;
 
     try
     {
         const tracks = await window.sfx.listMusic();
-        console.log('[CRP56 renderer] autoplay tracks:', tracks);
         loadedMusicTracks = tracks.slice();
+        if (!tracks.length) return;
 
-        if (tracks.length > 0)
-        {
-            const pick = tracks[Math.floor(Math.random() * tracks.length)];
-            console.log('[CRP56 renderer] autoplay music ->', pick);
-            window.sfx.playMusic(pick);
-            bgMusicStarted = true;
-            log('BG music started:', pick);
-        }
-        else
-        {
-            console.log('[CRP56 renderer] autoplay skipped; no tracks');
-        }
+        const saved = localStorage.getItem('crp56-music-track');
+        const pick = saved && tracks.includes(saved) ? saved : tracks[Math.floor(Math.random() * tracks.length)];
+
+        bgMusicStarted = true;
+        localStorage.setItem('crp56-music-track', pick);
+        window.sfx.playMusic(pick);
+        log('BG music started:', pick);
     }
     catch (e)
     {
@@ -627,7 +606,7 @@ function bindVolumeSliders()
             const pct = Number(sfxSlider.value);
             sync(sfxSlider, sfxLabel, pct);
             console.log('[CRP56 renderer] sfx volume input ->', pct);
-            if (window.sfx) window.sfx.setVolume(pct / 100);
+            if (window.sfx?.setSfxVolume) window.sfx.setSfxVolume(pct / 100);
             try { localStorage.setItem(SFX_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
         });
         sfxSlider.addEventListener('change', () => playSfx('cursor'));
@@ -641,7 +620,7 @@ function bindVolumeSliders()
             const pct = Number(musicSlider.value);
             sync(musicSlider, musicLabel, pct);
             console.log('[CRP56 renderer] music volume input ->', pct);
-            if (window.sfx) window.sfx.setMusicVolume(pct / 100);
+            if (window.sfx?.setMusicVolume) window.sfx.setMusicVolume(pct / 100);
             try { localStorage.setItem(MUSIC_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
         });
     }
@@ -680,12 +659,12 @@ function applySavedVolumes()
 
     console.log('[CRP56 renderer] applying saved volumes', { master, sfxVol, musicVol });
 
-    window.sfx.setMasterVolume(master / 100);
-    window.sfx.setVolume(sfxVol / 100);
-    window.sfx.setMusicVolume(musicVol / 100);
+    if (window.sfx.setMasterVolume) window.sfx.setMasterVolume(master / 100);
+    if (window.sfx.setSfxVolume) window.sfx.setSfxVolume(sfxVol / 100);
+    if (window.sfx.setMusicVolume) window.sfx.setMusicVolume(musicVol / 100);
 
     const muted = localStorage.getItem(MUTE_STORAGE_KEY) === 'on';
-    window.sfx.setMuteAll(muted);
+    if (window.sfx.setMuteAll) window.sfx.setMuteAll(muted);
 }
 
 const canvas = document.getElementById('particles');
@@ -815,6 +794,7 @@ window.addEventListener('DOMContentLoaded', async () =>
             console.error('[CRP56] Delayed BG music start failed:', e);
         }
     }, 500);
+
 
     if (!window.crp56)
     {
