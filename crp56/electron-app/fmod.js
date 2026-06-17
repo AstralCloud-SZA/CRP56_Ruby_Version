@@ -31,7 +31,7 @@ const FMOD_Channel_Stop = lib.func('FMOD_Channel_Stop', 'int', [FMOD_CHANNEL]);
 const FMOD_Channel_IsPlaying = lib.func('FMOD_Channel_IsPlaying', 'int', [FMOD_CHANNEL, '_Out_ int *']);
 const FMOD_Sound_Release = lib.func('FMOD_Sound_Release', 'int', [FMOD_SOUND]);
 
-const FMOD_Sound_GetLength     = lib.func('FMOD_Sound_GetLength',     'int', [FMOD_SOUND,   '_Out_ uint *', 'uint']);
+const FMOD_Sound_GetLength = lib.func('FMOD_Sound_GetLength', 'int', [FMOD_SOUND, '_Out_ uint *', 'uint']);
 const FMOD_Channel_GetPosition = lib.func('FMOD_Channel_GetPosition', 'int', [FMOD_CHANNEL, '_Out_ uint *', 'uint']);
 
 const FMOD_VERSION = 0x00020314;
@@ -39,36 +39,19 @@ const FMOD_INIT_NORMAL = 0x00000000;
 const FMOD_LOOP_OFF = 0x00000001;
 const FMOD_LOOP_NORMAL = 0x00000002;
 const FMOD_2D = 0x00000008;
-const FMOD_TIMEUNIT_MS  = 0x00000002;
+const FMOD_TIMEUNIT_MS = 0x00000002;
 const FMOD_ACCURATETIME = 0x00004000;
 
+const MUSIC_DIR = path.join(__dirname, 'audiofiles', 'Friday_Magic');
+
+let musicTracks = [];
+let currentMusicChannel = null;
+let currentMusicSound = null;
+let currentTrackName = null;
+let fadeTimer = null;
+let targetMusicVolume = 1.0;
+let currentTrackLength_MS = 0;
 let musicEndWatcher = null;
-
-function log(...args) { console.log('[fmod]', ...args); }
-function warn(...args) { console.warn('[fmod]', ...args); }
-function err(...args) { console.error('[fmod]', ...args); }
-
-function check(result, label)
-{
-    if (result !== 0) throw new Error(`FMOD error in ${label}: code ${result}`);
-}
-
-function safeCall(label, fn, fallback = null)
-{
-    try { return fn(); }
-    catch (e)
-    {
-        err(`${label} threw:`, e.message);
-        return fallback;
-    }
-}
-
-function ptrLabel(value)
-{
-    if (value === null || value === undefined) return 'null';
-    try { return String(value); }
-    catch (_) { return '[ptr]'; }
-}
 
 let system = null;
 let masterGroup = null;
@@ -81,10 +64,6 @@ const AUDIO_DIR = path.join(__dirname, 'audiofiles');
 const library = {};
 const shuffleState = {};
 
-function categoryOf(filename)
-{
-    return filename.split('_')[0].toLowerCase();
-}
 
 function loadLibrary()
 {
@@ -140,68 +119,7 @@ function nextFile(cat)
     return file;
 }
 
-const MUSIC_DIR = path.join(__dirname, 'audiofiles', 'Friday_Magic');
 
-let musicTracks = [];
-let currentMusicChannel = null;
-let currentMusicSound = null;
-let currentTrackName = null;
-let fadeTimer = null;
-let targetMusicVolume = 1.0;
-let currentTrackLength_MS =0;
-
-function dumpMusicState(context = 'snapshot')
-{
-    log(`==== MUSIC STATE (${context}) ====`);
-    log('system ptr:', ptrLabel(system));
-    log('music group ptr:', ptrLabel(musicGroup));
-    log('current music channel:', ptrLabel(currentMusicChannel));
-    log('current music sound:', ptrLabel(currentMusicSound));
-    log('current track name:', currentTrackName);
-    log('current track length (ms):', currentTrackLength_MS);
-    log('music tracks:', musicTracks.map(t => t.name));
-    log('musicEndWatcher:', musicEndWatcher ? 'active' : 'null');
-    log('==============================');
-}
-
-function loadMusicList()
-{
-    musicTracks = [];
-    log('Scanning music directory:', MUSIC_DIR);
-    if (!fs.existsSync(MUSIC_DIR))
-    {
-        warn('No music dir (create electron-app/audiofiles/Friday_Magic) at', MUSIC_DIR);
-        return;
-    }
-    const exts = ['.mp3', '.ogg', '.wav', '.flac'];
-    const files = fs.readdirSync(MUSIC_DIR).filter(f => exts.includes(path.extname(f).toLowerCase()));
-    musicTracks = files.map(f => ({ name: path.parse(f).name, path: path.join(MUSIC_DIR, f) }));
-    log(`music tracks found: ${musicTracks.length}`);
-    musicTracks.forEach((t, i) => log(`  [music ${i + 1}] ${t.name} -> ${t.path}`));
-}
-
-function dumpMixerState(context = 'snapshot')
-{
-    log(`==== MIXER STATE (${context}) ====`);
-    log('system ptr:', ptrLabel(system));
-    log('master group ptr:', ptrLabel(masterGroup));
-    log('sfx group ptr:', ptrLabel(sfxGroup));
-    log('music group ptr:', ptrLabel(musicGroup));
-    log('music channel ptr:', ptrLabel(currentMusicChannel));
-    log('current track name:', currentTrackName);
-    log('==============================');
-}
-
-function startDiagnostics()
-{
-    if (diagTimer) clearInterval(diagTimer);
-    diagTimer = setInterval(() =>
-    {
-        if (!system) return;
-        dumpMixerState('heartbeat');
-        dumpMusicState('heartbeat');
-    }, 15000);
-}
 
 function init()
 {
@@ -341,7 +259,7 @@ function play(category)
 
             const pausedOut2 = [0];
             const rp = FMOD_Channel_GetPaused(channel, pausedOut2);
-            log(`poll #${pollCount} for ${path.basename(file)} -> playing=${playingOut[0]} pausedRc=${rp} paused=${pausedOut2[0]}`);
+            // log(`poll #${pollCount} for ${path.basename(file)} -> playing=${playingOut[0]} pausedRc=${rp} paused=${pausedOut2[0]}`);
 
             if (playingOut[0] !== 1)
             {
@@ -429,7 +347,7 @@ function playMusic(name, { fadeMs = 1200 } = {})
     log('[music] sound ptr ->', ptrLabel(newSound));
 
     const lenOut = [0];
-    const lenRc = FMOD_Sound_GetLength(newSound,lenOut,FMOD_TIMEUNIT_MS);
+    const lenRc = FMOD_Sound_GetLength(newSound, lenOut, FMOD_TIMEUNIT_MS);
 
     let trackLengthMs;
     if (lenRc === 0)
@@ -489,6 +407,7 @@ function stopMusic({ fadeMs = 800 } = {})
     currentMusicChannel = null;
     currentMusicSound = null;
     currentTrackName = null;
+    currentTrackLength_MS = 0;
 
     if (fadeTimer) { clearInterval(fadeTimer); fadeTimer = null; }
 
@@ -520,6 +439,151 @@ function isMusicPlaying()
     log(`isMusicPlaying() -> rc=${r}, playing=${out[0]}`);
     return r === 0 && out[0] === 1;
 }
+
+
+//
+function categories()
+{
+    return Object.keys(library).map(c => ({ category: c, count: library[c].length }));
+}
+
+function advanceToNextTrack(fromTrackName)
+{
+    let nextTrack = null;
+
+    if (musicTracks.length === 1)
+    {
+        nextTrack = musicTracks[0];
+    }
+    else
+    {
+        for (const track of musicTracks)
+        {
+            if (track.name !== fromTrackName)
+            {
+                nextTrack = track;
+                break;
+            }
+        }
+    }
+
+    log('[music watcher] next track selected:', nextTrack ? nextTrack.name : null);
+
+    if (nextTrack)
+    {
+        playMusic(nextTrack.name);
+    }
+}
+
+function startMusicEndWatcher()
+{
+    if (musicEndWatcher)
+    {
+        clearInterval(musicEndWatcher);
+        musicEndWatcher = null;
+        log('[music watcher] cleared existing watcher before starting new one');
+    }
+
+    if (!currentMusicChannel)
+    {
+        log('[music watcher] no current music channel; aborting');
+        return;
+    }
+
+    const watchChannel = currentMusicChannel;
+    const watchTrack = currentTrackName;
+    const watchLengthMs = currentTrackLength_MS;
+
+    log('[music watcher] started for track:', watchTrack, 'channel:', ptrLabel(watchChannel), 'length:', watchLengthMs + 'ms');
+
+    musicEndWatcher = setInterval(() =>
+    {
+        if (!system)
+        {
+            log('[music watcher] system missing; stopping');
+            clearInterval(musicEndWatcher);
+            musicEndWatcher = null;
+            return;
+        }
+
+        if (watchChannel !== currentMusicChannel || watchTrack !== currentTrackName)
+        {
+            log('[music watcher] track/channel changed; stopping watcher');
+            clearInterval(musicEndWatcher);
+            musicEndWatcher = null;
+            return;
+        }
+
+        if (watchLengthMs > 0)
+        {
+            const posOut = [0];
+            const posRc = FMOD_Channel_GetPosition(watchChannel, posOut, FMOD_TIMEUNIT_MS);
+            const posMs = posOut[0];
+
+            log('[music watcher] poll', { track: watchTrack, posMs, watchLengthMs, posRc });
+
+            if (posRc !== 0)
+            {
+                log('[music watcher] GetPosition returned non-zero (rc=' + posRc + '); track likely ended');
+                clearInterval(musicEndWatcher);
+                musicEndWatcher = null;
+                advanceToNextTrack(watchTrack);
+                return;
+            }
+
+            const fadeLeadMs = 1300;
+            if (posMs >= watchLengthMs - fadeLeadMs)
+            {
+                log('[music watcher] near end -> pos:', posMs, '/ length:', watchLengthMs, '-> advancing');
+                clearInterval(musicEndWatcher);
+                musicEndWatcher = null;
+                advanceToNextTrack(watchTrack);
+            }
+
+            return;
+        }
+
+        const out = [0];
+        const rc = FMOD_Channel_IsPlaying(watchChannel, out);
+        log('[music watcher] fallback poll', { track: watchTrack, rc, playing: out[0] });
+
+        if (rc !== 0 || out[0] !== 1)
+        {
+            clearInterval(musicEndWatcher);
+            musicEndWatcher = null;
+            log('[music watcher] fallback: track ended');
+            advanceToNextTrack(watchTrack);
+        }
+
+    }, 500);
+}
+
+function shutdown()
+{
+    log('shutdown() called');
+    if (musicEndWatcher) { clearInterval(musicEndWatcher); musicEndWatcher = null; }
+    if (fadeTimer) { clearInterval(fadeTimer); fadeTimer = null; }
+    if (diagTimer) { clearInterval(diagTimer); diagTimer = null; }
+    if (updateTimer) { clearInterval(updateTimer); updateTimer = null; }
+    dumpMixerState('pre-shutdown');
+    dumpMusicState('pre-shutdown');
+
+    if (system)
+    {
+        check(FMOD_System_Release(system), 'Release');
+        system = null;
+        masterGroup = null;
+        sfxGroup = null;
+        musicGroup = null;
+        currentMusicChannel = null;
+        currentMusicSound = null;
+        currentTrackName = null;
+        currentTrackLength_MS = 0;
+        log('FMOD system released');
+    }
+}
+
+// Setting Values Functions
 
 function clamp01(v)
 {
@@ -568,152 +632,94 @@ function setMuteAll(muted)
     dumpMixerState('after setMuteAll');
 }
 
-function categories()
+//HELPERS  & DEBUGGING
+
+function dumpMusicState(context = 'snapshot')
 {
-    return Object.keys(library).map(c => ({ category: c, count: library[c].length }));
+    log(`==== MUSIC STATE (${context}) ====`);
+    log('system ptr:', ptrLabel(system));
+    log('music group ptr:', ptrLabel(musicGroup));
+    log('current music channel:', ptrLabel(currentMusicChannel));
+    log('current music sound:', ptrLabel(currentMusicSound));
+    log('current track name:', currentTrackName);
+    log('current track length (ms):', currentTrackLength_MS);
+    log('music tracks:', musicTracks.map(t => t.name));
+    log('musicEndWatcher:', musicEndWatcher ? 'active' : 'null');
+    log('==============================');
 }
 
-
-function startMusicEndWatcher()
+function loadMusicList()
 {
-    if (musicEndWatcher)
+    musicTracks = [];
+    log('Scanning music directory:', MUSIC_DIR);
+    if (!fs.existsSync(MUSIC_DIR))
     {
-        clearInterval(musicEndWatcher);
-        musicEndWatcher = null;
-        log('[music watcher] cleared existing watcher before starting new one');
-    }
-
-    if (!currentMusicChannel)
-    {
-        log('[music watcher] no current music channel; aborting');
+        warn('No music dir (create electron-app/audiofiles/Friday_Magic) at', MUSIC_DIR);
         return;
     }
-
-    const watchChannel  = currentMusicChannel;
-    const watchTrack    = currentTrackName;
-    const watchLengthMs = currentTrackLength_MS;
-
-    log('[music watcher] started for track:', watchTrack,
-        'channel:', ptrLabel(watchChannel),
-        'length:', watchLengthMs + 'ms');
-
-    musicEndWatcher = setInterval(() =>
-    {
-        if (!system)
-        {
-            log('[music watcher] system missing; stopping');
-            clearInterval(musicEndWatcher);
-            musicEndWatcher = null;
-            return;
-        }
-
-        if (watchChannel !== currentMusicChannel || watchTrack !== currentTrackName)
-        {
-            log('[music watcher] track/channel changed; stopping watcher');
-            clearInterval(musicEndWatcher);
-            musicEndWatcher = null;
-            return;
-        }
-
-        // --- primary check: position vs length ---
-        if (watchLengthMs > 0)
-        {
-            const posOut = [0];
-            const posRc  = FMOD_Channel_GetPosition(watchChannel, posOut, FMOD_TIMEUNIT_MS);
-            const posMs  = posOut[0];
-
-            log('[music watcher] poll', { track: watchTrack, posMs, watchLengthMs, posRc });
-
-            if (posRc !== 0)
-            {
-                // Channel is gone (returns ERR_INVALID_HANDLE when finished)
-                log('[music watcher] GetPosition returned non-zero (rc=' + posRc + '); track likely ended');
-                clearInterval(musicEndWatcher);
-                musicEndWatcher = null;
-                advanceToNextTrack(watchTrack);
-                return;
-            }
-
-            // Only advance when within 500ms of the end
-            // This gives the crossfade time to start before the channel dies
-            const fadeLeadMs = 1300; // slightly more than your fadeMs default of 1200
-            if (posMs >= watchLengthMs - fadeLeadMs)
-            {
-                log('[music watcher] near end -> pos:', posMs, '/ length:', watchLengthMs, '-> advancing');
-                clearInterval(musicEndWatcher);
-                musicEndWatcher = null;
-                advanceToNextTrack(watchTrack);
-            }
-
-            return;
-        }
-
-        // --- fallback: IsPlaying (if length query failed) ---
-        const out = [0];
-        const rc  = FMOD_Channel_IsPlaying(watchChannel, out);
-        log('[music watcher] fallback poll', { track: watchTrack, rc, playing: out[0] });
-
-        if (rc !== 0 || out[0] !== 1)
-        {
-            clearInterval(musicEndWatcher);
-            musicEndWatcher = null;
-            log('[music watcher] fallback: track ended');
-            advanceToNextTrack(watchTrack);
-        }
-
-    }, 500);
+    const exts = ['.mp3', '.ogg', '.wav', '.flac'];
+    const files = fs.readdirSync(MUSIC_DIR).filter(f => exts.includes(path.extname(f).toLowerCase()));
+    musicTracks = files.map(f => ({ name: path.parse(f).name, path: path.join(MUSIC_DIR, f) }));
+    log(`music tracks found: ${musicTracks.length}`);
+    musicTracks.forEach((t, i) => log(`  [music ${i + 1}] ${t.name} -> ${t.path}`));
 }
 
-function advanceToNextTrack(fromTrackName)
+function dumpMixerState(context = 'snapshot')
 {
-    let nextTrack = null;
+    log(`==== MIXER STATE (${context}) ====`);
+    log('system ptr:', ptrLabel(system));
+    log('master group ptr:', ptrLabel(masterGroup));
+    log('sfx group ptr:', ptrLabel(sfxGroup));
+    log('music group ptr:', ptrLabel(musicGroup));
+    log('music channel ptr:', ptrLabel(currentMusicChannel));
+    log('current track name:', currentTrackName);
+    log('==============================');
+}
 
-    if (musicTracks.length === 1)
+function startDiagnostics()
+{
+    if (diagTimer) clearInterval(diagTimer);
+    diagTimer = setInterval(() =>
     {
-        nextTrack = musicTracks[0];
-    }
-    else
-    {
-        for (const track of musicTracks)
-        {
-            if (track.name !== fromTrackName)
-            {
-                nextTrack = track;
-                break;
-            }
-        }
-    }
-
-    log('[music watcher] next track selected:', nextTrack ? nextTrack.name : null);
-
-    if (nextTrack)
-    {
-        playMusic(nextTrack.name);
-    }
+        if (!system) return;
+        dumpMixerState('heartbeat');
+        dumpMusicState('heartbeat');
+    }, 15000);
 }
 
 
-function shutdown()
+
+function log(...args) { console.log('[fmod]', ...args); }
+function warn(...args) { console.warn('[fmod]', ...args); }
+function err(...args) { console.error('[fmod]', ...args); }
+
+function check(result, label)
 {
-    log('shutdown() called');
-    if (musicEndWatcher) { clearInterval(musicEndWatcher); musicEndWatcher = null; }
-    if (fadeTimer) { clearInterval(fadeTimer); fadeTimer = null; }
-    if (diagTimer) { clearInterval(diagTimer); diagTimer = null; }
-    if (updateTimer) { clearInterval(updateTimer); updateTimer = null; }
-    dumpMixerState('pre-shutdown');
-    dumpMusicState('pre-shutdown');
-    if (system)
+    if (result !== 0) throw new Error(`FMOD error in ${label}: code ${result}`);
+}
+
+function safeCall(label, fn, fallback = null)
+{
+    try { return fn(); }
+    catch (e)
     {
-        check(FMOD_System_Release(system), 'Release');
-        system = null;
-        masterGroup = null;
-        sfxGroup = null;
-        musicGroup = null;
-        currentMusicChannel = null;
-        currentMusicSound = null;
-        currentTrackName = null;
-        log('FMOD system released');
+        err(`${label} threw:`, e.message);
+        return fallback;
     }
+}
+
+function ptrLabel(value)
+{
+    if (value === null || value === undefined) return 'null';
+    try { return String(value); }
+    catch (_) { return '[ptr]'; }
+}
+
+
+
+function categoryOf(filename)
+{
+    return filename.split('_')[0].toLowerCase();
 }
 
 module.exports = {
@@ -723,3 +729,4 @@ module.exports = {
     setMasterVolume, setSfxVolume, setMusicVolume, setMuteAll,
     shutdown
 };
+
