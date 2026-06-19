@@ -859,6 +859,7 @@ function drawParticles()
 window.addEventListener('DOMContentLoaded', async () =>
 {
     console.log('[CRP56 renderer] DOMContentLoaded');
+
     bindThemeToggle();
     bindThemeButtons();
     bindTabButtons();
@@ -874,9 +875,18 @@ window.addEventListener('DOMContentLoaded', async () =>
     drawParticles();
     applySavedVolumes();
 
-    console.log('[CRP56 renderer] awaiting music track binding');
-    await bindMusicTrackSelect();
-    await bindOutputDeviceSelect();
+    const page = body?.dataset?.page;
+
+    if (page === 'settings')
+    {
+        console.log('[CRP56 renderer] binding settings-only audio UI');
+        await bindMusicTrackSelect();
+        await bindOutputDeviceSelect();
+    }
+    else
+    {
+        console.log('[CRP56 renderer] skipping settings-only audio UI on page:', page);
+    }
 
     setTimeout(async () =>
     {
@@ -901,7 +911,6 @@ window.addEventListener('DOMContentLoaded', async () =>
     bindPageActions();
     bindProgressEvents();
 
-    const page = body?.dataset?.page;
     if (page) show({ ok: true, status: `${page.charAt(0).toUpperCase() + page.slice(1)} page ready.` });
 });
 
