@@ -1,8 +1,4 @@
-import "@fontsource/sora";
-import "@fontsource/sora/600.css";
-import "@fontsource/sora/700.css";
-import "@fontsource/cinzel";
-import "@fontsource/cinzel/700.css";
+
 
 const output = document.getElementById('output');
 const themeStylesheet = document.getElementById('themeStylesheet');

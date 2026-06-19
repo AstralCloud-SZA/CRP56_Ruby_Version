@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="font adjustments">
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
-    </list>
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="main tweaks" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -190,14 +188,6 @@
       <workItem from="1781791547988" duration="2230000" />
       <workItem from="1781811342920" duration="1414000" />
       <workItem from="1781887252386" duration="11361000" />
-    </task>
-    <task id="LOCAL-00015" summary="css rework and then page by page adjustments">
-      <option name="closed" value="true" />
-      <created>1781029130949</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1781029130949</updated>
     </task>
     <task id="LOCAL-00016" summary="Updated and fixes made by the claude flame model">
       <option name="closed" value="true" />
@@ -583,7 +573,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781912339264</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="main tweaks">
+      <option name="closed" value="true" />
+      <created>1781912557542</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1781912557542</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -601,7 +599,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="app.js and preload.js fixes" />
     <MESSAGE value="decryption of folders fixes and crypto logic tweaks +new testing file" />
     <MESSAGE value="testing file" />
     <MESSAGE value="path and requirement patches" />
@@ -626,6 +623,7 @@
     <MESSAGE value="base css tweak" />
     <MESSAGE value="git ignore fixes" />
     <MESSAGE value="font adjustments" />
-    <option name="LAST_COMMIT_MESSAGE" value="font adjustments" />
+    <MESSAGE value="main tweaks" />
+    <option name="LAST_COMMIT_MESSAGE" value="main tweaks" />
   </component>
 </project>
