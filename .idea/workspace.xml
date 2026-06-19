@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="settings page minor rework and settings functionality update">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="settings page minor rework and settings functionality update 3">
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -189,15 +189,7 @@
       <workItem from="1781723832198" duration="1822000" />
       <workItem from="1781791547988" duration="2230000" />
       <workItem from="1781811342920" duration="1414000" />
-      <workItem from="1781887252386" duration="6715000" />
-    </task>
-    <task id="LOCAL-00009" summary="testing electron app RUBY -&gt; ELECTRON TEST">
-      <option name="closed" value="true" />
-      <created>1781006392632</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1781006392632</updated>
+      <workItem from="1781887252386" duration="7029000" />
     </task>
     <task id="LOCAL-00010" summary="testing electron app RUBY -&gt; ELECTRON TEST 2">
       <option name="closed" value="true" />
@@ -583,7 +575,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781897597689</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="settings page minor rework and settings functionality update 3">
+      <option name="closed" value="true" />
+      <created>1781898568608</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1781898568608</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -601,7 +601,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fmod.js diagnostic update and file rework" />
     <MESSAGE value="removed unsafe diagnostic elements" />
     <MESSAGE value="removed unsafe diagnostic elements 2" />
     <MESSAGE value="fixed up how the folder encryption and decryption works it now actually saves it too a singular folder" />
@@ -626,6 +625,7 @@
     <MESSAGE value="FMOD File rearrangement" />
     <MESSAGE value="bg music fixes and adjustments 7" />
     <MESSAGE value="settings page minor rework and settings functionality update" />
-    <option name="LAST_COMMIT_MESSAGE" value="settings page minor rework and settings functionality update" />
+    <MESSAGE value="settings page minor rework and settings functionality update 3" />
+    <option name="LAST_COMMIT_MESSAGE" value="settings page minor rework and settings functionality update 3" />
   </component>
 </project>

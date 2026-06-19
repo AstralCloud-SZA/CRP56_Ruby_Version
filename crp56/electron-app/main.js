@@ -239,6 +239,39 @@ ipcMain.handle('dialog:pick-save-file', async (_event, options = {}) =>
     return dialog.showSaveDialog(mainWindow, options);
 });
 
+ipcMain.handle('sfx:listOutputDevices', async () =>
+{
+    try
+    {
+        const devices = fmod.listOutputDevices();
+        console.log('[CRP56 main] sfx:listOutputDevices ->', devices);
+        return devices;
+    }
+    catch (e)
+    {
+        console.error('[CRP56 main] sfx:listOutputDevices FAILED:', e);
+        return [];
+    }
+});
+
+ipcMain.handle('sfx:setOutputDevice', async (_event, id) =>
+{
+    try
+    {
+        console.log('[CRP56 main] sfx:setOutputDevice ->', id);
+        if (typeof fmod.setOutputDevice !== 'function')
+        {
+            throw new Error('fmod.setOutputDevice is not implemented');
+        }
+        return fmod.setOutputDevice(id);
+    }
+    catch (e)
+    {
+        console.error('[CRP56 main] sfx:setOutputDevice FAILED:', e);
+        return { ok: false, error: `${e.name}: ${e.message}` };
+    }
+});
+
 ipcMain.on('sfx:play', (_event, category) =>
 {
     console.log('[CRP56 main] sfx:play ->', category);

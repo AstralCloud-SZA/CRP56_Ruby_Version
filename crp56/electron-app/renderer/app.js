@@ -581,15 +581,32 @@ async function bindOutputDeviceSelect()
     {
         console.log('[CRP56 renderer] requesting output device list...');
         const devices = await window.sfx.listOutputDevices();
+        console.log('[CRP56 renderer] output devices returned:', devices);
+
         select.innerHTML = '';
+
+        if (!Array.isArray(devices) || devices.length === 0)
+        {
+            const opt = document.createElement('option');
+            opt.value = '';
+            opt.textContent = 'No output devices found';
+            select.appendChild(opt);
+            select.disabled = true;
+            applyBtn.disabled = true;
+            return;
+        }
 
         for (const dev of devices)
         {
+            console.log('[CRP56 renderer] device:', dev);
             const opt = document.createElement('option');
             opt.value = String(dev.id);
             opt.textContent = dev.name + (dev.isDefault ? ' (system default)' : '');
             select.appendChild(opt);
         }
+
+        select.disabled = false;
+        applyBtn.disabled = false;
 
         const saved = localStorage.getItem('crp56-output-device');
         if (saved && devices.some(d => String(d.id) === saved))
