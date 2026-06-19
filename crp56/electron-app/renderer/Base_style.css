@@ -108,14 +108,14 @@ button
 
 #particles
 {
-    z-index: 0;
+    z-index: 2;
     opacity: 0.62;
 }
 
 .shell
 {
     position: relative;
-    z-index: 1;
+    z-index: 3;
     height: 100dvh;
     padding: var(--space-6);
     display: grid;

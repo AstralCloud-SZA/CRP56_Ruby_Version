@@ -668,14 +668,22 @@ async function startBackgroundMusicOnce()
 function setParticlesEnabled(enabled, { persist = true } = {})
 {
     particlesEnabled = !!enabled;
+
     if (persist)
     {
         try { localStorage.setItem(PARTICLE_STORAGE_KEY, particlesEnabled ? 'on' : 'off'); } catch (_) {}
     }
+
     const toggle = document.getElementById('particleToggle');
     const status = document.getElementById('particleStatus');
+
     if (toggle) toggle.textContent = particlesEnabled ? 'Disable particles' : 'Enable particles';
     if (status) status.textContent = particlesEnabled ? 'On' : 'Off';
+
+    if (window.ParticleFX?.setEnabled)
+    {
+        window.ParticleFX.setEnabled(particlesEnabled);
+    }
 }
 
 function savedParticlesEnabled()
@@ -781,101 +789,33 @@ function applySavedVolumes()
     if (window.sfx.setMuteAll) window.sfx.setMuteAll(muted);
 }
 
-const canvas = document.getElementById('particles');
-const ctx = canvas ? canvas.getContext('2d') : null;
-let particles = [];
+// PARTICLE EFFECTS SYSTEM INTEGRATION
 
-function accentColors()
+function initParticles()
 {
-    const style = getComputedStyle(document.documentElement);
-    return [style.getPropertyValue('--accent').trim() || '#ffea00', style.getPropertyValue('--accent-2').trim() || '#fff9c4'];
-}
-
-function hexToRgba(input, alpha)
-{
-    const c = String(input).replace('#', '');
-    const normalized = c.length === 3 ? c.split('').map(ch => ch + ch).join('') : c;
-    const bigint = parseInt(normalized, 16);
-    const r = (bigint >> 16) & 255;
-    const g = (bigint >> 8) & 255;
-    const b = bigint & 255;
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
-function seedParticles()
-{
-    if (!canvas || !ctx) return;
-    const count = Math.max(38, Math.floor(window.innerWidth / 32));
-    const colors = accentColors();
-    particles = Array.from({ length: count }, (_, i) => ({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        r: Math.random() * 2.2 + 0.7,
-        vx: (Math.random() - 0.5) * 0.22, vy: (Math.random() - 0.5) * 0.22,
-        alpha: Math.random() * 0.55 + 0.18, twinkle: Math.random() * Math.PI * 2,
-        color: colors[i % colors.length]
-    }));
-}
-
-function resizeCanvas()
-{
-    if (!canvas || !ctx) return;
-    const ratio = Math.min(window.devicePixelRatio || 1, 1.8);
-    canvas.width = Math.floor(window.innerWidth * ratio);
-    canvas.height = Math.floor(window.innerHeight * ratio);
-    canvas.style.width = window.innerWidth + 'px';
-    canvas.style.height = window.innerHeight + 'px';
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    seedParticles();
-}
-
-function drawParticles()
-{
-    if (!canvas || !ctx) return;
-    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-
-    if (!particlesEnabled)
+    if (!window.ParticleFX)
     {
-        requestAnimationFrame(drawParticles);
+        console.warn('[CRP56 renderer] ParticleFX missing');
         return;
     }
 
-    particles.forEach((p, i) =>
+    const ok = window.ParticleFX.initCanvas('particles');
+    if (!ok)
     {
-        p.x += p.vx; p.y += p.vy; p.twinkle += 0.03;
-        if (p.x < -20) p.x = window.innerWidth + 20;
-        if (p.x > window.innerWidth + 20) p.x = -20;
-        if (p.y < -20) p.y = window.innerHeight + 20;
-        if (p.y > window.innerHeight + 20) p.y = -20;
-        const pulse = (Math.sin(p.twinkle) + 1) / 2;
-        ctx.beginPath();
-        ctx.fillStyle = hexToRgba(p.color, 0.16 + pulse * p.alpha * 0.4);
-        ctx.arc(p.x, p.y, p.r + pulse * 1.4, 0, Math.PI * 2);
-        ctx.fill();
-        for (let j = i + 1; j < particles.length; j++)
-        {
-            const q = particles[j];
-            const dx = p.x - q.x;
-            const dy = p.y - q.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
+        console.warn('[CRP56 renderer] particle canvas missing or unusable');
+        return;
+    }
 
-            if (dist < 128)
-            {
-                ctx.strokeStyle = hexToRgba(p.color, (1 - dist / 128) * 0.12);
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(p.x, p.y);
-                ctx.lineTo(q.x, q.y);
-                ctx.stroke();
-            }
-        }
-    });
-    requestAnimationFrame(drawParticles);
+    window.ParticleFX.attach();
 }
 
 window.addEventListener('DOMContentLoaded', async () =>
 {
     console.log('[CRP56 renderer] DOMContentLoaded');
+
+    initParticles();
+    setParticlesEnabled(savedParticlesEnabled(), { persist: false });
+    setTheme(savedTheme() || html.dataset.theme || 'primordial-gold');
 
     bindThemeToggle();
     bindThemeButtons();
@@ -885,11 +825,11 @@ window.addEventListener('DOMContentLoaded', async () =>
     bindMasterAndMusic();
     bindRailAudio();
     bindDataSfx();
+
     initBackgroundHost();
-    setParticlesEnabled(savedParticlesEnabled(), { persist: false });
-    setTheme(savedTheme() || html.dataset.theme || 'primordial-gold');
-    resizeCanvas();
-    drawParticles();
+
+
+
     applySavedVolumes();
 
     const page = body?.dataset?.page;
@@ -930,5 +870,3 @@ window.addEventListener('DOMContentLoaded', async () =>
 
     if (page) show({ ok: true, status: `${page.charAt(0).toUpperCase() + page.slice(1)} page ready.` });
 });
-
-window.addEventListener('resize', resizeCanvas);
