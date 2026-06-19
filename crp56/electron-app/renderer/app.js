@@ -27,94 +27,7 @@ let musicUiBound = false;
 const SFX_THROTTLE_MS = 60;
 const lastSfxAt = {};
 
-function playSfx(category)
-{
-    if (!window.sfx || typeof window.sfx.play !== 'function')
-    {
-        console.warn('[CRP56 sfx] window.sfx bridge missing. Requested:', category);
-        return;
-    }
-    const now = Date.now();
-    if (now - (lastSfxAt[category] || 0) < SFX_THROTTLE_MS) return;
-    lastSfxAt[category] = now;
-    console.log('[CRP56 renderer] sfx:play ->', category);
-    window.sfx.play(category);
-}
 
-function bindMasterAndMusic()
-{
-    const masterSlider = document.getElementById('masterVolume');
-    const masterLabel = document.getElementById('masterVolumeLabel');
-
-    if (masterSlider)
-    {
-        masterSlider.disabled = false;
-
-        const savedMaster = Number(localStorage.getItem(MASTER_VOL_STORAGE_KEY) ?? 100);
-        const masterValue = Number.isFinite(savedMaster) ? Math.max(0, Math.min(100, savedMaster)) : 100;
-
-        masterSlider.value = String(masterValue);
-        if (masterLabel) masterLabel.textContent = `${masterValue}%`;
-
-        masterSlider.addEventListener('input', () =>
-        {
-            const pct = Number(masterSlider.value);
-            const clamped = Number.isFinite(pct) ? Math.max(0, Math.min(100, pct)) : 100;
-
-            if (masterLabel) masterLabel.textContent = `${clamped}%`;
-            console.log('[CRP56 renderer] master volume input ->', clamped);
-
-            if (window.sfx?.setMasterVolume) window.sfx.setMasterVolume(clamped / 100);
-            try { localStorage.setItem(MASTER_VOL_STORAGE_KEY, String(clamped)); } catch (_) {}
-        });
-
-        masterSlider.addEventListener('change', () => playSfx('cursor'));
-    }
-
-    const muteBtn = document.getElementById('muteToggle');
-    const muteStatus = document.getElementById('muteStatus');
-
-    if (muteBtn)
-    {
-        let muted = localStorage.getItem(MUTE_STORAGE_KEY) === 'on';
-
-        const render = () =>
-        {
-            muteBtn.textContent = muted ? 'Unmute' : 'Mute all';
-            if (muteStatus) muteStatus.textContent = muted ? 'Muted' : 'Unmuted';
-            muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
-            muteBtn.title = muted ? 'Click to unmute all audio' : 'Click to mute all audio';
-        };
-
-        render();
-
-        if (window.sfx?.setMuteAll)
-        {
-            window.sfx.setMuteAll(muted);
-        }
-
-        muteBtn.addEventListener('click', () =>
-        {
-            muted = !muted;
-            console.log('[CRP56 renderer] mute toggle ->', muted);
-
-            if (window.sfx?.setMuteAll)
-            {
-                window.sfx.setMuteAll(muted);
-            }
-
-            try
-            {
-                localStorage.setItem(MUTE_STORAGE_KEY, muted ? 'on' : 'off');
-            }
-            catch (_) {}
-
-            render();
-
-            if (!muted) playSfx('confirm');
-        });
-    }
-}
 
 const THEMES = {
     'primordial-gold': { label: 'Primordial Gold', href: './primordial_gold.css' },
@@ -176,10 +89,45 @@ function log(...args)
     console.log('[CRP56 renderer]', ...args);
 }
 
+
+function formatTerminalLine(data)
+{
+    if (typeof data === 'string') return `[SYSTEM] ${data}`;
+
+    if (data?.status) return `[SYSTEM] ${data.status}`;
+    if (data?.error) return `[ERROR] ${data.error}`;
+    if (data?.ok === true) return `[TRACE] Operation completed`;
+    if (data?.stage) return `[TRACE] ${data.stage}`;
+
+    return `[PACKET] ${JSON.stringify(data)}`;
+}
+
+const outputLines = [];
+
+function renderOutput()
+{
+    output.innerHTML = outputLines.map((line) =>
+    {
+        const cls = line.startsWith('[ERROR]') ? 'term-error' : line.startsWith('[TRACE]') ? 'term-trace' : line.startsWith('[PACKET]') ? 'term-packet' : 'term-system';
+        return `<div class="term-line ${cls}">${escapeHtml(line)}</div>`;
+    }).join('');
+
+    output.scrollTop = output.scrollHeight;
+}
+
 function show(data)
 {
     if (!output) return;
-    output.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+
+    const line = formatTerminalLine(data);
+    outputLines.push(line);
+
+    if (outputLines.length > 24)
+    {
+        outputLines.shift();
+    }
+
+    renderOutput();
 }
 
 function baseName(fullPath)
@@ -645,6 +593,95 @@ async function bindOutputDeviceSelect()
     }
 }
 
+function playSfx(category)
+{
+    if (!window.sfx || typeof window.sfx.play !== 'function')
+    {
+        console.warn('[CRP56 sfx] window.sfx bridge missing. Requested:', category);
+        return;
+    }
+    const now = Date.now();
+    if (now - (lastSfxAt[category] || 0) < SFX_THROTTLE_MS) return;
+    lastSfxAt[category] = now;
+    console.log('[CRP56 renderer] sfx:play ->', category);
+    window.sfx.play(category);
+}
+
+function bindMasterAndMusic()
+{
+    const masterSlider = document.getElementById('masterVolume');
+    const masterLabel = document.getElementById('masterVolumeLabel');
+
+    if (masterSlider)
+    {
+        masterSlider.disabled = false;
+
+        const savedMaster = Number(localStorage.getItem(MASTER_VOL_STORAGE_KEY) ?? 100);
+        const masterValue = Number.isFinite(savedMaster) ? Math.max(0, Math.min(100, savedMaster)) : 100;
+
+        masterSlider.value = String(masterValue);
+        if (masterLabel) masterLabel.textContent = `${masterValue}%`;
+
+        masterSlider.addEventListener('input', () =>
+        {
+            const pct = Number(masterSlider.value);
+            const clamped = Number.isFinite(pct) ? Math.max(0, Math.min(100, pct)) : 100;
+
+            if (masterLabel) masterLabel.textContent = `${clamped}%`;
+            console.log('[CRP56 renderer] master volume input ->', clamped);
+
+            if (window.sfx?.setMasterVolume) window.sfx.setMasterVolume(clamped / 100);
+            try { localStorage.setItem(MASTER_VOL_STORAGE_KEY, String(clamped)); } catch (_) {}
+        });
+
+        masterSlider.addEventListener('change', () => playSfx('cursor'));
+    }
+
+    const muteBtn = document.getElementById('muteToggle');
+    const muteStatus = document.getElementById('muteStatus');
+
+    if (muteBtn)
+    {
+        let muted = localStorage.getItem(MUTE_STORAGE_KEY) === 'on';
+
+        const render = () =>
+        {
+            muteBtn.textContent = muted ? 'Unmute' : 'Mute all';
+            if (muteStatus) muteStatus.textContent = muted ? 'Muted' : 'Unmuted';
+            muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+            muteBtn.title = muted ? 'Click to unmute all audio' : 'Click to mute all audio';
+        };
+
+        render();
+
+        if (window.sfx?.setMuteAll)
+        {
+            window.sfx.setMuteAll(muted);
+        }
+
+        muteBtn.addEventListener('click', () =>
+        {
+            muted = !muted;
+            console.log('[CRP56 renderer] mute toggle ->', muted);
+
+            if (window.sfx?.setMuteAll)
+            {
+                window.sfx.setMuteAll(muted);
+            }
+
+            try
+            {
+                localStorage.setItem(MUTE_STORAGE_KEY, muted ? 'on' : 'off');
+            }
+            catch (_) {}
+
+            render();
+
+            if (!muted) playSfx('confirm');
+        });
+    }
+}
+
 async function startBackgroundMusicOnce()
 {
     if (bgMusicStarted) return;
@@ -817,7 +854,9 @@ function initParticles()
 window.addEventListener('DOMContentLoaded', async () =>
 {
     console.log('[CRP56 renderer] DOMContentLoaded');
-
+    if (!output) return;
+    outputLines.push('[SYSTEM] Encrypt page ready.');
+    renderOutput();
     initBackgroundHost();
     initParticles();
     setParticlesEnabled(savedParticlesEnabled(), { persist: false });
@@ -831,9 +870,6 @@ window.addEventListener('DOMContentLoaded', async () =>
     bindMasterAndMusic();
     bindRailAudio();
     bindDataSfx();
-
-
-
 
 
     applySavedVolumes();
