@@ -208,8 +208,11 @@ function setTheme(theme)
     if (themeName) themeName.textContent = THEMES[theme].label;
     if (themeNameCard) themeNameCard.textContent = THEMES[theme].label;
     try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch (_) {}
-    seedParticles();
-    startBackgroundLoop(theme);
+
+    if (window.ParticleFX?.resizeCanvas)
+    {
+        window.ParticleFX.resizeCanvas();
+    }
 }
 
 function savedTheme()

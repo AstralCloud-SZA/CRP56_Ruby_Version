@@ -33,19 +33,22 @@ html, body
 {
     height: 100%;
     margin: 0;
-    overflow: hidden;
 }
 
 body
 {
+    min-height: 100vh;
+    overflow: hidden;
     font-family: var(--font-body);
     font-size: var(--text-base);
     color: var(--text);
-    background: linear-gradient(160deg, var(--bg), var(--bg-2));
+    background:
+            radial-gradient(circle at top, rgba(255, 234, 0, 0.08), transparent 28%),
+            linear-gradient(160deg, var(--bg), var(--bg-2));
     -webkit-font-smoothing: antialiased;
 }
 
-button, input, textarea
+button, input, textarea, select
 {
     font: inherit;
 }
@@ -74,24 +77,31 @@ button
 
 .bg-slides
 {
+    z-index: 0;
     overflow: hidden;
     pointer-events: none;
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), radial-gradient(circle at 30% 25%, rgba(255, 214, 122, 0.1), transparent 25%), linear-gradient(120deg, #0d0905 0%, #1a120a 32%, #0f0b07 100%);
+    background:
+            linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.42)),
+            radial-gradient(circle at 30% 25%, rgba(255, 214, 122, 0.10), transparent 25%),
+            linear-gradient(120deg, #0d0905 0%, #1a120a 32%, #0f0b07 100%);
 }
 
-.bg-slide {
+.bg-slide
+{
     position: absolute;
     inset: 0;
+    z-index: 0;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0;
     transform: scale(1.04);
-    filter: blur(2px);
+    filter: blur(1.5px);
     transition: opacity 900ms ease-out, transform 900ms ease-out;
 }
 
-.bg-slide.visible {
+.bg-slide.visible
+{
     opacity: 1;
     transform: scale(1);
 }
@@ -101,6 +111,7 @@ button
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 1;
     background: var(--veil);
     mix-blend-mode: screen;
     pointer-events: none;
@@ -109,7 +120,8 @@ button
 #particles
 {
     z-index: 2;
-    opacity: 0.62;
+    opacity: 0.92;
+    pointer-events: none;
 }
 
 .shell
@@ -621,7 +633,6 @@ button
     padding: var(--space-3);
 }
 
-/* Make audio-control actually flex */
 .audio-control
 {
     display: flex;
@@ -632,7 +643,6 @@ button
     min-width: 180px;
 }
 
-/* Style selects inside setting rows to match pill aesthetic */
 .setting-row select
 {
     font-size: var(--text-xs);
@@ -647,7 +657,6 @@ button
     max-width: 180px;
     appearance: none;
     -webkit-appearance: none;
-    /* minimal arrow indicator */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.6rem center;
@@ -660,7 +669,8 @@ button
     to { background-position: 68px 0; }
 }
 
-@keyframes flamePulse {
+@keyframes flamePulse
+{
     0%, 100% { transform: translateY(-50%) rotate(45deg) scale(0.8); opacity: 0.7; }
     50% { transform: translateY(-50%) rotate(45deg) scale(1.2); opacity: 1; }
 }
