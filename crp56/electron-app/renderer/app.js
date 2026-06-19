@@ -213,6 +213,8 @@ function setTheme(theme)
     {
         window.ParticleFX.resizeCanvas();
     }
+
+    startBackgroundLoop(theme);
 }
 
 function savedTheme()
@@ -816,6 +818,7 @@ window.addEventListener('DOMContentLoaded', async () =>
 {
     console.log('[CRP56 renderer] DOMContentLoaded');
 
+    initBackgroundHost();
     initParticles();
     setParticlesEnabled(savedParticlesEnabled(), { persist: false });
     setTheme(savedTheme() || html.dataset.theme || 'primordial-gold');
@@ -829,7 +832,7 @@ window.addEventListener('DOMContentLoaded', async () =>
     bindRailAudio();
     bindDataSfx();
 
-    initBackgroundHost();
+
 
 
 

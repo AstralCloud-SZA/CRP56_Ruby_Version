@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="reworked particle_system.js and fully adjusted some pages">
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" afterDir="false" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="base css tweak">
       <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -190,15 +189,7 @@
       <workItem from="1781723832198" duration="1822000" />
       <workItem from="1781791547988" duration="2230000" />
       <workItem from="1781811342920" duration="1414000" />
-      <workItem from="1781887252386" duration="11038000" />
-    </task>
-    <task id="LOCAL-00012" summary="base html and CSS work">
-      <option name="closed" value="true" />
-      <created>1781011025048</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1781011025048</updated>
+      <workItem from="1781887252386" duration="11361000" />
     </task>
     <task id="LOCAL-00013" summary="page tweaks">
       <option name="closed" value="true" />
@@ -584,7 +575,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781908020025</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="base css tweak">
+      <option name="closed" value="true" />
+      <created>1781908326212</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1781908326212</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -602,7 +601,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed up how the folder encryption and decryption works it now actually saves it too a singular folder" />
     <MESSAGE value="fixed up how the folder encryption and decryption works it now actually saves it too a singular folder 2" />
     <MESSAGE value="fixed up how the folder encryption and decryption works it now actually saves it too a singular folder 3" />
     <MESSAGE value="app.js and preload.js fixes" />
@@ -627,6 +625,7 @@
     <MESSAGE value="settings page minor rework and settings functionality update 3" />
     <MESSAGE value="settings page minor rework and settings functionality update 4" />
     <MESSAGE value="reworked particle_system.js and fully adjusted some pages" />
-    <option name="LAST_COMMIT_MESSAGE" value="reworked particle_system.js and fully adjusted some pages" />
+    <MESSAGE value="base css tweak" />
+    <option name="LAST_COMMIT_MESSAGE" value="base css tweak" />
   </component>
 </project>
