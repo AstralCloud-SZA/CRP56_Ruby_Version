@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="base css tweak">
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
