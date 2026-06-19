@@ -19,8 +19,9 @@
     --radius-lg: 1rem;
     --radius-xl: 1.35rem;
     --radius-full: 9999px;
-    --font-body: 'General Sans', Inter, sans-serif;
-    --font-display: 'Cabinet Grotesk', 'General Sans', sans-serif;
+    --font-body: 'Sora', 'Inter', sans-serif;
+    --font-display: 'Cinzel', 'Sora', serif;
+    --font-mono: 'JetBrains Mono', monospace;
     --rail-width: 124px;
     --transition: 300ms cubic-bezier(0.23, 1, 0.32, 1);
     --gold-gradient: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 50%, var(--accent) 100%);
@@ -42,9 +43,7 @@ body
     font-family: var(--font-body);
     font-size: var(--text-base);
     color: var(--text);
-    background:
-            radial-gradient(circle at top, rgba(255, 234, 0, 0.08), transparent 28%),
-            linear-gradient(160deg, var(--bg), var(--bg-2));
+    background: radial-gradient(circle at top, rgba(255, 234, 0, 0.08), transparent 28%), linear-gradient(160deg, var(--bg), var(--bg-2));
     -webkit-font-smoothing: antialiased;
 }
 
@@ -215,6 +214,7 @@ button
 
 .eyebrow
 {
+    font-family: var(--font-body);
     font-size: var(--text-xs);
     letter-spacing: 0.25em;
     text-transform: uppercase;
@@ -244,6 +244,7 @@ button
 .chip,
 .theme-button
 {
+    font-family: var(--font-body);
     border-radius: var(--radius-sm);
     border: 1px solid var(--border);
     background: rgba(255,255,255,0.03);
@@ -346,6 +347,7 @@ button
 
 .kicker
 {
+    font-family: var(--font-body);
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
@@ -373,6 +375,7 @@ button
 .hero p
 {
     margin: 0;
+    font-family: var(--font-body);
     color: var(--muted);
     max-width: 58ch;
     line-height: 1.6;
@@ -388,6 +391,7 @@ button
 .primary-btn,
 .secondary-btn
 {
+    font-family: var(--font-body);
     min-height: 48px;
     border-radius: var(--radius-sm);
     padding: 0.9rem 1.5rem;
@@ -442,6 +446,7 @@ button
 
 .mini-label
 {
+    font-family: var(--font-body);
     font-size: var(--text-xs);
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -451,6 +456,7 @@ button
 .mini-value
 {
     margin-top: var(--space-2);
+    font-family: var(--font-body);
     font-size: var(--text-lg);
     font-weight: 600;
 }
@@ -470,8 +476,8 @@ button
 .panel-title
 {
     margin: 0 0 var(--space-3);
-    font-size: var(--text-lg);
     font-family: var(--font-display);
+    font-size: var(--text-lg);
     border-bottom: 1px solid var(--border);
     padding-bottom: var(--space-2);
 }
@@ -494,6 +500,7 @@ button
 
 .action-label
 {
+    font-family: var(--font-body);
     font-size: var(--text-xs);
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -544,6 +551,7 @@ button
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: var(--faint);
+    font-family: var(--font-body);
     font-size: var(--text-xs);
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -585,6 +593,7 @@ button
 
 .nav-btn
 {
+    font-family: var(--font-body);
     min-height: 52px;
     border: 1px solid transparent;
     background: transparent;
@@ -623,6 +632,7 @@ button
 
 .rail-note
 {
+    font-family: var(--font-body);
     font-size: var(--text-xs);
     line-height: 1.45;
     text-align: center;
@@ -645,6 +655,7 @@ button
 
 .setting-row select
 {
+    font-family: var(--font-body);
     font-size: var(--text-xs);
     text-transform: uppercase;
     letter-spacing: 0.08em;

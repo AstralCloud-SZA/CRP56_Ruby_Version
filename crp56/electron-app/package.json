@@ -10,6 +10,8 @@
     "electron": "^35.0.0"
   },
   "dependencies": {
+    "@fontsource/cinzel": "^5.2.8",
+    "@fontsource/sora": "^5.2.8",
     "koffi": "^3.0.2"
   }
 }
