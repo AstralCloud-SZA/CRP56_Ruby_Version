@@ -33,6 +33,11 @@ const FMOD_Sound_Release = lib.func('FMOD_Sound_Release', 'int', [FMOD_SOUND]);
 
 const FMOD_Sound_GetLength = lib.func('FMOD_Sound_GetLength', 'int', [FMOD_SOUND, '_Out_ uint *', 'uint']);
 const FMOD_Channel_GetPosition = lib.func('FMOD_Channel_GetPosition', 'int', [FMOD_CHANNEL, '_Out_ uint *', 'uint']);
+const FMOD_System_GetNumDrivers = lib.func('FMOD_System_GetNumDrivers', 'int', [FMOD_SYSTEM, '_Out_ int *']);
+
+// Correct signature: driver index is the second argument
+const FMOD_System_GetDriverInfo = lib.func('FMOD_System_GetDriverInfo', 'int', [FMOD_SYSTEM, 'int', 'char *', 'int', 'void *', 'void *', 'void *', 'void *']);
+const FMOD_System_SetDriver = lib.func('FMOD_System_SetDriver', 'int', [FMOD_SYSTEM, 'int']);
 
 const FMOD_VERSION = 0x00020314;
 const FMOD_INIT_NORMAL = 0x00000000;
@@ -682,7 +687,57 @@ function startDiagnostics()
     }, 15000);
 }
 
+function listOutputDevices()
+{
+    if (!system)
+    {
+        warn('listOutputDevices() called but system is null');
+        return [];
+    }
 
+    const outCount = [0];
+    const rcCount = FMOD_System_GetNumDrivers(system, outCount);
+    check(rcCount, 'GetNumDrivers');
+    const count = outCount[0];
+
+    const devices = [];
+    const nameBufSize = 256;
+
+    for (let i = 0; i < count; i++)
+    {
+        const buf = Buffer.alloc(nameBufSize);
+        const rcInfo = FMOD_System_GetDriverInfo(system, i, buf, nameBufSize, null, null, null, null);
+        if (rcInfo !== 0)
+        {
+            warn('GetDriverInfo failed for index', i, 'rc=', rcInfo);
+            continue;
+        }
+
+        const rawName = buf.toString('utf8').replace(/\0+$/, '');
+        devices.push({
+            id: i,
+            name: rawName || `Device ${i}`,
+            isDefault: i === 0
+        });
+    }
+
+    log('Output devices:', devices);
+    return devices;
+}
+
+function setOutputDevice(index)
+{
+    if (!system)
+    {
+        warn('setOutputDevice() called but system is null');
+        return;
+    }
+
+    const idx = Number(index) | 0;
+    log('setOutputDevice ->', idx);
+    check(FMOD_System_SetDriver(system, idx), 'SetDriver');
+    dumpMixerState('after setOutputDevice');
+}
 
 function log(...args) { console.log('[fmod]', ...args); }
 function warn(...args) { console.warn('[fmod]', ...args); }
@@ -722,6 +777,7 @@ module.exports = {
     play, playAny, categories,
     playMusic, stopMusic, listMusic, isMusicPlaying,
     setMasterVolume, setSfxVolume, setMusicVolume, setMuteAll,
+    listOutputDevices, setOutputDevice,
     shutdown
 };
 

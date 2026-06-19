@@ -24,7 +24,6 @@ let bgMusicStarted = false;
 let loadedMusicTracks = [];
 let musicUiBound = false;
 
-
 const SFX_THROTTLE_MS = 60;
 const lastSfxAt = {};
 
@@ -46,37 +45,72 @@ function bindMasterAndMusic()
 {
     const masterSlider = document.getElementById('masterVolume');
     const masterLabel = document.getElementById('masterVolumeLabel');
+
     if (masterSlider)
     {
         masterSlider.disabled = false;
+
         const savedMaster = Number(localStorage.getItem(MASTER_VOL_STORAGE_KEY) ?? 100);
-        masterSlider.value = savedMaster;
-        if (masterLabel) masterLabel.textContent = `${savedMaster}%`;
+        const masterValue = Number.isFinite(savedMaster) ? Math.max(0, Math.min(100, savedMaster)) : 100;
+
+        masterSlider.value = String(masterValue);
+        if (masterLabel) masterLabel.textContent = `${masterValue}%`;
+
         masterSlider.addEventListener('input', () =>
         {
             const pct = Number(masterSlider.value);
-            if (masterLabel) masterLabel.textContent = `${pct}%`;
-            console.log('[CRP56 renderer] master volume input ->', pct);
-            if (window.sfx) window.sfx.setMasterVolume(pct / 100);
-            try { localStorage.setItem(MASTER_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
+            const clamped = Number.isFinite(pct) ? Math.max(0, Math.min(100, pct)) : 100;
+
+            if (masterLabel) masterLabel.textContent = `${clamped}%`;
+            console.log('[CRP56 renderer] master volume input ->', clamped);
+
+            if (window.sfx?.setMasterVolume) window.sfx.setMasterVolume(clamped / 100);
+            try { localStorage.setItem(MASTER_VOL_STORAGE_KEY, String(clamped)); } catch (_) {}
         });
+
         masterSlider.addEventListener('change', () => playSfx('cursor'));
     }
 
     const muteBtn = document.getElementById('muteToggle');
+    const muteStatus = document.getElementById('muteStatus');
+
     if (muteBtn)
     {
         let muted = localStorage.getItem(MUTE_STORAGE_KEY) === 'on';
-        const render = () => { muteBtn.textContent = muted ? 'Unmute' : 'Mute all'; };
+
+        const render = () =>
+        {
+            muteBtn.textContent = muted ? 'Unmute' : 'Mute all';
+            if (muteStatus) muteStatus.textContent = muted ? 'Muted' : 'Unmuted';
+            muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+            muteBtn.title = muted ? 'Click to unmute all audio' : 'Click to mute all audio';
+        };
+
         render();
-        if (window.sfx) window.sfx.setMuteAll(muted);
+
+        if (window.sfx?.setMuteAll)
+        {
+            window.sfx.setMuteAll(muted);
+        }
+
         muteBtn.addEventListener('click', () =>
         {
             muted = !muted;
             console.log('[CRP56 renderer] mute toggle ->', muted);
-            if (window.sfx) window.sfx.setMuteAll(muted);
-            try { localStorage.setItem(MUTE_STORAGE_KEY, muted ? 'on' : 'off'); } catch (_) {}
+
+            if (window.sfx?.setMuteAll)
+            {
+                window.sfx.setMuteAll(muted);
+            }
+
+            try
+            {
+                localStorage.setItem(MUTE_STORAGE_KEY, muted ? 'on' : 'off');
+            }
+            catch (_) {}
+
             render();
+
             if (!muted) playSfx('confirm');
         });
     }
@@ -150,7 +184,7 @@ function show(data)
 
 function baseName(fullPath)
 {
-    return String(fullPath).split(/[\/]/).pop();
+    return String(fullPath).split(/[\\/]/).pop();
 }
 
 function ensureCrp56Extension(filePath)
@@ -526,6 +560,69 @@ async function bindMusicTrackSelect()
     }
 }
 
+async function bindOutputDeviceSelect()
+{
+    const select = document.getElementById('outputDeviceSelect');
+    const applyBtn = document.getElementById('outputDeviceApply');
+
+    if (!select || !applyBtn)
+    {
+        console.log('[CRP56 renderer] output device UI missing');
+        return;
+    }
+
+    if (!window.sfx?.listOutputDevices || !window.sfx?.setOutputDevice)
+    {
+        console.log('[CRP56 renderer] output device bridge missing');
+        return;
+    }
+
+    try
+    {
+        console.log('[CRP56 renderer] requesting output device list...');
+        const devices = await window.sfx.listOutputDevices();
+        select.innerHTML = '';
+
+        for (const dev of devices)
+        {
+            const opt = document.createElement('option');
+            opt.value = String(dev.id);
+            opt.textContent = dev.name + (dev.isDefault ? ' (system default)' : '');
+            select.appendChild(opt);
+        }
+
+        const saved = localStorage.getItem('crp56-output-device');
+        if (saved && devices.some(d => String(d.id) === saved))
+        {
+            select.value = saved;
+        }
+
+        applyBtn.addEventListener('click', async () =>
+        {
+            const raw = select.value;
+            if (!raw) return;
+            const id = Number(raw);
+            console.log('[CRP56 renderer] set output device ->', id);
+
+            try
+            {
+                await window.sfx.setOutputDevice(id);
+                localStorage.setItem('crp56-output-device', String(id));
+                playSfx('confirm');
+            }
+            catch (e)
+            {
+                console.error('[CRP56 renderer] setOutputDevice failed:', e);
+                playSfx('error');
+            }
+        });
+    }
+    catch (e)
+    {
+        console.error('[CRP56 renderer] failed to load output devices:', e);
+    }
+}
+
 async function startBackgroundMusicOnce()
 {
     if (bgMusicStarted) return;
@@ -697,10 +794,8 @@ function seedParticles()
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
         r: Math.random() * 2.2 + 0.7,
-        vx: (Math.random() - 0.5) * 0.22,
-        vy: (Math.random() - 0.5) * 0.22,
-        alpha: Math.random() * 0.55 + 0.18,
-        twinkle: Math.random() * Math.PI * 2,
+        vx: (Math.random() - 0.5) * 0.22, vy: (Math.random() - 0.5) * 0.22,
+        alpha: Math.random() * 0.55 + 0.18, twinkle: Math.random() * Math.PI * 2,
         color: colors[i % colors.length]
     }));
 }
@@ -781,6 +876,7 @@ window.addEventListener('DOMContentLoaded', async () =>
 
     console.log('[CRP56 renderer] awaiting music track binding');
     await bindMusicTrackSelect();
+    await bindOutputDeviceSelect();
 
     setTimeout(async () =>
     {
@@ -794,7 +890,6 @@ window.addEventListener('DOMContentLoaded', async () =>
             console.error('[CRP56] Delayed BG music start failed:', e);
         }
     }, 500);
-
 
     if (!window.crp56)
     {

@@ -173,4 +173,14 @@ contextBridge.exposeInMainWorld('sfx', {
         log('sfx.listMusic()');
         return ipcRenderer.invoke('music:list');
     },
+    listOutputDevices: () =>
+    {
+        log('sfx.listOutputDevices()');
+        return ipcRenderer.invoke('sfx:listOutputDevices');
+    },
+    setOutputDevice: (id) =>
+    {
+        log('sfx.setOutputDevice()', id);
+        return ipcRenderer.invoke('sfx:setOutputDevice', id);
+    },
 });
