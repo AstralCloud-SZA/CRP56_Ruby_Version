@@ -9,12 +9,7 @@ let rubyProcess = null;
 const pendingRequests = new Map();
 let requestCounter = 0;
 
-const COMMAND_TIMEOUTS = {
-    encrypt_folder: 600000,
-    decrypt_folder: 600000,
-    encrypt_file: 120000,
-    decrypt_file: 120000
-};
+const COMMAND_TIMEOUTS = {encrypt_folder: 600000, decrypt_folder: 600000, encrypt_file: 120000, decrypt_file: 120000};
 
 const DEFAULT_TIMEOUT = 30000;
 
@@ -59,12 +54,7 @@ function startRubyServer()
     log('Ruby cwd:', rubyCorePath);
     log('Spawn command:', command, args.join(' '));
 
-    rubyProcess = spawn(command, args, {
-        cwd: rubyCorePath,
-        stdio: ['pipe', 'pipe', 'pipe'],
-        windowsHide: true,
-        shell: isWin
-    });
+    rubyProcess = spawn(command, args, {cwd: rubyCorePath, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true, shell: isWin});
 
     rubyProcess.on('spawn', () => { log('Ruby process spawned successfully'); });
     rubyProcess.on('error', (err) => { console.error('[Ruby spawn error]', err); });
@@ -325,11 +315,7 @@ function createWindow()
         title: 'CRP56',
         backgroundColor: '#161616',
         autoHideMenuBar: true,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-            contextIsolation: true,
-            nodeIntegration: false
-        }
+        webPreferences: {preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false}
     });
 
     mainWindow.webContents.openDevTools({ mode: 'detach' });
