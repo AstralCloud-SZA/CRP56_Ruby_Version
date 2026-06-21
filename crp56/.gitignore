@@ -36,6 +36,7 @@
 # Local logs
 /electron-app/*.log
 /ruby-core/*.log
+/ruby-runtime
 
 # IDE project files
 /.idea/

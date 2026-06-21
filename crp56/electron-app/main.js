@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 const readline = require('readline');
 const fmod = require('./fmod');
 
@@ -9,7 +10,14 @@ let rubyProcess = null;
 const pendingRequests = new Map();
 let requestCounter = 0;
 
-const COMMAND_TIMEOUTS = {encrypt_folder: 600000, decrypt_folder: 600000, encrypt_file: 120000, decrypt_file: 120000};
+const COMMAND_TIMEOUTS = {
+    encrypt_folder: 600000,
+    decrypt_folder: 600000,
+    encrypt_file: 120000,
+    decrypt_file: 120000,
+    version: 15000,
+    ping: 15000
+};
 
 const DEFAULT_TIMEOUT = 30000;
 
@@ -22,7 +30,10 @@ process.on('uncaughtException', (err) =>
     } catch (_) {}
 });
 
-process.on('unhandledRejection', (reason) => { console.error('[unhandledRejection]', reason); });
+process.on('unhandledRejection', (reason) =>
+{
+    console.error('[unhandledRejection]', reason);
+});
 
 function log(...args) { console.log('[CRP56 main]', ...args); }
 function musicLog(...args) { console.log('[CRP56 music]', ...args); }
@@ -43,18 +54,54 @@ function armTimeout(id)
     }, pending.timeoutMs);
 }
 
+function getRubyCorePath()
+{
+    const candidates = [
+        path.join(process.resourcesPath, 'ruby-core'),
+        path.join(__dirname, '..', 'ruby-core'),
+        path.join(__dirname, 'ruby-core')
+    ];
+
+    for (const candidate of candidates)
+    {
+        if (fs.existsSync(candidate)) return candidate;
+    }
+
+    return candidates[candidates.length - 1];
+}
+
+function getRubyExePath()
+{
+    const candidates = [
+        path.join(process.resourcesPath, 'ruby-runtime', 'bin', 'ruby.exe'),
+        path.join(__dirname, '..', 'ruby-runtime', 'bin', 'ruby.exe'),
+        path.join(__dirname, 'ruby-runtime', 'bin', 'ruby.exe')
+    ];
+
+    for (const candidate of candidates)
+    {
+        if (fs.existsSync(candidate)) return candidate;
+    }
+
+    return 'ruby';
+}
+
 function startRubyServer()
 {
-    const rubyCorePath = path.join(__dirname, '..', 'ruby-core');
-    const isWin = process.platform === 'win32';
-
-    const command = 'ruby';
+    const rubyCorePath = getRubyCorePath();
+    const rubyExe = getRubyExePath();
     const args = ['main.rb', 'server'];
 
     log('Ruby cwd:', rubyCorePath);
-    log('Spawn command:', command, args.join(' '));
+    log('Ruby exe:', rubyExe);
+    log('Spawn command:', rubyExe, args.join(' '));
 
-    rubyProcess = spawn(command, args, {cwd: rubyCorePath, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true, shell: isWin});
+    rubyProcess = spawn(rubyExe, args, {
+        cwd: rubyCorePath,
+        stdio: ['pipe', 'pipe', 'pipe'],
+        windowsHide: true,
+        shell: false
+    });
 
     rubyProcess.on('spawn', () => { log('Ruby process spawned successfully'); });
     rubyProcess.on('error', (err) => { console.error('[Ruby spawn error]', err); });
@@ -179,6 +226,45 @@ async function safeInvoke(command, params = {})
     }
 }
 
+async function testRubyLaunch()
+{
+    const rubyExe = getRubyExePath();
+    const rubyCorePath = getRubyCorePath();
+
+    return new Promise((resolve) =>
+    {
+        const child = spawn(rubyExe, ['-v'], {
+            cwd: rubyCorePath,
+            stdio: ['ignore', 'pipe', 'pipe'],
+            windowsHide: true,
+            shell: false
+        });
+
+        let out = '';
+        let err = '';
+
+        child.stdout.on('data', (data) => { out += data.toString(); });
+        child.stderr.on('data', (data) => { err += data.toString(); });
+
+        child.on('close', (code) =>
+        {
+            log('Ruby launch test complete');
+            log('Ruby launch test path:', rubyExe);
+            log('Ruby launch test exit code:', code);
+            log('Ruby launch test stdout:', out.trim());
+            log('Ruby launch test stderr:', err.trim());
+            resolve({
+                ok: code === 0,
+                rubyExe,
+                rubyCorePath,
+                code,
+                stdout: out.trim(),
+                stderr: err.trim()
+            });
+        });
+    });
+}
+
 ipcMain.handle('crp56:ping', async () => safeInvoke('ping'));
 ipcMain.handle('crp56:version', async () => safeInvoke('version'));
 
@@ -210,6 +296,11 @@ ipcMain.handle('crp56:encrypt-folder', async (_event, { passphrase, sourceFolder
 ipcMain.handle('crp56:decrypt-folder', async (_event, { passphrase, sourceFolder, outputFolder }) =>
 {
     return safeInvoke('decrypt_folder', { passphrase, source: sourceFolder, output_folder: outputFolder });
+});
+
+ipcMain.handle('crp56:test-ruby-launch', async () =>
+{
+    return await testRubyLaunch();
 });
 
 ipcMain.handle('dialog:pick-file', async (_event, options = {}) =>
@@ -289,6 +380,7 @@ ipcMain.on('music:play', (_e, name) =>
         console.error('[CRP56 main] music:play FAILED:', e.message);
     }
 });
+
 ipcMain.on('music:stop', () =>
 {
     musicLog('music:stop');
@@ -315,7 +407,11 @@ function createWindow()
         title: 'CRP56',
         backgroundColor: '#161616',
         autoHideMenuBar: true,
-        webPreferences: {preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false}
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: false
+        }
     });
 
     mainWindow.webContents.openDevTools({ mode: 'detach' });
@@ -328,10 +424,13 @@ function createWindow()
         log('Renderer finished load');
     });
 
-    mainWindow.on('closed', () => { mainWindow = null; });
+    mainWindow.on('closed', () =>
+    {
+        mainWindow = null;
+    });
 }
 
-app.whenReady().then(() =>
+app.whenReady().then(async () =>
 {
     log('Electron app ready');
 
@@ -350,6 +449,7 @@ app.whenReady().then(() =>
 
     try
     {
+        await testRubyLaunch();
         startRubyServer();
     }
     catch (err)
