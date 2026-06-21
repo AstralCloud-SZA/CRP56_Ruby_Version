@@ -4,12 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="font import section changes">
-      <change afterPath="$PROJECT_DIR$/crp56/electron-app/forge.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/package.json" afterDir="false" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="distro and forge work 2">
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -118,6 +114,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
     "DefaultHtmlFileTemplate": "HTML File",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.MCP Project settings loaded": "true",
@@ -195,15 +192,7 @@
       <workItem from="1781811342920" duration="1414000" />
       <workItem from="1781887252386" duration="11361000" />
       <workItem from="1781913669016" duration="66000" />
-      <workItem from="1782044736001" duration="3640000" />
-    </task>
-    <task id="LOCAL-00017" summary="Updated and fixes made by the claude flame model 2">
-      <option name="closed" value="true" />
-      <created>1781114427483</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1781114427483</updated>
+      <workItem from="1782044736001" duration="5005000" />
     </task>
     <task id="LOCAL-00018" summary="Updated and fixes made by the claude flame model 3">
       <option name="closed" value="true" />
@@ -589,7 +578,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781913109641</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="distro and forge work 2">
+      <option name="closed" value="true" />
+      <created>1782056195078</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1782056195079</updated>
+    </task>
+    <option name="localTasksCounter" value="67" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -607,7 +604,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="testing file" />
     <MESSAGE value="path and requirement patches" />
     <MESSAGE value="small decryption TWEAK" />
     <MESSAGE value="small decryption TWEAK 2" />
@@ -632,6 +628,7 @@
     <MESSAGE value="font adjustments" />
     <MESSAGE value="main tweaks" />
     <MESSAGE value="font import section changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="font import section changes" />
+    <MESSAGE value="distro and forge work 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="distro and forge work 2" />
   </component>
 </project>
