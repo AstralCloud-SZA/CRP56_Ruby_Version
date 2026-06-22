@@ -22,7 +22,7 @@ module.exports = {
         {
             name: '@electron-forge/maker-squirrel',
             config: {
-                name: 'CRP56 Encryption App',
+                name: 'CRP56.Encryption.App',
                 setupIcon: './Icon/f1.ico',
                 authors: 'AstralCloud_SZA [D Gounden]',
                 description: 'CRP56 is a polymorphic encryption system that seals text, files, and entire folders behind a passphrase-derived shard cipher.',
@@ -32,6 +32,19 @@ module.exports = {
         {
             name: '@electron-forge/maker-zip',
             platforms: ['win32']
+        }
+    ],
+    publishers: [
+        {
+            name: '@electron-forge/publisher-github',
+            config: {
+                repository: {
+                    owner: 'AstralCloud-SZA',
+                    name: 'CarreraCRP56'
+                },
+                prerelease: true,
+                draft: true
+            }
         }
     ],
 
