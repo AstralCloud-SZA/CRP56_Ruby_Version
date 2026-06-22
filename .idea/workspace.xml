@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="blackhole logo system integrated with particle effect toggle">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="git publishing integration work">
+      <change beforePath="$PROJECT_DIR$/.idea/CRP56_MK2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/CRP56_MK2.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crp56/electron-app/forge.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/forge.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -217,15 +216,8 @@
       <workItem from="1781913669016" duration="66000" />
       <workItem from="1782044736001" duration="5043000" />
       <workItem from="1782146540408" duration="4943000" />
-      <workItem from="1782154786095" duration="3236000" />
-    </task>
-    <task id="LOCAL-00026" summary="audio system integration to the apps html pages">
-      <option name="closed" value="true" />
-      <created>1781292293740</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1781292293740</updated>
+      <workItem from="1782154786095" duration="3358000" />
+      <workItem from="1782158483462" duration="759000" />
     </task>
     <task id="LOCAL-00027" summary="audio system integration to the apps html pages slight adjustemnts">
       <option name="closed" value="true" />
@@ -611,7 +603,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782156552376</updated>
     </task>
-    <option name="localTasksCounter" value="75" />
+    <task id="LOCAL-00075" summary="git publishing integration work">
+      <option name="closed" value="true" />
+      <created>1782158457318</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1782158457318</updated>
+    </task>
+    <option name="localTasksCounter" value="76" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -679,7 +679,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="bg music code debugging setup" />
     <MESSAGE value="bg music code debugging setup 2" />
     <MESSAGE value="bg music code debugging setup 3" />
     <MESSAGE value=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM" />
@@ -704,6 +703,7 @@
     <MESSAGE value="blackhole logo and icon image files 5" />
     <MESSAGE value="blackhole logo and icon image files 6" />
     <MESSAGE value="blackhole logo system integrated with particle effect toggle" />
-    <option name="LAST_COMMIT_MESSAGE" value="blackhole logo system integrated with particle effect toggle" />
+    <MESSAGE value="git publishing integration work" />
+    <option name="LAST_COMMIT_MESSAGE" value="git publishing integration work" />
   </component>
 </project>

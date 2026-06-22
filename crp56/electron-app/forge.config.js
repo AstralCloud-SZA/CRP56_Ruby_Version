@@ -40,7 +40,7 @@ module.exports = {
             config: {
                 repository: {
                     owner: 'AstralCloud-SZA',
-                    name: 'CarreraCRP56'
+                    name: 'CRP56_Ruby_Version'
                 },
                 prerelease: true,
                 draft: true
