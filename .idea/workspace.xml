@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="sidebar adjustments and fixes and changes">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" afterDir="false" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="blackhole logo and icon image files 3">
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +26,26 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="release/distro" />
+              </list>
+            </value>
+          </entry>
+          <entry type="REMOTE">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="origin/release/distro" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -195,14 +214,6 @@
       <workItem from="1781913669016" duration="66000" />
       <workItem from="1782044736001" duration="5043000" />
       <workItem from="1782146540408" duration="4943000" />
-    </task>
-    <task id="LOCAL-00021" summary="Fmod sound engine installation work and npm koffi installation and base fmod set up">
-      <option name="closed" value="true" />
-      <created>1781265082057</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1781265082057</updated>
     </task>
     <task id="LOCAL-00022" summary="Fmod sound engine work 2">
       <option name="closed" value="true" />
@@ -588,13 +599,41 @@
       <option name="project" value="LOCAL" />
       <updated>1782153444347</updated>
     </task>
-    <option name="localTasksCounter" value="70" />
+    <task id="LOCAL-00070" summary="blackhole logo and icon image files 3">
+      <option name="closed" value="true" />
+      <created>1782154581745</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1782154581745</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/release/distro" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="master" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
@@ -606,7 +645,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="bg music meiko nakahara friday album" />
     <MESSAGE value="bg music code setup" />
     <MESSAGE value="bg music code setup 3" />
     <MESSAGE value="bg music code setup 4" />
@@ -631,6 +669,7 @@
     <MESSAGE value="distro and forge work 3" />
     <MESSAGE value="Distro ready work fonts added to render and adjustmenst to css" />
     <MESSAGE value="sidebar adjustments and fixes and changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="sidebar adjustments and fixes and changes" />
+    <MESSAGE value="blackhole logo and icon image files 3" />
+    <option name="LAST_COMMIT_MESSAGE" value="blackhole logo and icon image files 3" />
   </component>
 </project>
