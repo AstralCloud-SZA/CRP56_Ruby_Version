@@ -8,7 +8,7 @@ module.exports = {
         extraResource: [
             '../ruby-runtime',
             '../ruby-core',
-            'node_modules/koffi/build/koffi'
+            '../soundengine'
         ]
     },
 
