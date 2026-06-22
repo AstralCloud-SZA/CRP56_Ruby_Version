@@ -760,7 +760,7 @@ button
     display: grid;
     place-items: center;
     width: 100%;
-    padding-bottom: var(--space-43);
+    padding-bottom: var(--space-6);
     color: var(--accent-2);
     filter: drop-shadow(0 0 8px var(--accent));
 }

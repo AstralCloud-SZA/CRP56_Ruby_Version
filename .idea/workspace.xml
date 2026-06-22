@@ -4,14 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="sidebar adjustments and fixes and changes">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="git publishing integration work">
+      <change beforePath="$PROJECT_DIR$/.idea/CRP56_MK2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/CRP56_MK2.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/about.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/decrypt.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/decrypt.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/encrypt.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/encrypt.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/settings.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/settings.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/forge.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/forge.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,6 +28,26 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="release/distro" />
+              </list>
+            </value>
+          </entry>
+          <entry type="REMOTE">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="origin/release/distro" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -118,36 +134,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "DefaultHtmlFileTemplate": "HTML File",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.ruby.rubocop.migration.global.runOnSaveToExternalFormatter": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP": "1782044794592",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "master",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "S:/CRP_56_EncryptionAPP/CRP56_MK2/crp56/electron-app/soundengine",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ruby.structure.view.model.defaults.configured": "true",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "S:\\JetBrains\\RubyMine 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ruby.rubocop.migration.global.runOnSaveToExternalFormatter&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP&quot;: &quot;1782044794592&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;release/distro&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;S:/CRP_56_EncryptionAPP/CRP56_MK2/crp56/electron-app/soundengine&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ruby.structure.view.model.defaults.configured&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;S:\\JetBrains\\RubyMine 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\soundengine" />
@@ -200,54 +216,8 @@
       <workItem from="1781913669016" duration="66000" />
       <workItem from="1782044736001" duration="5043000" />
       <workItem from="1782146540408" duration="4943000" />
-    </task>
-    <task id="LOCAL-00021" summary="Fmod sound engine installation work and npm koffi installation and base fmod set up">
-      <option name="closed" value="true" />
-      <created>1781265082057</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1781265082057</updated>
-    </task>
-    <task id="LOCAL-00022" summary="Fmod sound engine work 2">
-      <option name="closed" value="true" />
-      <created>1781268966022</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1781268966022</updated>
-    </task>
-    <task id="LOCAL-00023" summary="audio file additions">
-      <option name="closed" value="true" />
-      <created>1781289961296</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1781289961296</updated>
-    </task>
-    <task id="LOCAL-00024" summary="FMOD sounds engine integration and base set up">
-      <option name="closed" value="true" />
-      <created>1781291177848</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1781291177848</updated>
-    </task>
-    <task id="LOCAL-00025" summary="master volume and BG music system integration">
-      <option name="closed" value="true" />
-      <created>1781291637736</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1781291637736</updated>
-    </task>
-    <task id="LOCAL-00026" summary="audio system integration to the apps html pages">
-      <option name="closed" value="true" />
-      <created>1781292293740</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1781292293740</updated>
+      <workItem from="1782154786095" duration="3358000" />
+      <workItem from="1782158483462" duration="759000" />
     </task>
     <task id="LOCAL-00027" summary="audio system integration to the apps html pages slight adjustemnts">
       <option name="closed" value="true" />
@@ -593,7 +563,55 @@
       <option name="project" value="LOCAL" />
       <updated>1782153444347</updated>
     </task>
-    <option name="localTasksCounter" value="70" />
+    <task id="LOCAL-00070" summary="blackhole logo and icon image files 3">
+      <option name="closed" value="true" />
+      <created>1782154581745</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1782154581745</updated>
+    </task>
+    <task id="LOCAL-00071" summary="blackhole logo and icon image files 4">
+      <option name="closed" value="true" />
+      <created>1782154962078</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1782154962078</updated>
+    </task>
+    <task id="LOCAL-00072" summary="blackhole logo and icon image files 5">
+      <option name="closed" value="true" />
+      <created>1782155441276</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1782155441276</updated>
+    </task>
+    <task id="LOCAL-00073" summary="blackhole logo and icon image files 6">
+      <option name="closed" value="true" />
+      <created>1782155731481</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1782155731481</updated>
+    </task>
+    <task id="LOCAL-00074" summary="blackhole logo system integrated with particle effect toggle">
+      <option name="closed" value="true" />
+      <created>1782156552376</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1782156552376</updated>
+    </task>
+    <task id="LOCAL-00075" summary="git publishing integration work">
+      <option name="closed" value="true" />
+      <created>1782158457318</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1782158457318</updated>
+    </task>
+    <option name="localTasksCounter" value="76" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -607,7 +625,23 @@
             <list>
               <RecentGroup>
                 <option name="FILTER_VALUES">
-                  <option value="release/distro" />
+                  <option value="origin/release/distro" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="master" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="*" />
                 </option>
               </RecentGroup>
             </list>
@@ -625,7 +659,14 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="release/distro" />
+                        <option value="origin/release/distro" />
+                      </list>
+                    </value>
+                  </entry>
+                  <entry key="user">
+                    <value>
+                      <list>
+                        <option value="*" />
                       </list>
                     </value>
                   </entry>
@@ -638,12 +679,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="bg music meiko nakahara friday album" />
-    <MESSAGE value="bg music code setup" />
-    <MESSAGE value="bg music code setup 3" />
-    <MESSAGE value="bg music code setup 4" />
-    <MESSAGE value="bg music code setup 5" />
-    <MESSAGE value="bg music code debugging setup" />
     <MESSAGE value="bg music code debugging setup 2" />
     <MESSAGE value="bg music code debugging setup 3" />
     <MESSAGE value=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM" />
@@ -663,6 +698,12 @@
     <MESSAGE value="distro and forge work 3" />
     <MESSAGE value="Distro ready work fonts added to render and adjustmenst to css" />
     <MESSAGE value="sidebar adjustments and fixes and changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="sidebar adjustments and fixes and changes" />
+    <MESSAGE value="blackhole logo and icon image files 3" />
+    <MESSAGE value="blackhole logo and icon image files 4" />
+    <MESSAGE value="blackhole logo and icon image files 5" />
+    <MESSAGE value="blackhole logo and icon image files 6" />
+    <MESSAGE value="blackhole logo system integrated with particle effect toggle" />
+    <MESSAGE value="git publishing integration work" />
+    <option name="LAST_COMMIT_MESSAGE" value="git publishing integration work" />
   </component>
 </project>

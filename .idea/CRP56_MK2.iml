@@ -36,6 +36,7 @@
     <orderEntry type="library" scope="PROVIDED" name="json (v2.19.9, ruby-3.4.9-p82 (2)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="json-schema (v6.2.0, ruby-3.4.9-p82 (2)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="logger (v1.7.0, ruby-3.4.9-p82 (2)) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="lz4-ruby (v0.3.3, ruby-3.4.9-p82 (2)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="minitest (v6.0.6, ruby-3.4.9-p82 (2)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="net-ftp (v0.3.8, ruby-3.4.9-p82 (2)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="net-http (v0.9.1, ruby-3.4.9-p82 (2)) [gem]" level="application" />
@@ -61,6 +62,7 @@
     <orderEntry type="library" scope="PROVIDED" name="rr (v3.1.2, ruby-3.4.9-p82 (2)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rss (v0.3.1, ruby-3.4.9-p82 (2)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ruby-graphviz (v1.2.5, ruby-3.4.9-p82 (2)) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="ruby-progressbar (v1.13.0, ruby-3.4.9-p82 (2)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rubygems-update (v4.0.6, ruby-3.4.9-p82 (2)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="securerandom (v0.4.1, ruby-3.4.9-p82 (2)) [gem]" level="application" />
     <orderEntry type="library" scope="TEST" name="simplecov (v0.22.0, ruby-3.4.9-p82 (2)) [gem]" level="application" />
@@ -77,6 +79,7 @@
     <orderEntry type="library" scope="PROVIDED" name="tsort (v0.2.0, ruby-3.4.9-p82 (2)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="uri (v1.1.1, ruby-3.4.9-p82 (2)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="version (v1.1.1, ruby-3.4.9-p82 (2)) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="zstd-ruby (v2.0.6, ruby-3.4.9-p82 (2)) [gem]" level="application" />
     <orderEntry type="module" module-name="ruby-core" />
   </component>
 </module>
