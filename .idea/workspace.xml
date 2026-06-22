@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="git publishing integration work">
-      <change beforePath="$PROJECT_DIR$/.idea/CRP56_MK2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/CRP56_MK2.iml" afterDir="false" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="git publishing integration work 2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/forge.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/forge.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -148,7 +146,7 @@
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP&quot;: &quot;1782044794592&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;release/distro&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;S:/CRP_56_EncryptionAPP/CRP56_MK2/crp56/electron-app/soundengine&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
@@ -175,6 +173,43 @@
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app" />
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\ruby-core" />
     </key>
+  </component>
+  <component name="RubyModuleManagerSettings">
+    <option name="blackListedRootsPaths">
+      <list>
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/specifications/default" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/gems/repl_type_completor-0.1.9" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/gems/resolv-replace-0.1.1" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/gems/getoptlong-0.2.1" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/gems/rinda-0.2.0" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/gems/abbrev-0.1.2" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/specifications" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/gems/net-ftp-0.3.8" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/gems/debug-1.11.0" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/gems/net-imap-0.5.8" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-core" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/gems/net-pop-0.1.2" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/3.4.0/bundler/templates" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/gems/nkf-0.2.0" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/gems/observer-0.1.2" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/gems/getoptlong-0.2.1" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/gems/power_assert-2.0.5" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/specifications" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/specifications/default" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/gems/net-ftp-0.3.8" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/gems/net-pop-0.1.2" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/gems/repl_type_completor-0.1.9" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/gems/net-imap-0.5.8" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/gems/resolv-replace-0.1.1" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/3.4.0/bundler/templates" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/gems/observer-0.1.2" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/gems/rinda-0.2.0" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/gems/abbrev-0.1.2" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/gems/nkf-0.2.0" />
+        <option value="$PROJECT_DIR$/crp56/ruby-runtime/lib/ruby/gems/3.4.0/gems/power_assert-2.0.5" />
+        <option value="$PROJECT_DIR$/crp56/electron-app/out/CRP56 Encryption App-win32-x64/resources/ruby-runtime/lib/ruby/gems/3.4.0/gems/debug-1.11.0" />
+      </list>
+    </option>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -218,6 +253,7 @@
       <workItem from="1782146540408" duration="4943000" />
       <workItem from="1782154786095" duration="3358000" />
       <workItem from="1782158483462" duration="759000" />
+      <workItem from="1782159447975" duration="814000" />
     </task>
     <task id="LOCAL-00027" summary="audio system integration to the apps html pages slight adjustemnts">
       <option name="closed" value="true" />
