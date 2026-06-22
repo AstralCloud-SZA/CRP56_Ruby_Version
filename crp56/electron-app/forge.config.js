@@ -1,6 +1,3 @@
-// forge.config.js
-// CRP56 Encryption App — Electron Forge config
-
 module.exports = {
     packagerConfig: {
         asar: {
@@ -10,7 +7,8 @@ module.exports = {
         icon: './Icon/f1',
         extraResource: [
             '../ruby-runtime',
-            '../ruby-core'
+            '../ruby-core',
+            'node_modules/koffi/build/koffi'
         ]
     },
 

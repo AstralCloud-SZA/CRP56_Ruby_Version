@@ -38,6 +38,25 @@ process.on('unhandledRejection', (reason) =>
 function log(...args) { console.log('[CRP56 main]', ...args); }
 function musicLog(...args) { console.log('[CRP56 music]', ...args); }
 
+function existsAny(paths)
+{
+    for (const p of paths)
+    {
+        if (p && fs.existsSync(p)) return p;
+    }
+    return null;
+}
+
+function resourcePath(...segments)
+{
+    return path.join(process.resourcesPath || path.join(__dirname, '..', 'resources'), ...segments);
+}
+
+function appPath(...segments)
+{
+    return path.join(__dirname, ...segments);
+}
+
 function armTimeout(id)
 {
     const pending = pendingRequests.get(id);
@@ -54,64 +73,45 @@ function armTimeout(id)
     }, pending.timeoutMs);
 }
 
-// ---------------------------------------------------------------------------
-// Ruby path resolution — uses app.isPackaged for a clean, unambiguous branch.
-// In dev: walks up one level from __dirname (electron-app/ -> ruby-core/).
-// Packaged: resolves from process.resourcesPath (guaranteed correct by Forge).
-// Falls back to system 'ruby' if the exe cannot be found in either location.
-// ---------------------------------------------------------------------------
 function getRubyCorePath()
 {
-    if (app.isPackaged)
-    {
-        // Packaged: resources/ sits beside the app.asar
-        const packed = path.join(process.resourcesPath, 'ruby-core');
-        if (fs.existsSync(packed)) return packed;
+    const candidates = app.isPackaged ? [resourcePath('ruby-core')] : [appPath('..', 'ruby-core'), appPath('ruby-core')];
 
-        // Safety: if resourcesPath itself is somehow unavailable log and throw
-        const msg = `[getRubyCorePath] packaged path not found: ${packed}`;
-        console.error(msg);
-        throw new Error(msg);
-    }
+    const found = existsAny(candidates);
+    if (found) return found;
 
-    // Development: ruby-core lives one directory above electron-app/
-    const devSibling = path.join(__dirname, '..', 'ruby-core');
-    if (fs.existsSync(devSibling)) return devSibling;
-
-    // Rare dev fallback: ruby-core nested inside electron-app/
-    const devNested = path.join(__dirname, 'ruby-core');
-    if (fs.existsSync(devNested)) return devNested;
-
-    // Last resort: return the sibling path and let Ruby fail with a clear cwd error
-    console.warn('[getRubyCorePath] could not locate ruby-core, using best-guess:', devSibling);
-    return devSibling;
+    const msg = app.isPackaged ? `[getRubyCorePath] packaged path not found: ${candidates[0]}` : `[getRubyCorePath] could not locate ruby-core, tried: ${candidates.join(' , ')}`;
+    console.error(msg);
+    throw new Error(msg);
 }
 
 function getRubyExePath()
 {
-    if (app.isPackaged)
-    {
-        // Packaged: use the bundled portable Ruby inside resources/
-        const packed = path.join(process.resourcesPath, 'ruby-runtime', 'bin', 'ruby.exe');
-        if (fs.existsSync(packed)) return packed;
+    const candidates = app.isPackaged ? [resourcePath('ruby-runtime', 'bin', 'ruby.exe')] : [appPath('..', 'ruby-runtime', 'bin', 'ruby.exe'), appPath('ruby-runtime', 'bin', 'ruby.exe')];
 
-        // Safety: bundled runtime missing — fall back to system Ruby and warn loudly
-        console.warn('[getRubyExePath] bundled ruby.exe not found at:', packed);
-        console.warn('[getRubyExePath] falling back to system Ruby — app may fail if Ruby is not on PATH');
-        return 'ruby';
-    }
+    const found = existsAny(candidates);
+    if (found) return found;
 
-    // Development: portable Ruby beside electron-app/
-    const devSibling = path.join(__dirname, '..', 'ruby-runtime', 'bin', 'ruby.exe');
-    if (fs.existsSync(devSibling)) return devSibling;
-
-    // Dev fallback: portable Ruby nested inside electron-app/
-    const devNested = path.join(__dirname, 'ruby-runtime', 'bin', 'ruby.exe');
-    if (fs.existsSync(devNested)) return devNested;
-
-    // Final fallback: system Ruby on PATH
-    console.warn('[getRubyExePath] no portable ruby.exe found in dev, falling back to system Ruby');
+    console.warn('[getRubyExePath] falling back to system ruby');
     return 'ruby';
+}
+
+function getKoffiRoot()
+{
+    const candidates = app.isPackaged ? [resourcePath('koffi')] : [appPath('node_modules', 'koffi', 'build', 'koffi')];
+
+    const found = existsAny(candidates);
+    if (found) return found;
+
+    const msg = `[getKoffiRoot] koffi runtime not found: ${candidates.join(' , ')}`;
+    console.error(msg);
+    throw new Error(msg);
+}
+
+function safeRequireKoffi()
+{
+    const root = getKoffiRoot();
+    return require(root);
 }
 
 function startRubyServer()
