@@ -309,6 +309,8 @@ function bindThemeToggle()
     themeToggle.addEventListener('click', () =>
     {
         console.log('[CRP56 renderer] theme toggle');
+        ParticleFX.blackHole('blackHoleMark', 52, 28);
+        ParticleFX.blackHole('blackHoleRail', 54, 28);
         playSfx('confirm');
         const next = html.dataset.theme === 'primordial-gold' ? 'hellflare-gold' : 'primordial-gold';
         setTheme(next);
