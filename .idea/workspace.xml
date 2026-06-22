@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="distro and forge work 3">
-      <change beforePath="$PROJECT_DIR$/.idea/CRP56_MK2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/CRP56_MK2.iml" afterDir="false" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="Distro ready work fonts added to render and adjustmenst to css">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/forge.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/forge.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -150,11 +149,11 @@
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\soundengine" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\renderer\fonts" />
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\audiofiles\Friday_Magic" />
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\audiofiles" />
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app" />
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\ruby-core" />
-      <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\BG_images" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -196,15 +195,7 @@
       <workItem from="1781887252386" duration="11361000" />
       <workItem from="1781913669016" duration="66000" />
       <workItem from="1782044736001" duration="5043000" />
-      <workItem from="1782146540408" duration="2197000" />
-    </task>
-    <task id="LOCAL-00019" summary="BG system work">
-      <option name="closed" value="true" />
-      <created>1781204220822</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1781204220823</updated>
+      <workItem from="1782146540408" duration="4292000" />
     </task>
     <task id="LOCAL-00020" summary="BG system work 2">
       <option name="closed" value="true" />
@@ -590,7 +581,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782058288125</updated>
     </task>
-    <option name="localTasksCounter" value="68" />
+    <task id="LOCAL-00068" summary="Distro ready work fonts added to render and adjustmenst to css">
+      <option name="closed" value="true" />
+      <created>1782150761964</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1782150761964</updated>
+    </task>
+    <option name="localTasksCounter" value="69" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -608,7 +607,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="small decryption TWEAK" />
     <MESSAGE value="small decryption TWEAK 2" />
     <MESSAGE value="bg music meiko nakahara friday album" />
     <MESSAGE value="bg music code setup" />
@@ -633,6 +631,7 @@
     <MESSAGE value="font import section changes" />
     <MESSAGE value="distro and forge work 2" />
     <MESSAGE value="distro and forge work 3" />
-    <option name="LAST_COMMIT_MESSAGE" value="distro and forge work 3" />
+    <MESSAGE value="Distro ready work fonts added to render and adjustmenst to css" />
+    <option name="LAST_COMMIT_MESSAGE" value="Distro ready work fonts added to render and adjustmenst to css" />
   </component>
 </project>
