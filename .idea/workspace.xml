@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="git publishing integration work 3">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="git publishing integration work 4">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/forge.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/forge.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -238,15 +239,7 @@
       <workItem from="1782154786095" duration="3358000" />
       <workItem from="1782158483462" duration="759000" />
       <workItem from="1782159447975" duration="1037000" />
-      <workItem from="1782161074424" duration="927000" />
-    </task>
-    <task id="LOCAL-00028" summary="fmod debugging work">
-      <option name="closed" value="true" />
-      <created>1781370738129</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1781370738129</updated>
+      <workItem from="1782161074424" duration="1590000" />
     </task>
     <task id="LOCAL-00029" summary="index.html debugging">
       <option name="closed" value="true" />
@@ -632,7 +625,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782161562579</updated>
     </task>
-    <option name="localTasksCounter" value="77" />
+    <task id="LOCAL-00077" summary="git publishing integration work 4">
+      <option name="closed" value="true" />
+      <created>1782162194532</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1782162194533</updated>
+    </task>
+    <option name="localTasksCounter" value="78" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -705,7 +706,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="bg music code debugging setup 3" />
     <MESSAGE value=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM" />
     <MESSAGE value=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM 2" />
     <MESSAGE value="FMOD File rearrangement" />
@@ -730,6 +730,7 @@
     <MESSAGE value="blackhole logo system integrated with particle effect toggle" />
     <MESSAGE value="git publishing integration work" />
     <MESSAGE value="git publishing integration work 3" />
-    <option name="LAST_COMMIT_MESSAGE" value="git publishing integration work 3" />
+    <MESSAGE value="git publishing integration work 4" />
+    <option name="LAST_COMMIT_MESSAGE" value="git publishing integration work 4" />
   </component>
 </project>
