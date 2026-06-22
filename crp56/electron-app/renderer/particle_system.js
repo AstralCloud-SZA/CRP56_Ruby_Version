@@ -243,7 +243,7 @@
             burst: burst && Math.random() < 0.18,
             seedAngle: angle,
             seedOrbit: radial,
-            life: Math.random() * 1 + 0.2
+            life: Math.random() + 0.2
         };
     }
 
