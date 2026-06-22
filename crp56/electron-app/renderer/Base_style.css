@@ -1,10 +1,160 @@
-@import "@fontsource/sora/index.css";
-@import "@fontsource/cinzel/index.css";
-@import "@fontsource/sora";
-@import "@fontsource/sora/600.css";
-@import "@fontsource/sora/700.css";
-@import "@fontsource/cinzel";
-@import "@fontsource/cinzel/700.css";
+/* ==========================================================
+   LOCAL FONTS — renderer/fonts/
+   ========================================================== */
+
+/* ── Sora ── */
+@font-face
+{
+    font-family: 'Sora';
+    font-style: normal;
+    font-weight: 100;
+    font-display: swap;
+    src: url('./fonts/sora-latin-100-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Sora';
+    font-style: normal;
+    font-weight: 200;
+    font-display: swap;
+    src: url('./fonts/sora-latin-200-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Sora';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('./fonts/sora-latin-300-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Sora';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('./fonts/sora-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+
+    font-family: 'Sora';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('./fonts/sora-latin-500-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Sora';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('./fonts/sora-latin-600-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Sora';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('./fonts/sora-latin-700-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Sora';
+    font-style: normal;
+    font-weight: 800;
+    font-display: swap;
+    src: url('./fonts/sora-latin-800-normal.woff2') format('woff2');
+}
+
+/* ── Cinzel (standard latin) ── */
+@font-face
+{
+    font-family: 'Cinzel';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('./fonts/cinzel-latin-400-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Cinzel';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('./fonts/cinzel-latin-500-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Cinzel';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('./fonts/cinzel-latin-600-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Cinzel';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('./fonts/cinzel-latin-700-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Cinzel';
+    font-style: normal;
+    font-weight: 800;
+    font-display: swap;
+    src: url('./fonts/cinzel-latin-800-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Cinzel';
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap;
+    src: url('./fonts/cinzel-latin-900-normal.woff2') format('woff2');
+}
+
+/* ── Cinzel Extended (latin-ext) ── */
+@font-face
+{
+    font-family: 'Cinzel';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF;
+    src: url('./fonts/cinzel-latin-ext-400-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Cinzel';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF;
+    src: url('./fonts/cinzel-latin-ext-500-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Cinzel';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF;
+    src: url('./fonts/cinzel-latin-ext-600-normal.woff2') format('woff2');
+}
+@font-face
+{
+    font-family: 'Cinzel';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF;
+    src: url('./fonts/cinzel-latin-ext-700-normal.woff2') format('woff2');
+}
 
 :root
 {

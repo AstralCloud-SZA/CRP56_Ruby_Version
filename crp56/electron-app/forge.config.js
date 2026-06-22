@@ -11,8 +11,8 @@ module.exports = {
         icon: './Icon/f1',
         // Bundle Ruby + backend as resources beside app.asar
         extraResource: [
-            './ruby-runtime', // portable Ruby (bin/, lib/, etc.)
-            './ruby-core'     // your CRP56 Ruby backend (main.rb, lib/, data/, ...)
+            '../ruby-runtime', // portable Ruby (bin/, lib/, etc.)
+            '../ruby-core'     // your CRP56 Ruby backend (main.rb, lib/, data/, ...)
         ]
     },
 
@@ -22,9 +22,11 @@ module.exports = {
         {
             name: '@electron-forge/maker-squirrel',
             config: {
-                name: 'CRP56EncryptionApp',
+                name: 'CRP56 Encryption App',
                 setupIcon: './Icon/f1.ico',
-                loadingGif: undefined
+                authors: 'AstralCloud_SZA [D Gounden]',
+                description: 'CRP56 is a polymorphic encryption system that seals text, files, and entire folders behind a passphrase-derived shard cipher.',
+                //loadingGif: undefined
             }
         },
         {

@@ -54,35 +54,63 @@ function armTimeout(id)
     }, pending.timeoutMs);
 }
 
+// ---------------------------------------------------------------------------
+// Ruby path resolution — uses app.isPackaged for a clean, unambiguous branch.
+// In dev: walks up one level from __dirname (electron-app/ -> ruby-core/).
+// Packaged: resolves from process.resourcesPath (guaranteed correct by Forge).
+// Falls back to system 'ruby' if the exe cannot be found in either location.
+// ---------------------------------------------------------------------------
 function getRubyCorePath()
 {
-    const candidates = [
-        path.join(process.resourcesPath, 'ruby-core'),
-        path.join(__dirname, '..', 'ruby-core'),
-        path.join(__dirname, 'ruby-core')
-    ];
-
-    for (const candidate of candidates)
+    if (app.isPackaged)
     {
-        if (fs.existsSync(candidate)) return candidate;
+        // Packaged: resources/ sits beside the app.asar
+        const packed = path.join(process.resourcesPath, 'ruby-core');
+        if (fs.existsSync(packed)) return packed;
+
+        // Safety: if resourcesPath itself is somehow unavailable log and throw
+        const msg = `[getRubyCorePath] packaged path not found: ${packed}`;
+        console.error(msg);
+        throw new Error(msg);
     }
 
-    return candidates[candidates.length - 1];
+    // Development: ruby-core lives one directory above electron-app/
+    const devSibling = path.join(__dirname, '..', 'ruby-core');
+    if (fs.existsSync(devSibling)) return devSibling;
+
+    // Rare dev fallback: ruby-core nested inside electron-app/
+    const devNested = path.join(__dirname, 'ruby-core');
+    if (fs.existsSync(devNested)) return devNested;
+
+    // Last resort: return the sibling path and let Ruby fail with a clear cwd error
+    console.warn('[getRubyCorePath] could not locate ruby-core, using best-guess:', devSibling);
+    return devSibling;
 }
 
 function getRubyExePath()
 {
-    const candidates = [
-        path.join(process.resourcesPath, 'ruby-runtime', 'bin', 'ruby.exe'),
-        path.join(__dirname, '..', 'ruby-runtime', 'bin', 'ruby.exe'),
-        path.join(__dirname, 'ruby-runtime', 'bin', 'ruby.exe')
-    ];
-
-    for (const candidate of candidates)
+    if (app.isPackaged)
     {
-        if (fs.existsSync(candidate)) return candidate;
+        // Packaged: use the bundled portable Ruby inside resources/
+        const packed = path.join(process.resourcesPath, 'ruby-runtime', 'bin', 'ruby.exe');
+        if (fs.existsSync(packed)) return packed;
+
+        // Safety: bundled runtime missing — fall back to system Ruby and warn loudly
+        console.warn('[getRubyExePath] bundled ruby.exe not found at:', packed);
+        console.warn('[getRubyExePath] falling back to system Ruby — app may fail if Ruby is not on PATH');
+        return 'ruby';
     }
 
+    // Development: portable Ruby beside electron-app/
+    const devSibling = path.join(__dirname, '..', 'ruby-runtime', 'bin', 'ruby.exe');
+    if (fs.existsSync(devSibling)) return devSibling;
+
+    // Dev fallback: portable Ruby nested inside electron-app/
+    const devNested = path.join(__dirname, 'ruby-runtime', 'bin', 'ruby.exe');
+    if (fs.existsSync(devNested)) return devNested;
+
+    // Final fallback: system Ruby on PATH
+    console.warn('[getRubyExePath] no portable ruby.exe found in dev, falling back to system Ruby');
     return 'ruby';
 }
 
@@ -414,7 +442,10 @@ function createWindow()
         }
     });
 
-    mainWindow.webContents.openDevTools({ mode: 'detach' });
+    if (!app.isPackaged)
+    {
+        mainWindow.webContents.openDevTools({ mode: 'detach' });
+    }
 
     const rendererPath = path.join(__dirname, 'renderer', 'index.html');
     mainWindow.loadFile(rendererPath);
