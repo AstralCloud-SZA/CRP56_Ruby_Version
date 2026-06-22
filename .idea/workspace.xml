@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="git publishing integration work 5">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="git publishing integration work 6">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crp56/electron-app/fmod.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/fmod.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/fmodplay.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/forge.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/forge.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -241,15 +242,7 @@
       <workItem from="1782158483462" duration="759000" />
       <workItem from="1782159447975" duration="1037000" />
       <workItem from="1782161074424" duration="1605000" />
-      <workItem from="1782162826413" duration="1322000" />
-    </task>
-    <task id="LOCAL-00030" summary="app.js fixes and reowrk">
-      <option name="closed" value="true" />
-      <created>1781372576596</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1781372576596</updated>
+      <workItem from="1782162826413" duration="3775000" />
     </task>
     <task id="LOCAL-00031" summary="fmod.js diagnostic update and file rework">
       <option name="closed" value="true" />
@@ -635,7 +628,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782162676691</updated>
     </task>
-    <option name="localTasksCounter" value="79" />
+    <task id="LOCAL-00079" summary="git publishing integration work 6">
+      <option name="closed" value="true" />
+      <created>1782164226239</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1782164226240</updated>
+    </task>
+    <option name="localTasksCounter" value="80" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -708,7 +709,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM 2" />
     <MESSAGE value="FMOD File rearrangement" />
     <MESSAGE value="bg music fixes and adjustments 7" />
     <MESSAGE value="settings page minor rework and settings functionality update" />
@@ -733,6 +733,7 @@
     <MESSAGE value="git publishing integration work 3" />
     <MESSAGE value="git publishing integration work 4" />
     <MESSAGE value="git publishing integration work 5" />
-    <option name="LAST_COMMIT_MESSAGE" value="git publishing integration work 5" />
+    <MESSAGE value="git publishing integration work 6" />
+    <option name="LAST_COMMIT_MESSAGE" value="git publishing integration work 6" />
   </component>
 </project>

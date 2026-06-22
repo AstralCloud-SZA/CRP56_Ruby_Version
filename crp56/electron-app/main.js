@@ -5,6 +5,7 @@ const fs = require('fs');
 const readline = require('readline');
 const fmod = require('./fmod');
 
+
 let mainWindow = null;
 let rubyProcess = null;
 const pendingRequests = new Map();
@@ -96,23 +97,7 @@ function getRubyExePath()
     return 'ruby';
 }
 
-function getKoffiRoot()
-{
-    const candidates = app.isPackaged ? [resourcePath('koffi')] : [appPath('node_modules', 'koffi', 'build', 'koffi')];
 
-    const found = existsAny(candidates);
-    if (found) return found;
-
-    const msg = `[getKoffiRoot] koffi runtime not found: ${candidates.join(' , ')}`;
-    console.error(msg);
-    throw new Error(msg);
-}
-
-function safeRequireKoffi()
-{
-    const root = getKoffiRoot();
-    return require(root);
-}
 
 function startRubyServer()
 {

@@ -2,8 +2,31 @@ const path = require('path');
 const fs = require('fs');
 const koffi = require('koffi');
 
-const dllPath = path.join(__dirname, 'soundengine', 'fmod.dll');
+function getFmodDllPath()
+{
+    const candidates = app && app.isPackaged
+        ? [
+            path.join(process.resourcesPath, 'soundengine', 'fmod.dll'),
+            path.join(process.resourcesPath, 'fmod.dll')
+        ]
+        : [
+            path.join(__dirname, 'soundengine', 'fmod.dll'),
+            path.join(__dirname, '..', 'soundengine', 'fmod.dll'),
+            path.join(process.cwd(), 'soundengine', 'fmod.dll')
+        ];
+
+    for (const p of candidates)
+    {
+        if (p && fs.existsSync(p)) return p;
+    }
+
+    throw new Error(`FMOD DLL not found. Tried: ${candidates.join(' | ')}`);
+}
+
+const dllPath = getFmodDllPath();
 const lib = koffi.load(dllPath);
+
+
 
 const FMOD_SYSTEM = 'void *';
 const FMOD_SOUND = 'void *';

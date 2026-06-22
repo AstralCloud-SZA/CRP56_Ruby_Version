@@ -8,7 +8,9 @@ module.exports = {
         extraResource: [
             '../ruby-runtime',
             '../ruby-core',
-            './soundengine'
+            './soundengine',
+            './BG_images',
+            './audiofiles'
         ]
     },
 
