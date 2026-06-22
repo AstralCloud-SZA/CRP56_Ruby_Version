@@ -105,7 +105,7 @@
             ctx.stroke();
 
             // — Inner photon ring (thinner, subtler)
-            ctx.strokeStyle = 'rgba(255, 249, 214, 0.22)';
+            ctx.strokeStyle = 'rgb(140 225 248 / 0.42)';
             ctx.lineWidth = 0.6;
             ctx.beginPath();
             ctx.arc(cx, cy, coreRadius + 3.2, 0, Math.PI * 2);
