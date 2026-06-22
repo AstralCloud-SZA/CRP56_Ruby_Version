@@ -693,6 +693,33 @@ function setParticlesEnabled(enabled, { persist = true } = {})
     {
         window.ParticleFX.setEnabled(particlesEnabled);
     }
+
+    if (window.ParticleFX?.blackHoleEnabled !== undefined)
+    {
+        window.ParticleFX.blackHoleEnabled = particlesEnabled;
+    }
+
+    if (window.ParticleFX)
+    {
+        if (particlesEnabled)
+        {
+            if (window.ParticleFX.blackHole)
+            {
+                const mark = document.getElementById('blackHoleMark');
+                const rail = document.getElementById('blackHoleRail');
+                if (mark) window.ParticleFX.blackHole('blackHoleMark', 52, 28);
+                if (rail) window.ParticleFX.blackHole('blackHoleRail', 54, 28);
+            }
+        }
+        else
+        {
+            if (window.ParticleFX.stopBlackHole)
+            {
+                window.ParticleFX.stopBlackHole('blackHoleMark');
+                window.ParticleFX.stopBlackHole('blackHoleRail');
+            }
+        }
+    }
 }
 
 function savedParticlesEnabled()

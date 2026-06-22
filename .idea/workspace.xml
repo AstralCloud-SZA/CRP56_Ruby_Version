@@ -4,14 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="blackhole logo and icon image files 4">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="blackhole logo and icon image files 6">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/about.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/decrypt.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/decrypt.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/encrypt.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/encrypt.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/settings.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/settings.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -220,23 +215,7 @@
       <workItem from="1781913669016" duration="66000" />
       <workItem from="1782044736001" duration="5043000" />
       <workItem from="1782146540408" duration="4943000" />
-      <workItem from="1782154786095" duration="648000" />
-    </task>
-    <task id="LOCAL-00023" summary="audio file additions">
-      <option name="closed" value="true" />
-      <created>1781289961296</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1781289961296</updated>
-    </task>
-    <task id="LOCAL-00024" summary="FMOD sounds engine integration and base set up">
-      <option name="closed" value="true" />
-      <created>1781291177848</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1781291177848</updated>
+      <workItem from="1782154786095" duration="1449000" />
     </task>
     <task id="LOCAL-00025" summary="master volume and BG music system integration">
       <option name="closed" value="true" />
@@ -614,7 +593,23 @@
       <option name="project" value="LOCAL" />
       <updated>1782154962078</updated>
     </task>
-    <option name="localTasksCounter" value="72" />
+    <task id="LOCAL-00072" summary="blackhole logo and icon image files 5">
+      <option name="closed" value="true" />
+      <created>1782155441276</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1782155441276</updated>
+    </task>
+    <task id="LOCAL-00073" summary="blackhole logo and icon image files 6">
+      <option name="closed" value="true" />
+      <created>1782155731481</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1782155731481</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -682,8 +677,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="bg music code setup 3" />
-    <MESSAGE value="bg music code setup 4" />
     <MESSAGE value="bg music code setup 5" />
     <MESSAGE value="bg music code debugging setup" />
     <MESSAGE value="bg music code debugging setup 2" />
@@ -707,6 +700,8 @@
     <MESSAGE value="sidebar adjustments and fixes and changes" />
     <MESSAGE value="blackhole logo and icon image files 3" />
     <MESSAGE value="blackhole logo and icon image files 4" />
-    <option name="LAST_COMMIT_MESSAGE" value="blackhole logo and icon image files 4" />
+    <MESSAGE value="blackhole logo and icon image files 5" />
+    <MESSAGE value="blackhole logo and icon image files 6" />
+    <option name="LAST_COMMIT_MESSAGE" value="blackhole logo and icon image files 6" />
   </component>
 </project>
