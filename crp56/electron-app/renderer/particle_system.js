@@ -3,24 +3,177 @@
 {
     const ParticleFX =
         {
-        canvas: null,
-        ctx: null,
-        rafId: null,
-        running: false,
-        enabled: true,
-        html: document.documentElement,
-        particles: [],
-        gravityWaves: [],
-        colors: ['#ffd400', '#ffea72', '#fff9d6', '#ffbf2f'],
-        resizeQueued: false,
-        pulseTick: 0,
-        config: {
-            solarDust: { countBase: 42, countDiv: 36, speed: 0.14, speedJitter: 0.12, radiusMin: 0.7, radiusMax: 1.9, alphaMin: 0.16, alphaMax: 0.48, linkDistance: 112, linkAlpha: 0.06 },
-            carreraBurst: { countBase: 20, countDiv: 80, speed: 0.45, speedJitter: 0.62, radiusMin: 0.9, radiusMax: 2.8, alphaMin: 0.35, alphaMax: 0.95, linkDistance: 82, linkAlpha: 0.04 },
-            gravityFlicker: { countBase: 8, countDiv: 140, speed: 0.18, speedJitter: 0.18, radiusMin: 1.3, radiusMax: 2.8, alphaMin: 0.12, alphaMax: 0.24, linkDistance: 120, linkAlpha: 0.05 }
-        }
-    };
+            canvas: null,
+            ctx: null,
+            rafId: null,
+            running: false,
+            enabled: true,
+            html: document.documentElement,
+            particles: [],
+            gravityWaves: [],
+            colors: ['#ffd400', '#ffea72', '#fff9d6', '#ffbf2f'],
+            resizeQueued: false,
+            pulseTick: 0,
+            config: {
+                solarDust:      { countBase: 42,  countDiv: 36,  speed: 0.14, speedJitter: 0.12, radiusMin: 0.7, radiusMax: 1.9, alphaMin: 0.16, alphaMax: 0.48, linkDistance: 112, linkAlpha: 0.06 },
+                carreraBurst:   { countBase: 20,  countDiv: 80,  speed: 0.45, speedJitter: 0.62, radiusMin: 0.9, radiusMax: 2.8, alphaMin: 0.35, alphaMax: 0.95, linkDistance: 82,  linkAlpha: 0.04 },
+                gravityFlicker: { countBase: 8,   countDiv: 140, speed: 0.18, speedJitter: 0.18, radiusMin: 1.3, radiusMax: 2.8, alphaMin: 0.12, alphaMax: 0.24, linkDistance: 120, linkAlpha: 0.05 }
+            }
+        };
 
+    // ── Black Hole Emblem ────────────────────────────────────────────────────
+    // A self-contained canvas animation — completely independent from the main
+    // particle field.  Multiple instances can run simultaneously (topbar + rail).
+    // Each instance gets its own rAF loop and particle array.
+    // Call: ParticleFX.blackHole('canvasId', size, particleCount)
+    // ────────────────────────────────────────────────────────────────────────
+    const BlackHoleInstances = new Map(); // canvasId -> { rafId, particles }
+
+    function blackHole(canvasId, size, particleCount)
+    {
+        // If an instance is already running on this canvas, stop it first
+        if (BlackHoleInstances.has(canvasId))
+        {
+            cancelAnimationFrame(BlackHoleInstances.get(canvasId).rafId);
+            BlackHoleInstances.delete(canvasId);
+        }
+
+        const canvas = typeof canvasId === 'string' ? document.getElementById(canvasId) : canvasId;
+        if (!canvas) return;
+
+        // Scale for device pixel ratio so it stays crisp on HiDPI screens
+        const dpr         = Math.min(window.devicePixelRatio || 1, 2);
+        const displaySize = size;
+        canvas.width      = Math.round(size * dpr);
+        canvas.height     = Math.round(size * dpr);
+        canvas.style.width  = displaySize + 'px';
+        canvas.style.height = displaySize + 'px';
+
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+
+        const cx          = size / 2;
+        const cy          = size / 2;
+        const coreRadius  = size * 0.175;
+        const orbitRadius = size * 0.34;
+
+        // Build particle ring — flattened ellipse (accretion disc perspective)
+        const particles = Array.from({ length: particleCount }, (_, i) =>
+            ({
+                angle:  (i / particleCount) * Math.PI * 2,
+                speed:  0.011 + Math.random() * 0.016,
+                dist:   orbitRadius * (0.7 + Math.random() * 0.62),
+                size:   0.8 + Math.random() * 1.7,
+                alpha:  0.45 + Math.random() * 0.55,
+                drift:  (Math.random() - 0.5) * 0.004,    // slow radial drift
+                // Each particle picks a gold shade from the accent palette
+                color:  ['#ffd400', '#ffea72', '#fff9d6', '#ffbf2f'][Math.floor(Math.random() * 4)]
+            }));
+
+        const instance = { rafId: null, particles };
+        BlackHoleInstances.set(canvasId, instance);
+
+        function drawFrame()
+        {
+            ctx.clearRect(0, 0, size, size);
+
+            // — Outer glow halo (accretion disc atmosphere)
+            const halo = ctx.createRadialGradient(cx, cy, coreRadius * 0.5, cx, cy, orbitRadius * 1.5);
+            halo.addColorStop(0,   'rgb(238 248 47 / 0.44)');
+            halo.addColorStop(0.5, 'rgb(224 135 42 / 0.33)');
+            halo.addColorStop(1,   'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = halo;
+            ctx.beginPath();
+            ctx.arc(cx, cy, orbitRadius * 1.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // — Black hole core (absolute void)
+            const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
+            core.addColorStop(0,    'rgba(0, 0, 0, 1)');
+            core.addColorStop(0.75, 'rgba(0, 0, 0, 0.96)');
+            core.addColorStop(1,    'rgba(10, 6, 2, 0.55)');
+            ctx.fillStyle = core;
+            ctx.beginPath();
+            ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // — Event horizon ring
+            ctx.strokeStyle = 'rgb(253 240 8 / 0.98)';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.arc(cx, cy, coreRadius + 1.8, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // — Inner photon ring (thinner, subtler)
+            ctx.strokeStyle = 'rgba(255, 249, 214, 0.22)';
+            ctx.lineWidth = 0.6;
+            ctx.beginPath();
+            ctx.arc(cx, cy, coreRadius + 3.2, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // — Orbiting particles (drawn in two passes for depth)
+            //   Pass 1: particles with sin(angle) > 0  — "behind" the disc (dimmed)
+            //   Pass 2: particles with sin(angle) <= 0 — "in front" of the disc (bright)
+            for (let pass = 0; pass < 2; pass++)
+            {
+                for (const p of particles)
+                {
+                    // Only draw each particle in its correct depth pass
+                    const isBehind = Math.sin(p.angle) > 0;
+                    if (pass === 0 && !isBehind) continue;
+                    if (pass === 1 && isBehind)  continue;
+
+                    // Advance orbit
+                    p.angle += p.speed;
+                    p.dist  += p.drift;
+
+                    // Clamp orbit distance
+                    if (p.dist < orbitRadius * 0.52) p.drift =  Math.abs(p.drift);
+                    if (p.dist > orbitRadius * 1.38) p.drift = -Math.abs(p.drift);
+
+                    // Flatten to ellipse — y axis compressed to simulate disc angle
+                    const x = cx + Math.cos(p.angle) * p.dist;
+                    const y = cy + Math.sin(p.angle) * p.dist * 0.38;
+
+                    // Depth-based alpha — particles behind the disc are much fainter
+                    const depthAlpha = isBehind ? p.alpha * 0.28 : p.alpha;
+
+                    // Particle glow
+                    if (!isBehind)
+                    {
+                        const glow = ctx.createRadialGradient(x, y, 0, x, y, p.size * 3.5);
+                        glow.addColorStop(0,   `rgba(242, 193, 79, ${depthAlpha * 0.5})`);
+                        glow.addColorStop(1,   'rgba(0, 0, 0, 0)');
+                        ctx.fillStyle = glow;
+                        ctx.beginPath();
+                        ctx.arc(x, y, p.size * 3.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    // Particle core dot
+                    ctx.beginPath();
+                    ctx.arc(x, y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(242, 193, 79, ${depthAlpha})`;
+                    ctx.fill();
+                }
+            }
+
+            instance.rafId = requestAnimationFrame(drawFrame);
+        }
+
+        drawFrame();
+    }
+
+    function stopBlackHole(canvasId)
+    {
+        if (BlackHoleInstances.has(canvasId))
+        {
+            cancelAnimationFrame(BlackHoleInstances.get(canvasId).rafId);
+            BlackHoleInstances.delete(canvasId);
+        }
+    }
+
+    // ── Existing helpers (unchanged) ────────────────────────────────────────
     function clamp(n, min, max)
     {
         return Math.max(min, Math.min(max, n));
@@ -90,7 +243,7 @@
             burst: burst && Math.random() < 0.18,
             seedAngle: angle,
             seedOrbit: radial,
-            life: Math.random() * 1 + 0.2
+            life: Math.random() + 0.2
         };
     }
 
@@ -102,12 +255,17 @@
 
         ParticleFX.colors = accentColors();
         ParticleFX.particles = [
-            ...Array.from({ length: countFor(ParticleFX.config.solarDust) }, () => makeParticle('solarDust')),
-            ...Array.from({ length: countFor(ParticleFX.config.carreraBurst) }, () => makeParticle('carreraBurst')),
-            ...Array.from({ length: countFor(ParticleFX.config.gravityFlicker) }, () => makeParticle('gravityFlicker'))
+            ...Array.from({ length: countFor(ParticleFX.config.solarDust) },      () => makeParticle('solarDust')),
+            ...Array.from({ length: countFor(ParticleFX.config.carreraBurst) },    () => makeParticle('carreraBurst')),
+            ...Array.from({ length: countFor(ParticleFX.config.gravityFlicker) },  () => makeParticle('gravityFlicker'))
         ];
 
-        ParticleFX.gravityWaves = Array.from({ length: 3 }, (_, i) => ({radius: 120 + i * 85, speed: 0.14 + i * 0.03, alpha: 0.08 + i * 0.03, offset: i * 1.7}));
+        ParticleFX.gravityWaves = Array.from({ length: 3 }, (_, i) => ({
+            radius: 120 + i * 85,
+            speed: 0.14 + i * 0.03,
+            alpha: 0.08 + i * 0.03,
+            offset: i * 1.7
+        }));
     }
 
     function resizeCanvas()
@@ -128,7 +286,7 @@
     {
         if (ParticleFX.resizeQueued) return;
         ParticleFX.resizeQueued = true;
-        requestAnimationFrame(() => {ParticleFX.resizeQueued = false;resizeCanvas();});
+        requestAnimationFrame(() => { ParticleFX.resizeQueued = false; resizeCanvas(); });
     }
 
     function updateParticle(p, i)
@@ -325,5 +483,16 @@
         start();
     }
 
-    window.ParticleFX = {initCanvas, attach, start, stop, setEnabled, seedParticles, resizeCanvas, queueResize};
+    window.ParticleFX = {
+        initCanvas,
+        attach,
+        start,
+        stop,
+        setEnabled,
+        seedParticles,
+        resizeCanvas,
+        queueResize,
+        blackHole,
+        stopBlackHole
+    };
 })();

@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="main tweaks" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="sidebar adjustments and fixes and changes">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,8 +21,8 @@
       <list>
         <option value="HTML File" />
         <option value="Ruby File" />
-        <option value="JavaScript File" />
         <option value="CSS File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -112,6 +115,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
     &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
@@ -121,9 +125,9 @@
     &quot;RunOnceActivity.ruby.rubocop.migration.global.runOnSaveToExternalFormatter&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP&quot;: &quot;1781811401776&quot;,
+    &quot;com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP&quot;: &quot;1782044794592&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;release/distro&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;S:/CRP_56_EncryptionAPP/CRP56_MK2/crp56/electron-app/soundengine&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
@@ -144,11 +148,11 @@
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\soundengine" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\renderer\fonts" />
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\audiofiles\Friday_Magic" />
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\audiofiles" />
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app" />
       <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\ruby-core" />
-      <recent name="S:\CRP_56_EncryptionAPP\CRP56_MK2\crp56\electron-app\BG_images" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -188,46 +192,9 @@
       <workItem from="1781791547988" duration="2230000" />
       <workItem from="1781811342920" duration="1414000" />
       <workItem from="1781887252386" duration="11361000" />
-    </task>
-    <task id="LOCAL-00016" summary="Updated and fixes made by the claude flame model">
-      <option name="closed" value="true" />
-      <created>1781113383388</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1781113383388</updated>
-    </task>
-    <task id="LOCAL-00017" summary="Updated and fixes made by the claude flame model 2">
-      <option name="closed" value="true" />
-      <created>1781114427483</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1781114427483</updated>
-    </task>
-    <task id="LOCAL-00018" summary="Updated and fixes made by the claude flame model 3">
-      <option name="closed" value="true" />
-      <created>1781114896925</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1781114896925</updated>
-    </task>
-    <task id="LOCAL-00019" summary="BG system work">
-      <option name="closed" value="true" />
-      <created>1781204220822</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1781204220823</updated>
-    </task>
-    <task id="LOCAL-00020" summary="BG system work 2">
-      <option name="closed" value="true" />
-      <created>1781204614576</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1781204614576</updated>
+      <workItem from="1781913669016" duration="66000" />
+      <workItem from="1782044736001" duration="5043000" />
+      <workItem from="1782146540408" duration="4943000" />
     </task>
     <task id="LOCAL-00021" summary="Fmod sound engine installation work and npm koffi installation and base fmod set up">
       <option name="closed" value="true" />
@@ -581,7 +548,47 @@
       <option name="project" value="LOCAL" />
       <updated>1781912557542</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="font import section changes">
+      <option name="closed" value="true" />
+      <created>1781913109641</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1781913109641</updated>
+    </task>
+    <task id="LOCAL-00066" summary="distro and forge work 2">
+      <option name="closed" value="true" />
+      <created>1782056195078</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1782056195079</updated>
+    </task>
+    <task id="LOCAL-00067" summary="distro and forge work 3">
+      <option name="closed" value="true" />
+      <created>1782058288125</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1782058288125</updated>
+    </task>
+    <task id="LOCAL-00068" summary="Distro ready work fonts added to render and adjustmenst to css">
+      <option name="closed" value="true" />
+      <created>1782150761964</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1782150761964</updated>
+    </task>
+    <task id="LOCAL-00069" summary="sidebar adjustments and fixes and changes">
+      <option name="closed" value="true" />
+      <created>1782153444347</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1782153444347</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -599,11 +606,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="decryption of folders fixes and crypto logic tweaks +new testing file" />
-    <MESSAGE value="testing file" />
-    <MESSAGE value="path and requirement patches" />
-    <MESSAGE value="small decryption TWEAK" />
-    <MESSAGE value="small decryption TWEAK 2" />
     <MESSAGE value="bg music meiko nakahara friday album" />
     <MESSAGE value="bg music code setup" />
     <MESSAGE value="bg music code setup 3" />
@@ -624,6 +626,11 @@
     <MESSAGE value="git ignore fixes" />
     <MESSAGE value="font adjustments" />
     <MESSAGE value="main tweaks" />
-    <option name="LAST_COMMIT_MESSAGE" value="main tweaks" />
+    <MESSAGE value="font import section changes" />
+    <MESSAGE value="distro and forge work 2" />
+    <MESSAGE value="distro and forge work 3" />
+    <MESSAGE value="Distro ready work fonts added to render and adjustmenst to css" />
+    <MESSAGE value="sidebar adjustments and fixes and changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="sidebar adjustments and fixes and changes" />
   </component>
 </project>

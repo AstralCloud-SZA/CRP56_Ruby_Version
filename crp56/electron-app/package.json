@@ -4,14 +4,22 @@
   "description": "CRP56 Encryption App",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^7.11.2",
+    "@electron-forge/maker-squirrel": "^7.11.2",
+    "@electron-forge/maker-zip": "^7.11.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.11.2",
     "electron": "^35.0.0"
   },
   "dependencies": {
     "@fontsource/cinzel": "^5.2.8",
     "@fontsource/sora": "^5.2.8",
+    "electron-squirrel-startup": "^1.0.1",
     "koffi": "^3.0.2"
   }
 }
