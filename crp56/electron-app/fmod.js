@@ -1,6 +1,14 @@
+const { app } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const koffi = require('koffi');
+
+function resourcePath(...segments)
+{
+    return app && app.isPackaged
+        ? path.join(process.resourcesPath, ...segments)
+        : path.join(__dirname, ...segments);
+}
 
 function getFmodDllPath()
 {
@@ -25,8 +33,6 @@ function getFmodDllPath()
 
 const dllPath = getFmodDllPath();
 const lib = koffi.load(dllPath);
-
-
 
 const FMOD_SYSTEM = 'void *';
 const FMOD_SOUND = 'void *';
@@ -57,8 +63,6 @@ const FMOD_Sound_Release = lib.func('FMOD_Sound_Release', 'int', [FMOD_SOUND]);
 const FMOD_Sound_GetLength = lib.func('FMOD_Sound_GetLength', 'int', [FMOD_SOUND, '_Out_ uint *', 'uint']);
 const FMOD_Channel_GetPosition = lib.func('FMOD_Channel_GetPosition', 'int', [FMOD_CHANNEL, '_Out_ uint *', 'uint']);
 const FMOD_System_GetNumDrivers = lib.func('FMOD_System_GetNumDrivers', 'int', [FMOD_SYSTEM, '_Out_ int *']);
-
-// Correct signature: driver index is the second argument
 const FMOD_System_GetDriverInfo = lib.func('FMOD_System_GetDriverInfo', 'int', [FMOD_SYSTEM, 'int', 'char *', 'int', 'void *', 'void *', 'void *', 'void *']);
 const FMOD_System_SetDriver = lib.func('FMOD_System_SetDriver', 'int', [FMOD_SYSTEM, 'int']);
 
@@ -70,7 +74,8 @@ const FMOD_2D = 0x00000008;
 const FMOD_TIMEUNIT_MS = 0x00000002;
 const FMOD_ACCURATETIME = 0x00004000;
 
-const MUSIC_DIR = path.join(__dirname, 'audiofiles', 'Friday_Magic');
+const MUSIC_DIR = resourcePath('audiofiles', 'Friday_Magic');
+const AUDIO_DIR = resourcePath('audiofiles');
 
 let musicTracks = [];
 let currentMusicChannel = null;
@@ -88,7 +93,7 @@ let musicGroup = null;
 let updateTimer = null;
 let diagTimer = null;
 
-const AUDIO_DIR = path.join(__dirname, 'audiofiles');
+
 const library = {};
 const shuffleState = {};
 
