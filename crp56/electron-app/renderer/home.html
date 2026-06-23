@@ -69,8 +69,22 @@
                     <section class="system-panel">
                         <h2 class="panel-title">Home page build target</h2>
                         <div class="action-grid">
-                            <article class="action-card"><div class="action-label">Primary route</div><div class="action-title">Encrypt</div><div class="action-copy">Text, file, and folder tabs inside a single focused operation page.</div></article>
-                            <article class="action-card"><div class="action-label">Parallel route</div><div class="action-title">Decrypt</div><div class="action-copy">Mirrors the encryption layout so the whole app feels like one system.</div></article>
+                            <article class="action-card">
+                                <div class="action-label">Primary route</div>
+                                <div class="action-title">Encrypt</div>
+                                <div class="action-copy">Text, file, and folder tabs inside a single focused operation page.</div>
+                            </article>
+                            <article class="action-card">
+                                <div class="action-label">Parallel route</div>
+                                <div class="action-title">Decrypt</div>
+                                <div class="action-copy">Mirrors the encryption layout so the whole app feels like one system.</div>
+                            </article>
+                            <article class="action-card">
+                                <div class="action-label">Singularity route</div>
+                                <div class="action-title">Gravity Collapse</div>
+                                <div class="action-copy">Carrera-inspired chamber for the locked collapse page.</div>
+                                <a class="secondary-btn" href="./gravitycollapse.html" data-sfx="cursor">Open Chamber</a>
+                            </article>
                         </div>
                     </section>
                     <section class="system-panel">
@@ -93,15 +107,25 @@
             <div class="rail-logo" aria-hidden="true">
                 <canvas id="blackHoleRail" width="54" height="54"></canvas>
             </div>
-            <nav class="rail-nav"><a class="nav-btn active" href="./home.html" data-sfx="cursor">Home</a><a class="nav-btn" href="./encrypt.html" data-sfx="cursor">Enc</a><a class="nav-btn" href="./decrypt.html" data-sfx="cursor">Dec</a><a class="nav-btn" href="./settings.html" data-sfx="cursor">Set</a><a class="nav-btn" href="./about.html" data-sfx="cursor">About</a></nav>
-            <div class="rail-bottom"><div class="rail-note">Yellow primordal shell active</div></div>
+            <nav class="rail-nav">
+                <a class="nav-btn active" href="./home.html" data-sfx="cursor">Home</a>
+                <a class="nav-btn" href="./encrypt.html" data-sfx="cursor">Enc</a>
+                <a class="nav-btn" href="./decrypt.html" data-sfx="cursor">Dec</a>
+                <a class="nav-btn" href="./gravitycollapse.html" data-sfx="cursor">Collapse</a>
+                <a class="nav-btn" href="./settings.html" data-sfx="cursor">Set</a>
+                <a class="nav-btn" href="./about.html" data-sfx="cursor">About</a>
+            </nav>
         </aside>
     </div>
 </div>
 <script src="./particle_system.js"></script>
 <script src="./app.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {ParticleFX.blackHole('blackHoleMark', 52, 28);ParticleFX.blackHole('blackHoleRail', 54, 28);});
+    document.addEventListener('DOMContentLoaded', () =>
+    {
+        ParticleFX.blackHole('blackHoleMark', 52, 28);
+        ParticleFX.blackHole('blackHoleRail', 54, 28);
+    });
 </script>
 </body>
 </html>
