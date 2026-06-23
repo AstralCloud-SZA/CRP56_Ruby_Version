@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="git publishing integration work 7">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="git publishing integration work 8">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/fmod.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/fmod.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/Base_style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/hellflare_gold.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/hellflare_gold.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/primordial_gold.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/primordial_gold.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -149,7 +149,7 @@
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;com.intellij.lang.ruby.rbs.tools.collection.workspace.sync.RbsCollectionUpdateProjectActivity#LAST_UPDATE_TIMESTAMP&quot;: &quot;1782044794592&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;release/distro&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;S:/CRP_56_EncryptionAPP/CRP56_MK2/crp56/electron-app/soundengine&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
@@ -242,15 +242,8 @@
       <workItem from="1782158483462" duration="759000" />
       <workItem from="1782159447975" duration="1037000" />
       <workItem from="1782161074424" duration="1605000" />
-      <workItem from="1782162826413" duration="4491000" />
-    </task>
-    <task id="LOCAL-00032" summary="removed unsafe diagnostic elements">
-      <option name="closed" value="true" />
-      <created>1781374886183</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1781374886183</updated>
+      <workItem from="1782162826413" duration="4987000" />
+      <workItem from="1782211184776" duration="4310000" />
     </task>
     <task id="LOCAL-00033" summary="removed unsafe diagnostic elements 2">
       <option name="closed" value="true" />
@@ -636,7 +629,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782172777926</updated>
     </task>
-    <option name="localTasksCounter" value="81" />
+    <task id="LOCAL-00081" summary="git publishing integration work 8">
+      <option name="closed" value="true" />
+      <created>1782173593492</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1782173593492</updated>
+    </task>
+    <option name="localTasksCounter" value="82" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -650,17 +651,17 @@
             <list>
               <RecentGroup>
                 <option name="FILTER_VALUES">
+                  <option value="master" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
                   <option value="release/distro" />
                 </option>
               </RecentGroup>
               <RecentGroup>
                 <option name="FILTER_VALUES">
                   <option value="origin/release/distro" />
-                </option>
-              </RecentGroup>
-              <RecentGroup>
-                <option name="FILTER_VALUES">
-                  <option value="master" />
                 </option>
               </RecentGroup>
             </list>
@@ -689,7 +690,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="release/distro" />
+                        <option value="master" />
                       </list>
                     </value>
                   </entry>
@@ -709,7 +710,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="bg music fixes and adjustments 7" />
     <MESSAGE value="settings page minor rework and settings functionality update" />
     <MESSAGE value="settings page minor rework and settings functionality update 3" />
     <MESSAGE value="settings page minor rework and settings functionality update 4" />
@@ -734,6 +734,7 @@
     <MESSAGE value="git publishing integration work 5" />
     <MESSAGE value="git publishing integration work 6" />
     <MESSAGE value="git publishing integration work 7" />
-    <option name="LAST_COMMIT_MESSAGE" value="git publishing integration work 7" />
+    <MESSAGE value="git publishing integration work 8" />
+    <option name="LAST_COMMIT_MESSAGE" value="git publishing integration work 8" />
   </component>
 </project>

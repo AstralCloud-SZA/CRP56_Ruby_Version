@@ -525,23 +525,7 @@ button
     min-height: 420px;
 }
 
-.kicker
-{
-    font-family: var(--font-body);
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    width: fit-content;
-    padding: 0.4rem 0.8rem;
-    font-size: var(--text-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    border-radius: var(--radius-sm);
-    background: var(--accent-soft);
-    border: 1px solid var(--accent);
-    color: var(--accent-2);
-    font-weight: 700;
-}
+
 
 .hero h2
 {
@@ -566,6 +550,62 @@ button
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-4);
+}
+
+.hero-grid
+{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin-top: auto;
+}
+
+
+/* In-app custom scrollbars */
+.hero,
+.section-shell
+{
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: var(--accent-2) rgba(0, 0, 0, 0.22);
+    scrollbar-gutter: stable;
+}
+
+.hero::-webkit-scrollbar,
+.section-shell::-webkit-scrollbar
+{
+    width: 10px;
+    height: 10px;
+}
+
+.hero::-webkit-scrollbar-track,
+.section-shell::-webkit-scrollbar-track
+{
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.25));
+    border-radius: 999px;
+    margin: 8px 0;
+}
+
+.hero::-webkit-scrollbar-thumb,
+.section-shell::-webkit-scrollbar-thumb
+{
+    background: linear-gradient(180deg, rgb(255 239 130 / 0.95), rgb(238 219 15 / 0.95));
+    border-radius: 999px;
+    border: 2px solid rgba(10, 8, 5, 0.85);
+    box-shadow: 0 0 10px rgba(242, 193, 79, 0.35);
+    min-height: 42px;
+}
+
+.hero::-webkit-scrollbar-thumb:hover,
+.section-shell::-webkit-scrollbar-thumb:hover
+{
+    background: linear-gradient(180deg, rgba(255, 220, 120, 1), rgba(214, 160, 42, 1));
+    box-shadow: 0 0 14px rgba(242, 193, 79, 0.55);
+}
+
+.hero::-webkit-scrollbar-corner,
+.section-shell::-webkit-scrollbar-corner
+{
+    background: transparent;
 }
 
 .primary-btn,
@@ -610,12 +650,23 @@ button
     border-color: var(--accent);
 }
 
-.hero-grid
+
+.kicker
 {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-4);
-    margin-top: auto;
+    font-family: var(--font-body);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: fit-content;
+    padding: 0.4rem 0.8rem;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    border-radius: var(--radius-sm);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    color: var(--accent-2);
+    font-weight: 700;
 }
 
 .mini-card

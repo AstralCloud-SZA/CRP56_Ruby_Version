@@ -46,3 +46,54 @@
             radial-gradient(circle at 80% 20%, rgba(255, 234, 0, 0.08), transparent 30%),
             linear-gradient(135deg, rgba(5, 5, 3, 0.95), rgba(10, 10, 7, 0.85));
 }
+
+/* ==========================================================
+   CUSTOM SCROLLBARS — theme-aware
+   ========================================================== */
+
+/* ── Primordial Gold ── */
+html[data-theme="primordial-gold"] .hero,
+html[data-theme="primordial-gold"] .section-shell
+{
+    scrollbar-width: thin;
+    scrollbar-color: rgba(242, 193, 79, 0.9) rgba(0, 0, 0, 0.22);
+    scrollbar-gutter: stable;
+}
+
+html[data-theme="primordial-gold"] .hero::-webkit-scrollbar,
+html[data-theme="primordial-gold"] .section-shell::-webkit-scrollbar
+{
+    width: 10px;
+    height: 10px;
+}
+
+html[data-theme="primordial-gold"] .hero::-webkit-scrollbar-track,
+html[data-theme="primordial-gold"] .section-shell::-webkit-scrollbar-track
+{
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.28));
+    border-radius: 999px;
+    margin: 8px 0;
+}
+
+html[data-theme="primordial-gold"] .hero::-webkit-scrollbar-thumb,
+html[data-theme="primordial-gold"] .section-shell::-webkit-scrollbar-thumb
+{
+    background: linear-gradient(180deg, rgba(242, 193, 79, 0.95), rgba(197, 145, 33, 0.95));
+    border-radius: 999px;
+    border: 2px solid rgba(10, 8, 5, 0.85);
+    box-shadow: 0 0 10px rgba(242, 193, 79, 0.35);
+    min-height: 42px;
+}
+
+html[data-theme="primordial-gold"] .hero::-webkit-scrollbar-thumb:hover,
+html[data-theme="primordial-gold"] .section-shell::-webkit-scrollbar-thumb:hover
+{
+    background: linear-gradient(180deg, rgba(255, 220, 120, 1), rgba(214, 160, 42, 1));
+    box-shadow: 0 0 16px rgba(242, 193, 79, 0.55);
+}
+
+html[data-theme="primordial-gold"] .hero::-webkit-scrollbar-corner,
+html[data-theme="primordial-gold"] .section-shell::-webkit-scrollbar-corner
+{
+    background: transparent;
+}
