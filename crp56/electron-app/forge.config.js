@@ -1,18 +1,16 @@
-// forge.config.js
-// CRP56 Encryption App — Electron Forge config
-
-const path = require('path');
-
 module.exports = {
     packagerConfig: {
-        asar: true,
+        asar: {
+            unpack: '**/*.{node,dll,so,dylib}'
+        },
         name: 'CRP56 Encryption App',
-        // Adjust if your icon is different or lives elsewhere:
         icon: './Icon/f1',
-        // Bundle Ruby + backend as resources beside app.asar
         extraResource: [
-            '../ruby-runtime', // portable Ruby (bin/, lib/, etc.)
-            '../ruby-core'     // your CRP56 Ruby backend (main.rb, lib/, data/, ...)
+            '../ruby-runtime',
+            '../ruby-core',
+            './soundengine',
+            './BG_images',
+            './audiofiles'
         ]
     },
 
@@ -25,8 +23,7 @@ module.exports = {
                 name: 'CRP56.Encryption.App',
                 setupIcon: './Icon/f1.ico',
                 authors: 'AstralCloud_SZA [D Gounden]',
-                description: 'CRP56 is a polymorphic encryption system that seals text, files, and entire folders behind a passphrase-derived shard cipher.',
-                //loadingGif: undefined
+                description: 'CRP56 is a polymorphic encryption system that seals text, files, and entire folders behind a passphrase-derived shard cipher.'
             }
         },
         {
@@ -34,6 +31,7 @@ module.exports = {
             platforms: ['win32']
         }
     ],
+
     publishers: [
         {
             name: '@electron-forge/publisher-github',
@@ -43,14 +41,13 @@ module.exports = {
                     name: 'CRP56_Ruby_Version'
                 },
                 prerelease: true,
-                draft: true
+                draft: false
             }
         }
     ],
 
     plugins: [
         {
-            // Makes sure koffi’s native binaries are unpacked from the ASAR
             name: '@electron-forge/plugin-auto-unpack-natives',
             config: {}
         }
