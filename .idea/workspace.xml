@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment=" gravity collapse feature and page intial work 5">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment=" gravity collapse feature and page intial work 6">
       <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/gravity_collapse.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/gravity_collapse.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -241,15 +240,7 @@
       <workItem from="1782159447975" duration="1037000" />
       <workItem from="1782161074424" duration="1605000" />
       <workItem from="1782162826413" duration="4987000" />
-      <workItem from="1782211184776" duration="7725000" />
-    </task>
-    <task id="LOCAL-00038" summary="app.js and preload.js fixes">
-      <option name="closed" value="true" />
-      <created>1781556416991</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1781556416991</updated>
+      <workItem from="1782211184776" duration="8034000" />
     </task>
     <task id="LOCAL-00039" summary="decryption of folders fixes and crypto logic tweaks +new testing file">
       <option name="closed" value="true" />
@@ -635,7 +626,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782224043576</updated>
     </task>
-    <option name="localTasksCounter" value="87" />
+    <task id="LOCAL-00087" summary=" gravity collapse feature and page intial work 6">
+      <option name="closed" value="true" />
+      <created>1782224273245</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1782224273245</updated>
+    </task>
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -708,7 +707,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="git ignore fixes" />
     <MESSAGE value="font adjustments" />
     <MESSAGE value="main tweaks" />
     <MESSAGE value="font import section changes" />
@@ -733,6 +731,7 @@
     <MESSAGE value=" gravity collapse feature and page intial work 1^2" />
     <MESSAGE value=" gravity collapse feature and page intial work 4" />
     <MESSAGE value=" gravity collapse feature and page intial work 5" />
-    <option name="LAST_COMMIT_MESSAGE" value=" gravity collapse feature and page intial work 5" />
+    <MESSAGE value=" gravity collapse feature and page intial work 6" />
+    <option name="LAST_COMMIT_MESSAGE" value=" gravity collapse feature and page intial work 6" />
   </component>
 </project>
