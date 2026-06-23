@@ -13,8 +13,8 @@
     <div class="bg-slides" aria-hidden="true"></div>
     <canvas id="particles" aria-hidden="true"></canvas>
 
-    <main class="shell gravity-shell">
-        <section class="chamber gravity-chamber">
+    <div class="shell">
+        <main class="chamber gravity-chamber">
             <header class="topbar gravity-topbar">
                 <div class="brand-wrap">
                     <div class="brand-mark gravity-mark" aria-hidden="true">
@@ -146,8 +146,34 @@
                 <span>Gravity Collapse chamber online</span>
                 <span id="collapseStatus">Awaiting target</span>
             </footer>
-        </section>
-    </main>
+        </main>
+
+        <aside class="rail" aria-label="Primary navigation">
+            <div class="rail-logo" aria-hidden="true">
+                <canvas id="blackHoleRail" width="54" height="54"></canvas>
+            </div>
+
+            <nav class="rail-nav">
+                <a class="nav-btn" href="./home.html" data-sfx="cursor">Home</a>
+                <a class="nav-btn" href="./encrypt.html" data-sfx="cursor">Enc</a>
+                <a class="nav-btn" href="./decrypt.html" data-sfx="cursor">Dec</a>
+                <a class="nav-btn active" href="./gravitycollapse.html" data-sfx="cursor">Collapse</a>
+                <a class="nav-btn" href="./settings.html" data-sfx="cursor">Set</a>
+                <a class="nav-btn" href="./about.html" data-sfx="cursor">About</a>
+            </nav>
+
+            <div class="rail-bottom">
+                <div class="rail-note">Gravity collapse shell active</div>
+            </div>
+        </aside>
+    </div>
 </div>
+
+<script src="./particle_system.js"></script>
+<script src="./app.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {ParticleFX.blackHole('blackHoleMark', 52, 28);ParticleFX.blackHole('blackHoleRail', 54, 28);});
+</script>
+
 </body>
 </html>
