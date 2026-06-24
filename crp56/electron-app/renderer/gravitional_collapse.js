@@ -52,6 +52,13 @@
     const stArm      = $("stArm");
     const stCollapse = $("stCollapse");
 
+    const sealDialog       = $("collapseSealDialog");
+    const sealTargetPath   = $("sealTargetPath");
+    const sealTargetType   = $("sealTargetType");
+    const sealTargetMode   = $("sealTargetMode");
+    const sealAcknowledge  = $("sealAcknowledge");
+    const sealConfirmBtn   = $("sealConfirmBtn");
+
     /* ---------- state ---------- */
     const state = {
         target:      null,   // { path, type:'folder'|'drive', items, size, blocked, reason }
@@ -112,7 +119,8 @@
     {
         const { cx, cy } = center();
         const maxR = Math.min(cw, ch) * (0.22 + 0.20 * bias);
-        for (let i = 0; i < n; i++) {
+        for (let i = 0; i < n; i++)
+        {
             const a = Math.random() * Math.PI * 2;
             particles.push({
                 x: cx + Math.cos(a) * rand(24, maxR),
@@ -122,12 +130,15 @@
                 hue: rand(18, 54), orbit: rand(0.002, 0.01),
             });
         }
+
     }
 
     function spawnDebris(count, power = 1)
     {
         const { cx, cy } = center();
-        for (let i = 0; i < count; i++) {
+
+        for (let i = 0; i < count; i++)
+        {
             const a = Math.random() * Math.PI * 2;
             const speed = rand(2.5, 8.5) * power;
             debris.push({
@@ -139,6 +150,7 @@
                 hue: rand(14, 52), alpha: rand(0.65, 1.0),
             });
         }
+
     }
 
     function addShockwave(power = 1)
@@ -177,12 +189,29 @@
     // Called from onProgress() — keeps visual phase aligned with real wipe progress
     function holdCrush(progressPct)
     {
-        if (seq.phase === "explode" || seq.phase === "settle") return;
+        if (seq.phase === "explode" || seq.phase === "settle") {return;}
+
         const pct = clamp((progressPct || 0) / 100, 0, 1);
         const now = nowMs();
-        if (pct < 0.22)       { if (seq.phase !== "charge")  { seq.phase = "charge";  seq.phaseStart = now; } }
-        else if (pct < 0.62)  { if (seq.phase !== "implode") { seq.phase = "implode"; seq.phaseStart = now; } }
-        else                  { if (seq.phase !== "crush")   { seq.phase = "crush";   seq.phaseStart = now; } }
+
+        const inChargeRange = pct < 0.22;
+        const inImplodeRange = pct >= 0.22 && pct < 0.62;
+
+        let nextPhase = "crush";
+
+        if (inChargeRange)
+        {
+            nextPhase = "charge";
+        } else if (inImplodeRange)
+        {
+            nextPhase = "implode";
+        }
+
+        if (seq.phase !== nextPhase)
+        {
+            seq.phase = nextPhase;
+            seq.phaseStart = now;
+        }
     }
 
     // Called when onDone(true) fires — detonates the explosion
@@ -215,7 +244,8 @@
 
     function phaseIntensity()
     {
-        switch (seq.phase) {
+        switch (seq.phase)
+        {
             case "idle":    return seq.manualIntensity;
             case "charge":  return lerp(seq.manualIntensity, 0.95, easeInOut(phaseT(900)));
             case "implode": return lerp(0.95, 1.22, easeInCubic(phaseT(700)));
@@ -229,7 +259,8 @@
     // Advances phase transitions automatically; called once per draw frame
     function updateSequence()
     {
-        switch (seq.phase) {
+        switch (seq.phase)
+        {
             case "charge":
                 if (phaseT(900) >= 1) { seq.phase = "implode"; seq.phaseStart = nowMs(); }
                 break;
@@ -237,7 +268,8 @@
                 if (phaseT(700) >= 1) { seq.phase = "crush";   seq.phaseStart = nowMs(); }
                 break;
             case "explode":
-                if (phaseT(700) >= 1) {
+                if (phaseT(700) >= 1)
+                {
                     seq.phase = "settle"; seq.phaseStart = nowMs();
                     seq.shake = 0.22;
                 }
@@ -268,7 +300,8 @@
         ctx.fillRect(0, 0, cw, ch);
 
         // Extra vignette during implosion crush
-        if (seq.phase === "implode" || seq.phase === "crush") {
+        if (seq.phase === "implode" || seq.phase === "crush")
+        {
             const vig = ctx.createRadialGradient(cx, cy, 10, cx, cy, Math.max(cw, ch) * 0.52);
             vig.addColorStop(0,    "rgba(0,0,0,0)");
             vig.addColorStop(0.42, "rgba(0,0,0,0.14)");
@@ -280,10 +313,21 @@
 
     function drawRings(cx, cy, t, v)
     {
-        const implodeBias = (seq.phase === "implode" || seq.phase === "crush") ? 1 : 0;
-        const explodeT    = seq.phase === "explode" ? easeOutCubic(phaseT(600)) : 0;
+        let implodeBias = 0;
 
-        for (let i = 0; i < 6; i++) {
+        if (seq.phase === "implode" || seq.phase === "crush")
+        {
+            implodeBias = 1;
+        }
+
+        let explodeT = 0;
+        if (seq.phase === "explode")
+        {
+            explodeT = easeOutCubic(phaseT(600));
+        }
+
+        for (let i = 0; i < 6; i++)
+        {
             const baseR     = Math.min(cw, ch) * (0.10 + i * 0.074);
             const collapse  = 1 - v * 0.16 - implodeBias * 0.26;
             const expand    = 1 + explodeT * (0.12 + i * 0.04);
@@ -342,21 +386,25 @@
         const explodePush = seq.phase === "explode";
         const explodePct  = explodePush ? (1 - phaseT(500)) : 0;
 
-        for (let i = particles.length - 1; i >= 0; i--) {
+        for (let i = particles.length - 1; i >= 0; i--)
+        {
             const p  = particles[i];
             const dx = cx - p.x, dy = cy - p.y;
             const d  = Math.max(16, Math.hypot(dx, dy));
             const nx = dx / d, ny = dy / d;
 
-            if (strongPull) {
+            if (strongPull)
+            {
                 const f  = 0.10 + v * 0.18;
                 const tg = p.orbit * 40;
                 p.vx += nx * f + (-ny * tg);
                 p.vy += ny * f + ( nx * tg);
-            } else if (explodePush) {
+            } else if (explodePush)
+            {
                 p.vx -= nx * explodePct * 0.9;
                 p.vy -= ny * explodePct * 0.9;
-            } else {
+            } else
+            {
                 const f = (0.018 + v * 0.08) / d * 28;
                 p.vx += nx * f; p.vy += ny * f;
             }
@@ -507,7 +555,8 @@
     function renderTarget()
     {
         const tg = state.target;
-        if (!tg) {
+        if (!tg)
+        {
             pathEl.textContent = "No target selected";
             targetCard.dataset.blocked = "false";
             targetWarning.dataset.blocked = "false";
@@ -523,12 +572,35 @@
         }
 
         pathEl.textContent    = tg.path;
-        tmType.textContent    = tg.type === "drive" ? "Drive" : "Folder";
-        tmItems.textContent   = tg.items != null ? tg.items + " items" : "— items";
-        tmSize.textContent    = tg.size  != null ? fmtBytes(tg.size) : "— size";
-        targetMeta.hidden     = false;
 
-        if (tg.blocked) {
+        if (tg.type === "drive")
+        {
+            tmType.textContent = "Drive";
+        } else
+        {
+            tmType.textContent = "Folder";
+        }
+
+        if (tg.items == null)
+        {
+            tmItems.textContent = "— items";
+        } else
+        {
+            tmItems.textContent = tg.items + " items";
+        }
+
+        if (tg.size == null)
+        {
+            tmSize.textContent = "— size";
+        } else
+        {
+            tmSize.textContent = fmtBytes(tg.size);
+        }
+
+        targetMeta.hidden = false;
+
+        if (tg.blocked)
+        {
             targetCard.dataset.blocked    = "true";
             targetWarning.dataset.blocked = "true";
             targetWarning.textContent     = "⛔ Guard blocked this target: " + (tg.reason || "protected path") + ". Pick a folder or a non-system drive.";
@@ -537,7 +609,8 @@
             setStageState("idle");
             setThreat(6, "BLOCKED");
             setIntensity(0.18);
-        } else {
+        } else
+        {
             targetCard.dataset.blocked    = "false";
             targetWarning.dataset.blocked = "false";
             targetWarning.textContent     = "⚠ This target will be permanently destroyed. There is no recovery.";
@@ -555,9 +628,11 @@
         if (state.collapsing) return;
         let picked = null;
 
-        if (HAS_API) {
+        if (HAS_API)
+        {
             picked = await window.collapseAPI.selectTarget(kind);
-        } else {
+        } else
+        {
             const demo    = kind === "drive" ? "E:\\" : "C:\\Users\\Izm\\Desktop\\DemoFolder";
             const blocked = /^[A-Za-z]:\\?$/.test(demo) && demo.toUpperCase().startsWith("C");
             picked = { path: demo, type: kind, items: 1284, size: 5.4 * 1024 ** 3, blocked, reason: blocked ? "System drive (demo)" : "" };
@@ -574,8 +649,12 @@
        ============================================================ */
     function lockSatisfied()
     {
-        return !!state.target && !state.target.blocked && state.pwVerified
-            && confirmInput.value.trim().toUpperCase() === CONFIRM_PHRASE;
+        if (!state.target) return false;
+        if (state.target.blocked) return false;
+        if (!state.pwVerified) return false;
+        return confirmInput.value.trim().toUpperCase() === CONFIRM_PHRASE;
+
+
     }
 
     let pwDebounce = null;
@@ -607,11 +686,13 @@
         armBtn.disabled     = !ready || state.collapsing || state.armed;
         executeBtn.disabled = !state.armed || state.collapsing;
 
-        if (state.collapsing) {
+        if (state.collapsing)
+        {
             collapseStatus.textContent = "Collapsing target…";
             return;
         }
-        if (state.armed) {
+        if (state.armed)
+        {
             armChip.textContent = "ARMED";
             armChip.classList.add("danger-chip");
             armChip.dataset.armed = "true";
@@ -621,18 +702,18 @@
             setIntensity(0.8);
             setReadout("SEQUENCE ARMED", "Execute to begin the collapse.");
             collapseStatus.textContent = "Armed — awaiting execute";
-        } else {
+        } else
+        {
             armChip.textContent   = ready ? "Ready to arm" : "Disarmed";
             armChip.dataset.armed = "false";
             setStatusCard(stArm, false, ready ? "Ready" : "Disarmed");
-            if (state.target && !state.target.blocked) {
+            if (state.target && !state.target.blocked)
+            {
                 setStageState("charged");
                 setThreat(ready ? 60 : 45, ready ? "PRIMED" : "CHARGED");
                 setIntensity(ready ? 0.55 : 0.45);
             }
-            collapseStatus.textContent = state.target
-                ? (state.target.blocked ? "Target blocked" : "Target locked")
-                : "Awaiting target";
+            collapseStatus.textContent = state.target ? (state.target.blocked ? "Target blocked" : "Target locked") : "Awaiting target";
         }
     }
 
@@ -665,6 +746,47 @@
     /* ============================================================
        EXECUTE COLLAPSE
        ============================================================ */
+    function openFinalSeal(tg)
+    {
+        return new Promise((resolve) =>
+        {
+            if (!sealDialog)
+            {
+                resolve(true);
+                return;
+            }
+
+            sealTargetPath.textContent = tg?.path || "No target selected";
+            sealTargetType.textContent = tg?.type === "drive" ? "Drive target" : "Folder target";
+            sealTargetMode.textContent = "Mode: " + wipeMode.value.toUpperCase();
+            sealAcknowledge.checked = false;
+            sealConfirmBtn.disabled = true;
+
+            const onCheck = () =>
+            {
+                sealConfirmBtn.disabled = !sealAcknowledge.checked;
+            };
+
+            const onClose = () =>
+            {
+                sealAcknowledge.removeEventListener("change", onCheck);
+                sealDialog.removeEventListener("close", onClose);
+                resolve(sealDialog.returnValue === "confirm" && sealAcknowledge.checked);
+            };
+
+            sealAcknowledge.addEventListener("change", onCheck);
+            sealDialog.addEventListener("close", onClose, { once: true });
+
+            if (typeof sealDialog.showModal === "function")
+            {
+                sealDialog.showModal();
+            } else
+            {
+                resolve(window.confirm("Final seal: release the collapse?"));
+            }
+        });
+    }
+
     async function execute()
     {
         if (!state.armed || state.collapsing) return;
@@ -672,37 +794,44 @@
         if (!tg || tg.blocked) return;
 
         let ok = true;
-        if (HAS_API) {
+        if (HAS_API)
+        {
             ok = await window.collapseAPI.confirmDestroy(tg.path, wipeMode.value);
-        } else {
+        } else
+        {
             ok = window.confirm(`DEMO: permanently collapse "${tg.path}"?\n(No files are touched in browser preview.)`);
         }
         if (!ok) return;
 
-        state.collapsing = true;
-        abortBtn.hidden  = false;
+        const finalSealOk = await openFinalSeal(tg);
+        if (!finalSealOk)
+        {
+            flash(executeBtn);
+            return;
+        }
 
+        state.collapsing = true;
+        abortBtn.hidden = false;
         setStageState("collapsing");
         setReadout("COLLAPSING", "Field pressure rising…");
         setThreat(100, "CRITICAL");
         setIntensity(1);
-        playCollapseSequence();     // ← start charge → implode → crush animation
-
         progressWrap.hidden = false;
         updateLockUI();
         setStatusCard(stCollapse, false, "Collapsing");
 
-        try {
-            if (HAS_API) {
-                await window.collapseAPI.run(
-                    { path: tg.path, type: tg.type, mode: wipeMode.value, password: pwInput.value },
-                    onProgress
-                );
-            } else {
+        try
+        {
+            if (HAS_API)
+            {
+                await window.collapseAPI.run({ path: tg.path, type: tg.type, mode: wipeMode.value, password: pwInput.value }, onProgress);
+            } else
+            {
                 await demoRun();
             }
             onDone(true);
-        } catch (err) {
+        } catch (err)
+        {
             onDone(false, err && err.message ? err.message : String(err));
         }
     }
@@ -724,7 +853,8 @@
         state.armed      = false;
         abortBtn.hidden  = true;
 
-        if (success) {
+        if (success)
+        {
             triggerExplosion();     // ← detonate: flash + shockwaves + debris, then auto-settle
 
             cpFill.style.width = "100%";
@@ -741,7 +871,8 @@
             state.target = null;
 
             setTimeout(() => { progressWrap.hidden = true; renderTarget(); }, 2600);
-        } else {
+        } else
+        {
             playFailureRecover();   // ← gentle de-escalation
 
             setStageState("charged");
@@ -779,16 +910,10 @@
        ============================================================ */
     pickFolderBtn && pickFolderBtn.addEventListener("click", () => pickTarget("folder"));
     pickDriveBtn  && pickDriveBtn.addEventListener("click", () => pickTarget("drive"));
-    clearBtn      && clearBtn.addEventListener("click", () => {
-        state.target = null; state.armed = false; renderTarget();
-    });
+    clearBtn      && clearBtn.addEventListener("click", () => {state.target = null; state.armed = false; renderTarget();});
 
-    pwInput && pwInput.addEventListener("input", () => {
-        state.armed = false; armChip.dataset.armed = "false"; scheduleVerify();
-    });
-    confirmInput && confirmInput.addEventListener("input", () => {
-        state.armed = false; armChip.dataset.armed = "false"; updateLockUI();
-    });
+    pwInput && pwInput.addEventListener("input", () => {state.armed = false; armChip.dataset.armed = "false"; scheduleVerify();});
+    confirmInput && confirmInput.addEventListener("input", () => {state.armed = false; armChip.dataset.armed = "false"; updateLockUI();});
     wipeMode && wipeMode.addEventListener("change", updateLockUI);
 
     armBtn     && armBtn.addEventListener("click", arm);
@@ -796,12 +921,15 @@
     abortBtn   && abortBtn.addEventListener("click", abort);
 
     // Guard chip
-    if (HAS_API && window.collapseAPI.guardStatus) {
-        window.collapseAPI.guardStatus().then((on) => {
+    if (HAS_API && window.collapseAPI.guardStatus)
+    {
+        window.collapseAPI.guardStatus().then((on) =>
+        {
             guardChip.textContent  = "System guard: " + (on ? "ON" : "OFF");
             guardChip.dataset.guard = on ? "on" : "off";
         }).catch(() => {});
-    } else {
+    } else
+    {
         guardChip.textContent   = HAS_API ? "System guard: ON" : "Demo mode (no IPC)";
         if (!HAS_API) guardChip.dataset.guard = "off";
     }
