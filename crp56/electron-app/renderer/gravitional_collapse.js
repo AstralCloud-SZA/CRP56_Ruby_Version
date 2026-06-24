@@ -1,9 +1,17 @@
-
+/* ============================================================
+   GRAVITY COLLAPSE — renderer logic
+   - Singularity / accretion-disk canvas
+   - Lock state machine (target -> password -> COLLAPSE -> arm -> execute)
+   - IPC bridge to Electron main (window.collapseAPI)
+   - Degrades to DEMO mode in a plain browser (no real deletion)
+   ============================================================ */
 (() => {
     "use strict";
 
     /* ---------- config ---------- */
-    const PASSWORD = "carrera";          // change to taste, or wire to settings
+    // Password is NOT stored here. It is verified by the main process against a
+    // salted scrypt hash in <userData>/collapse_secret.json. The renderer only
+    // sends a candidate password to be checked.
     const CONFIRM_PHRASE = "COLLAPSE";
 
     const HAS_API = typeof window !== "undefined" && !!window.collapseAPI;
@@ -53,6 +61,8 @@
         target: null,      // { path, type:'folder'|'drive', items, size, blocked, reason }
         armed: false,
         collapsing: false,
+        pwVerified: false, // set by verifyPassword() against the main process
+        pwChecking: false,
     };
 
     /* ============================================================
@@ -64,7 +74,8 @@
     let cw = 0, ch = 0, raf = 0, intensity = 0.18; // 0..1 collapse intensity
     const particles = [];
 
-    function resize() {
+    function resize()
+    {
         if (!canvas) return;
         const r = canvas.getBoundingClientRect();
         cw = Math.max(1, Math.floor(r.width));
@@ -75,20 +86,21 @@
     }
     const rand = (a, b) => a + Math.random() * (b - a);
 
-    function spawn(n) {
+    function spawn(n)
+    {
         const cx = cw * 0.5, cy = ch * 0.46;
         for (let i = 0; i < n; i++) {
             const a = Math.random() * Math.PI * 2;
             const rad = rand(20, Math.min(cw, ch) * 0.42);
             particles.push({
-                x: cx + Math.cos(a) * rad, y: cy + Math.sin(a) * rad,
-                vx: rand(-0.3, 0.3), vy: rand(-0.3, 0.3),
+                x: cx + Math.cos(a) * rad, y: cy + Math.sin(a) * rad, vx: rand(-0.3, 0.3), vy: rand(-0.3, 0.3),
                 life: rand(120, 300), size: rand(0.8, 2.4), hue: rand(18, 52),
             });
         }
     }
 
-    function draw() {
+    function draw()
+    {
         if (!ctx) return;
         ctx.clearRect(0, 0, cw, ch);
         const cx = cw * 0.5, cy = ch * 0.46, t = performance.now() * 0.001;
@@ -103,7 +115,8 @@
         ctx.fillStyle = bg; ctx.fillRect(0, 0, cw, ch);
 
         // accretion rings
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 5; i++)
+        {
             const baseR = Math.min(cw, ch) * (0.10 + i * 0.085);
             const r = baseR * (1 - intensity * 0.18) * (1 + Math.sin(t * (0.8 + i * 0.12)) * 0.008);
             ctx.beginPath();
@@ -132,7 +145,9 @@
         // particles
         const spawnRate = 0.18 + intensity * 0.6;
         if (Math.random() < spawnRate && particles.length < 200) spawn(1 + Math.floor(intensity * 3));
-        for (let i = particles.length - 1; i >= 0; i--) {
+
+        for (let i = particles.length - 1; i >= 0; i--)
+        {
             const p = particles[i];
             const dx = cx - p.x, dy = cy - p.y;
             const d = Math.max(30, Math.hypot(dx, dy));
@@ -152,7 +167,8 @@
 
     function setIntensity(v) { intensity = Math.max(0, Math.min(1, v)); }
 
-    if (canvas) {
+    if (canvas)
+    {
         const ro = new ResizeObserver(resize);
         ro.observe(canvas);
         resize();
@@ -164,21 +180,25 @@
        UI HELPERS
        ============================================================ */
     function setStageState(s) { if (stage) stage.dataset.state = s; }
-    function setReadout(phase, sub) {
+    function setReadout(phase, sub)
+    {
         if (readoutPhase) readoutPhase.textContent = phase;
         if (sub != null && readoutSub) readoutSub.textContent = sub;
     }
-    function setStatusCard(card, ok, detail) {
+    function setStatusCard(card, ok, detail)
+    {
         if (!card) return;
         card.dataset.ok = ok ? "true" : "false";
         const d = card.querySelector(".status-detail");
         if (d && detail) d.textContent = detail;
     }
-    function setThreat(level, label) {
+    function setThreat(level, label)
+    {
         if (threatFill) threatFill.style.width = level + "%";
         if (threatLevel) threatLevel.textContent = label;
     }
-    function fmtBytes(n) {
+    function fmtBytes(n)
+    {
         if (n == null) return "—";
         const u = ["B", "KB", "MB", "GB", "TB"]; let i = 0;
         while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
@@ -188,14 +208,14 @@
     /* ============================================================
        TARGET HANDLING
        ============================================================ */
-    function renderTarget() {
+    function renderTarget()
+    {
         const tg = state.target;
         if (!tg) {
             pathEl.textContent = "No target selected";
             targetCard.dataset.blocked = "false";
             targetWarning.dataset.blocked = "false";
-            targetWarning.textContent =
-                "Collapse is irreversible. The system drive, the app drive, and protected roots are blocked by the gravity guard.";
+            targetWarning.textContent = "Collapse is irreversible. The system drive, the app drive, and protected roots are blocked by the gravity guard.";
             targetMeta.hidden = true;
             setStatusCard(stTarget, false, "Pending");
             setReadout("CORE IDLE", "Select a target to charge the singularity.");
@@ -212,17 +232,18 @@
         tmSize.textContent = tg.size != null ? fmtBytes(tg.size) : "— size";
         targetMeta.hidden = false;
 
-        if (tg.blocked) {
+        if (tg.blocked)
+        {
             targetCard.dataset.blocked = "true";
             targetWarning.dataset.blocked = "true";
-            targetWarning.textContent = "⛔ Guard blocked this target: " + (tg.reason || "protected path") +
-                ". Pick a folder or a non-system drive.";
+            targetWarning.textContent = "⛔ Guard blocked this target: " + (tg.reason || "protected path") + ". Pick a folder or a non-system drive.";
             setStatusCard(stTarget, false, "Blocked");
             setReadout("TARGET REJECTED", tg.reason || "Protected path.");
             setStageState("idle");
             setThreat(6, "BLOCKED");
             setIntensity(0.18);
-        } else {
+        } else
+        {
             targetCard.dataset.blocked = "false";
             targetWarning.dataset.blocked = "false";
             targetWarning.textContent = "⚠ This target will be permanently destroyed. There is no recovery.";
@@ -235,13 +256,16 @@
         updateLockUI();
     }
 
-    async function pickTarget(kind) {
+    async function pickTarget(kind)
+    {
         if (state.collapsing) return;
         let picked = null;
 
-        if (HAS_API) {
+        if (HAS_API)
+        {
             picked = await window.collapseAPI.selectTarget(kind); // {path,type,items,size,blocked,reason} or null
-        } else {
+        } else
+        {
             // DEMO mode (plain browser): fake a target so you can preview the UI
             const demo = kind === "drive" ? "E:\\" : "C:\\Users\\Izm\\Desktop\\DemoFolder";
             const blocked = /^[A-Za-z]:\\?$/.test(demo) && demo.toUpperCase().startsWith("C");
@@ -257,23 +281,53 @@
     /* ============================================================
        LOCK STATE MACHINE
        ============================================================ */
-    function lockSatisfied() {
-        return !!state.target &&
-            !state.target.blocked &&
-            pwInput.value === PASSWORD &&
-            confirmInput.value.trim().toUpperCase() === CONFIRM_PHRASE;
+    function lockSatisfied()
+    {
+        return !!state.target && !state.target.blocked && state.pwVerified && confirmInput.value.trim().toUpperCase() === CONFIRM_PHRASE;
     }
 
-    function updateLockUI() {
+    // Verify the typed password against the main process (or accept any non-empty
+    // value in DEMO mode so the UI can be previewed in a plain browser).
+    let pwDebounce = null;
+    function scheduleVerify()
+    {
+        state.pwVerified = false;
+        clearTimeout(pwDebounce);
+        const candidate = pwInput.value;
+        if (!candidate) { updateLockUI(); return; }
+        pwDebounce = setTimeout(async () =>
+        {
+            state.pwChecking = true;
+            let ok = false;
+
+            try
+            {
+                ok = HAS_API ? await window.collapseAPI.verifyPassword(candidate) : candidate.length > 0;
+            } catch { ok = false; }
+            state.pwChecking = false;
+            // ignore stale results if the field changed while we were checking
+            if (pwInput.value === candidate)
+            {
+                state.pwVerified = !!ok;
+                if (!ok) flash(pwInput);
+                updateLockUI();
+            }
+        }, 250);
+    }
+
+    function updateLockUI()
+    {
         const ready = lockSatisfied();
         armBtn.disabled = !ready || state.collapsing || state.armed;
         executeBtn.disabled = !state.armed || state.collapsing;
 
-        if (state.collapsing) {
+        if (state.collapsing)
+        {
             collapseStatus.textContent = "Collapsing target…";
             return;
         }
-        if (state.armed) {
+        if (state.armed)
+        {
             armChip.textContent = "ARMED";
             armChip.classList.add("danger-chip");
             armChip.dataset.armed = "true";
@@ -283,41 +337,41 @@
             setIntensity(0.8);
             setReadout("SEQUENCE ARMED", "Execute to begin the collapse.");
             collapseStatus.textContent = "Armed — awaiting execute";
-        } else {
+        } else
+        {
             armChip.textContent = ready ? "Ready to arm" : "Disarmed";
             armChip.dataset.armed = "false";
             setStatusCard(stArm, false, ready ? "Ready" : "Disarmed");
-            if (state.target && !state.target.blocked) {
+            if (state.target && !state.target.blocked)
+            {
                 setStageState("charged");
                 setThreat(ready ? 60 : 45, ready ? "PRIMED" : "CHARGED");
                 setIntensity(ready ? 0.55 : 0.45);
             }
-            collapseStatus.textContent = state.target
-                ? (state.target.blocked ? "Target blocked" : "Target locked")
-                : "Awaiting target";
+            collapseStatus.textContent = state.target ? (state.target.blocked ? "Target blocked" : "Target locked") : "Awaiting target";
         }
     }
 
-    function arm() {
+    function arm()
+    {
         if (!lockSatisfied()) { flash(armBtn); return; }
         state.armed = true;
         abortBtn.hidden = false;
         updateLockUI();
     }
 
-    function abort() {
+    function abort()
+    {
         state.armed = false;
         abortBtn.hidden = true;
         if (HAS_API && state.collapsing) window.collapseAPI.abort();
         updateLockUI();
     }
 
-    function flash(el) {
+    function flash(el)
+    {
         if (!el) return;
-        el.animate(
-            [{ outline: "2px solid #ff5a3c" }, { outline: "2px solid transparent" }],
-            { duration: 500, iterations: 2 }
-        );
+        el.animate([{ outline: "2px solid #ff5a3c" }, { outline: "2px solid transparent" }], { duration: 500, iterations: 2 });
     }
 
     /* ============================================================
@@ -330,9 +384,11 @@
 
         // Final OS-level confirm (native dialog if available)
         let ok = true;
-        if (HAS_API) {
+        if (HAS_API)
+        {
             ok = await window.collapseAPI.confirmDestroy(tg.path, wipeMode.value);
-        } else {
+        } else
+        {
             ok = window.confirm(`DEMO: permanently collapse "${tg.path}"?\n(No files are touched in browser preview.)`);
         }
         if (!ok) { return; }
@@ -348,11 +404,9 @@
         setStatusCard(stCollapse, false, "Collapsing");
 
         try {
-            if (HAS_API) {
-                await window.collapseAPI.run(
-                    { path: tg.path, type: tg.type, mode: wipeMode.value },
-                    onProgress
-                );
+            if (HAS_API)
+            {
+                await window.collapseAPI.run({ path: tg.path, type: tg.type, mode: wipeMode.value, password: pwInput.value }, onProgress);
             } else {
                 await demoRun();
             }
@@ -362,7 +416,8 @@
         }
     }
 
-    function onProgress(p) {
+    function onProgress(p)
+    {
         // p: { pct, current, done, total, phase }
         const pct = Math.round(p.pct != null ? p.pct : (p.total ? (p.done / p.total) * 100 : 0));
         cpFill.style.width = pct + "%";
@@ -372,11 +427,14 @@
         setReadout("COLLAPSING", (p.phase || "Crushing") + " · " + pct + "%");
     }
 
-    function onDone(success, errMsg) {
+    function onDone(success, errMsg)
+    {
         state.collapsing = false;
         state.armed = false;
         abortBtn.hidden = true;
-        if (success) {
+
+        if (success)
+        {
             cpFill.style.width = "100%";
             cpPct.textContent = "100%";
             cpLabel.textContent = "Collapse complete";
@@ -389,7 +447,8 @@
             collapseStatus.textContent = "Collapse complete";
             state.target = null;
             setTimeout(() => { progressWrap.hidden = true; renderTarget(); }, 2600);
-        } else {
+        } else
+        {
             setStageState("charged");
             setReadout("COLLAPSE FAILED", errMsg || "Aborted.");
             setStatusCard(stCollapse, false, "Failed");
@@ -402,10 +461,12 @@
 
     // DEMO fake progress
     function demoRun() {
-        return new Promise((resolve) => {
+        return new Promise((resolve) =>
+        {
             let pct = 0;
             const phases = ["Sealing field", "Overwriting", "Crushing", "Erasing"];
-            const id = setInterval(() => {
+            const id = setInterval(() =>
+            {
                 pct += rand(2, 7);
                 if (pct >= 100) { pct = 100; clearInterval(id); resolve(); }
                 onProgress({ pct, phase: phases[Math.min(phases.length - 1, Math.floor(pct / 26))], current: "demo/file_" + Math.floor(pct) + ".bin" });
@@ -420,7 +481,8 @@
     pickDriveBtn  && pickDriveBtn.addEventListener("click", () => pickTarget("drive"));
     clearBtn      && clearBtn.addEventListener("click", () => { state.target = null; state.armed = false; renderTarget(); });
 
-    [pwInput, confirmInput].forEach((el) => el && el.addEventListener("input", () => { state.armed = false; armChip.dataset.armed = "false"; updateLockUI(); }));
+    pwInput && pwInput.addEventListener("input", () => { state.armed = false; armChip.dataset.armed = "false"; scheduleVerify(); });
+    confirmInput && confirmInput.addEventListener("input", () => { state.armed = false; armChip.dataset.armed = "false"; updateLockUI(); });
     wipeMode && wipeMode.addEventListener("change", updateLockUI);
 
     armBtn     && armBtn.addEventListener("click", arm);
@@ -428,8 +490,10 @@
     abortBtn   && abortBtn.addEventListener("click", abort);
 
     // guard chip reflects whether main reports guard on
-    if (HAS_API && window.collapseAPI.guardStatus) {
-        window.collapseAPI.guardStatus().then((on) => {
+    if (HAS_API && window.collapseAPI.guardStatus)
+    {
+        window.collapseAPI.guardStatus().then((on) =>
+        {
             guardChip.textContent = "System guard: " + (on ? "ON" : "OFF");
             guardChip.dataset.guard = on ? "on" : "off";
         }).catch(() => {});

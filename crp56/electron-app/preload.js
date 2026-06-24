@@ -18,6 +18,7 @@ const ALLOWED_CHANNELS = new Set([
     'dialog:pick-save-file',
     // --- Gravity Collapse ---
     'collapse:guard-status',
+    'collapse:verify-password',
     'collapse:select-target',
     'collapse:confirm-destroy',
     'collapse:run',
@@ -132,6 +133,11 @@ contextBridge.exposeInMainWorld('collapseAPI', {
     {
         log('collapse.guardStatus()');
         return invoke('collapse:guard-status');
+    },
+    verifyPassword: (candidate) =>
+    {
+        log('collapse.verifyPassword()', { len: candidate?.length ?? 0 });
+        return invoke('collapse:verify-password', candidate);
     },
     selectTarget: (kind) =>
     {

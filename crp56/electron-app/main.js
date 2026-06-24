@@ -6,7 +6,8 @@ const fsp = fs.promises;
 const os = require('os');
 const readline = require('readline');
 const fmod = require('./fmod');
-const collapseLog = require('./collapse-logger');
+const collapseLog = require('./collapse_logger');
+const collapseSecret = require('./collapse_secret');
 
 
 let mainWindow = null;
@@ -540,6 +541,12 @@ ipcMain.handle('dialog:pick-save-file', async (_event, options = {}) =>
 /* ---------------- Gravity Collapse IPC ---------------- */
 ipcMain.handle('collapse:guard-status', () => !COLLAPSE_ALLOW_SYSTEM);
 
+ipcMain.handle('collapse:verify-password', (_event, candidate) =>
+{
+    try { return collapseSecret.verify(candidate); }
+    catch (e) { console.error('[collapse:verify-password failed]', e); return false; }
+});
+
 ipcMain.handle('collapse:select-target', async (_event, kind) =>
 {
     const res = await dialog.showOpenDialog(mainWindow, {
@@ -560,11 +567,7 @@ ipcMain.handle('collapse:confirm-destroy', async (_event, { path: targetPath, mo
     if (guard.blocked)
     {
         collapseLog.record({ path: targetPath, mode, status: 'blocked', error: guard.reason });
-        await dialog.showMessageBox(mainWindow, {
-            type: 'error', title: 'Collapse blocked',
-            message: 'Gravity guard blocked this target.',
-            detail: guard.reason,
-        });
+        await dialog.showMessageBox(mainWindow, {type: 'error', title: 'Collapse blocked', message: 'Gravity guard blocked this target.', detail: guard.reason,});
         return false;
     }
     const r = await dialog.showMessageBox(mainWindow, {
@@ -581,6 +584,14 @@ ipcMain.handle('collapse:confirm-destroy', async (_event, { path: targetPath, mo
 
 ipcMain.handle('collapse:run', async (event, job) =>
 {
+    // Defense in depth: never wipe unless the supplied password verifies in main.
+    if (!collapseSecret.verify(job && job.password))
+    {
+        const msg = 'Password verification failed';
+        collapseLog.record({ path: job && job.path, type: job && job.type, mode: job && job.mode, status: 'failed', error: msg });
+        return { ok: false, error: msg };
+    }
+
     const send = (p) =>
     {
         try
@@ -749,6 +760,13 @@ app.whenReady().then(async () =>
 
     try { log('Collapse audit log at:', collapseLog.init(app)); }
     catch (err) { console.error('[collapse-logger init failed]', err); }
+
+    try
+    {
+        const s = collapseSecret.init(app);
+        log('Collapse secret at:', s.path, s.seeded ? '(seeded from INITIAL_PASSWORD)' : (s.exists ? '(existing)' : '(NOT SET)'));
+    }
+    catch (err) { console.error('[collapse-secret init failed]', err); }
 
     try
     {
