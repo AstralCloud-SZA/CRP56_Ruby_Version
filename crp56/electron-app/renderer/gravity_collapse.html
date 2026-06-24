@@ -15,124 +15,150 @@
 
     <div class="shell">
         <main class="chamber gravity-chamber">
+            <!-- ===================== TOP BAR ===================== -->
             <header class="topbar gravity-topbar">
                 <div class="brand-wrap">
                     <div class="brand-mark gravity-mark" aria-hidden="true">
                         <div class="mini-black-hole" id="blackHoleMark"></div>
                     </div>
-
                     <div>
-                        <div class="eyebrow">Carrera // Gravity Collapse</div>
+                        <div class="eyebrow">Carrera // Skill: Gravity Collapse</div>
                         <h1 class="page-title">Gravity Collapse</h1>
                     </div>
                 </div>
 
                 <div class="top-controls">
-                    <span class="chip danger-chip">Locked Chamber</span>
-                    <button class="theme-button gravity-badge" type="button" disabled>
-                        Singularity Core
-                    </button>
+                    <span class="chip danger-chip" id="armChip">Disarmed</span>
+                    <span class="chip gravity-badge" id="guardChip">System guard: ON</span>
                 </div>
             </header>
 
+            <!-- ===================== MAIN GRID ===================== -->
             <section class="gravity-grid">
-                <article class="gravity-core-panel">
-                    <div class="core-orbit">
-                        <div class="core-ring ring-1"></div>
-                        <div class="core-ring ring-2"></div>
-                        <div class="core-ring ring-3"></div>
-                        <div class="core-void"></div>
-                        <div class="core-pulse"></div>
+
+                <!-- ----- LEFT: the singularity stage ----- -->
+                <article class="gravity-stage" id="collapseStage" data-state="idle">
+                    <canvas id="singularityCanvas" class="singularity-canvas" aria-hidden="true"></canvas>
+
+                    <div class="stage-readout" id="stageReadout">
+                        <span class="kicker">Localized collapse field</span>
+                        <div class="readout-line" id="readoutPhase">CORE IDLE</div>
+                        <div class="readout-sub" id="readoutSub">Select a target to charge the singularity.</div>
                     </div>
 
-                    <div class="gravity-core-copy">
-                        <span class="kicker">Localized collapse field</span>
-                        <h2>Seal the target, draw it inward, and crush the field.</h2>
-                        <p>
-                            A sealed destruction chamber themed after Gravity Collapse.
-                            Select a target, enter the lock code, and confirm the collapse sequence.
+                    <div class="stage-overlay">
+                        <h2 id="stageTitle">Seal the target. Draw it inward. Crush the field.</h2>
+                        <p id="stageBody">
+                            A sealed destruction chamber modelled on Carrera's gravity collapse.
+                            Lock onto a folder or non-system drive, arm the sequence, and the
+                            singularity erases it pass by pass.
                         </p>
+                    </div>
+
+                    <!-- collapse progress sweep -->
+                    <div class="collapse-progress" id="collapseProgress" hidden>
+                        <div class="cp-bar"><div class="cp-fill" id="cpFill"></div></div>
+                        <div class="cp-meta">
+                            <span id="cpLabel">Collapsing…</span>
+                            <span id="cpPct">0%</span>
+                        </div>
+                        <div class="cp-file" id="cpFile">&nbsp;</div>
                     </div>
                 </article>
 
+                <!-- ----- RIGHT: controls ----- -->
                 <aside class="gravity-side">
+
+                    <!-- Target -->
                     <section class="system-panel gravity-card">
                         <h2 class="panel-title">Target Node</h2>
 
-                        <div class="target-card">
+                        <div class="target-card" id="targetCard">
                             <div class="target-label">Selected path</div>
                             <div class="target-value" id="selectedTargetPath">No target selected</div>
+                            <div class="target-meta" id="targetMeta" hidden>
+                                <span class="tm-chip" id="tmType">—</span>
+                                <span class="tm-chip" id="tmItems">—</span>
+                                <span class="tm-chip" id="tmSize">—</span>
+                            </div>
                         </div>
 
                         <div class="target-actions">
-                            <button class="secondary-btn gravity-btn" id="pickTargetBtn" type="button">
-                                Select Folder / Drive
-                            </button>
-                            <button class="secondary-btn gravity-btn" id="clearTargetBtn" type="button">
-                                Clear
-                            </button>
+                            <button class="secondary-btn gravity-btn" id="pickFolderBtn" type="button">Select Folder</button>
+                            <button class="secondary-btn gravity-btn" id="pickDriveBtn" type="button">Select Drive</button>
+                            <button class="secondary-btn gravity-btn" id="clearTargetBtn" type="button">Clear</button>
                         </div>
 
-                        <div class="warning-box">
-                            Collapse is locked behind a password and multi-step confirmation.
+                        <div class="warning-box" id="targetWarning">
+                            Collapse is irreversible. The system drive, the app drive, and protected
+                            roots are blocked by the gravity guard.
                         </div>
                     </section>
 
+                    <!-- Lock -->
                     <section class="system-panel gravity-card">
                         <h2 class="panel-title">Collapse Lock</h2>
+
+                        <div class="setting-row gravity-row">
+                            <div class="setting-copy">
+                                <div class="mini-label">Mode</div>
+                                <div class="subtle">Overwrite passes before deletion.</div>
+                            </div>
+                            <select class="gravity-input" id="wipeMode">
+                                <option value="quick">Quick (delete only)</option>
+                                <option value="single" selected>Secure · 1 pass</option>
+                                <option value="dod">DoD · 3 pass</option>
+                                <option value="gutmann">Gutmann · 7 pass</option>
+                            </select>
+                        </div>
 
                         <div class="setting-row gravity-row">
                             <div class="setting-copy">
                                 <div class="mini-label">Password</div>
                                 <div class="subtle">Required to unlock the chamber.</div>
                             </div>
-                            <input class="gravity-input" id="collapsePassword" type="password" placeholder="Enter password" />
+                            <input class="gravity-input" id="collapsePassword" type="password" placeholder="Enter password" autocomplete="off" />
                         </div>
 
                         <div class="setting-row gravity-row">
                             <div class="setting-copy">
-                                <div class="mini-label">Confirm</div>
-                                <div class="subtle">Type COLLAPSE to arm the sequence.</div>
+                                <div class="mini-label">Confirm phrase</div>
+                                <div class="subtle">Type COLLAPSE to arm.</div>
                             </div>
-                            <input class="gravity-input" id="collapseConfirm" type="text" placeholder="COLLAPSE" />
+                            <input class="gravity-input" id="collapseConfirm" type="text" placeholder="COLLAPSE" autocomplete="off" />
                         </div>
 
-                        <div class="setting-row gravity-row">
-                            <div class="setting-copy">
-                                <div class="mini-label">Final check</div>
-                                <div class="subtle">Confirm target selection before execute.</div>
-                            </div>
-                            <button class="theme-button gravity-mini-btn" id="finalConfirmBtn" type="button">
-                                Arm Sequence
-                            </button>
+                        <div class="lock-actions">
+                            <button class="theme-button gravity-mini-btn" id="armBtn" type="button" disabled>Arm Sequence</button>
+                            <button class="theme-button gravity-execute" id="executeBtn" type="button" disabled>Execute Collapse</button>
+                            <button class="secondary-btn gravity-btn" id="abortBtn" type="button" hidden>Abort</button>
                         </div>
                     </section>
 
+                    <!-- Status -->
                     <section class="system-panel gravity-card">
                         <h2 class="panel-title">Threat Meter</h2>
 
                         <div class="threat-meter">
-                            <div class="threat-track">
-                                <div class="threat-fill"></div>
-                            </div>
+                            <div class="threat-track"><div class="threat-fill" id="threatFill"></div></div>
                             <div class="threat-meta">
                                 <span>Gravity pressure</span>
-                                <span>MAX</span>
+                                <span id="threatLevel">IDLE</span>
                             </div>
                         </div>
 
                         <div class="status-list gravity-status">
-                            <div class="status-card">
-                                <div class="status-name">Core stability</div>
-                                <div class="status-detail">Active</div>
-                                <span class="dot"></span>
-                            </div>
-                            <div class="status-card">
+                            <div class="status-card" data-ok="false" id="stTarget">
                                 <div class="status-name">Target lock</div>
                                 <div class="status-detail">Pending</div>
                                 <span class="dot"></span>
                             </div>
-                            <div class="status-card">
+                            <div class="status-card" data-ok="false" id="stArm">
+                                <div class="status-name">Sequence</div>
+                                <div class="status-detail">Disarmed</div>
+                                <span class="dot"></span>
+                            </div>
+                            <div class="status-card" data-ok="false" id="stCollapse">
                                 <div class="status-name">Collapse state</div>
                                 <div class="status-detail">Sealed</div>
                                 <span class="dot"></span>
@@ -148,11 +174,11 @@
             </footer>
         </main>
 
+        <!-- ===================== RAIL ===================== -->
         <aside class="rail" aria-label="Primary navigation">
             <div class="rail-logo" aria-hidden="true">
                 <canvas id="blackHoleRail" width="54" height="54"></canvas>
             </div>
-
             <nav class="rail-nav">
                 <a class="nav-btn" href="./home.html" data-sfx="cursor">Home</a>
                 <a class="nav-btn" href="./encrypt.html" data-sfx="cursor">Enc</a>
@@ -161,20 +187,22 @@
                 <a class="nav-btn" href="./settings.html" data-sfx="cursor">Set</a>
                 <a class="nav-btn" href="./about.html" data-sfx="cursor">About</a>
             </nav>
-
             <div class="rail-bottom">
                 <div class="rail-note">Gravity collapse shell active</div>
             </div>
         </aside>
     </div>
 </div>
+
 <script src="./particle_system.js"></script>
 <script src="./gravitional_collapse.js"></script>
 <script src="./app.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        ParticleFX.blackHole('blackHoleMark', 52, 28);
-        ParticleFX.blackHole('blackHoleRail', 54, 28);
+        if (window.ParticleFX && ParticleFX.blackHole) {
+            ParticleFX.blackHole('blackHoleMark', 52, 28);
+            ParticleFX.blackHole('blackHoleRail', 54, 28);
+        }
     });
 </script>
 </body>

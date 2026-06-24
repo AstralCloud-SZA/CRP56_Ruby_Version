@@ -16,6 +16,14 @@ const ALLOWED_CHANNELS = new Set([
     'dialog:pick-file',
     'dialog:pick-folder',
     'dialog:pick-save-file',
+    // --- Gravity Collapse ---
+    'collapse:guard-status',
+    'collapse:select-target',
+    'collapse:confirm-destroy',
+    'collapse:run',
+    'collapse:abort',
+    'collapse:log-read',
+    'collapse:log-clear',
 ]);
 
 function log(...args)
@@ -111,6 +119,62 @@ contextBridge.exposeInMainWorld('crp56', {
             log('onProgress() unsubscribe');
             ipcRenderer.removeListener('crp56:progress', listener);
         };
+    },
+});
+
+/**
+ * Gravity Collapse bridge.
+ * Exposed as window.collapseAPI so gravitional_collapse.js can drive the
+ * destruction chamber. All channels route through the allowlisted invoke().
+ */
+contextBridge.exposeInMainWorld('collapseAPI', {
+    guardStatus: () =>
+    {
+        log('collapse.guardStatus()');
+        return invoke('collapse:guard-status');
+    },
+    selectTarget: (kind) =>
+    {
+        log('collapse.selectTarget()', kind);
+        return invoke('collapse:select-target', kind);
+    },
+    confirmDestroy: (targetPath, mode) =>
+    {
+        log('collapse.confirmDestroy()', { targetPath, mode });
+        return invoke('collapse:confirm-destroy', { path: targetPath, mode });
+    },
+    abort: () =>
+    {
+        log('collapse.abort()');
+        return invoke('collapse:abort');
+    },
+    readLog: (limit) =>
+    {
+        log('collapse.readLog()', limit);
+        return invoke('collapse:log-read', limit);
+    },
+    clearLog: () =>
+    {
+        log('collapse.clearLog()');
+        return invoke('collapse:log-clear');
+    },
+
+    /**
+     * run(job, onProgress) -> Promise<result>
+     * job: { path, type:'folder'|'drive', mode:'quick'|'single'|'dod'|'gutmann' }
+     * Progress streams on the 'collapse:progress' channel.
+     */
+    run: (job, onProgress) =>
+    {
+        log('collapse.run()', job);
+        const listener = (_event, data) =>
+        {
+            try { onProgress && onProgress(data); }
+            catch (e) { log('collapse progress callback error', e?.message); }
+        };
+        ipcRenderer.on('collapse:progress', listener);
+        return invoke('collapse:run', job)
+            .finally(() => ipcRenderer.removeListener('collapse:progress', listener));
     },
 });
 
