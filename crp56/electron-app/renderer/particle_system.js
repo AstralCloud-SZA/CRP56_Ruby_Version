@@ -31,7 +31,6 @@
 
     function blackHole(canvasId, size, particleCount)
     {
-        // If an instance is already running on this canvas, stop it first
         if (BlackHoleInstances.has(canvasId))
         {
             cancelAnimationFrame(BlackHoleInstances.get(canvasId).rafId);
@@ -41,34 +40,39 @@
         const canvas = typeof canvasId === 'string' ? document.getElementById(canvasId) : canvasId;
         if (!canvas) return;
 
-        // Scale for device pixel ratio so it stays crisp on HiDPI screens
-        const dpr         = Math.min(window.devicePixelRatio || 1, 2);
+        if (!(canvas instanceof HTMLCanvasElement))
+        {
+            console.warn('blackHole() expected a canvas but got:', canvas);
+            return;
+        }
+
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
         const displaySize = size;
-        canvas.width      = Math.round(size * dpr);
-        canvas.height     = Math.round(size * dpr);
-        canvas.style.width  = displaySize + 'px';
+        canvas.width = Math.round(size * dpr);
+        canvas.height = Math.round(size * dpr);
+        canvas.style.width = displaySize + 'px';
         canvas.style.height = displaySize + 'px';
 
         const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.scale(dpr, dpr);
 
-        const cx          = size / 2;
-        const cy          = size / 2;
-        const coreRadius  = size * 0.175;
+        const cx = size / 2;
+        const cy = size / 2;
+        const coreRadius = size * 0.175;
         const orbitRadius = size * 0.34;
 
-        // Build particle ring — flattened ellipse (accretion disc perspective)
-        const particles = Array.from({ length: particleCount }, (_, i) =>
-            ({
-                angle:  (i / particleCount) * Math.PI * 2,
-                speed:  0.011 + Math.random() * 0.016,
-                dist:   orbitRadius * (0.7 + Math.random() * 0.62),
-                size:   0.8 + Math.random() * 1.7,
-                alpha:  0.45 + Math.random() * 0.55,
-                drift:  (Math.random() - 0.5) * 0.004,    // slow radial drift
-                // Each particle picks a gold shade from the accent palette
-                color:  ['#ffd400', '#ffea72', '#fff9d6', '#ffbf2f'][Math.floor(Math.random() * 4)]
-            }));
+        const particles = Array.from({ length: particleCount }, (_, i) => ({
+            angle: (i / particleCount) * Math.PI * 2,
+            speed: 0.011 + Math.random() * 0.016,
+            dist: orbitRadius * (0.7 + Math.random() * 0.62),
+            size: 0.8 + Math.random() * 1.7,
+            alpha: 0.45 + Math.random() * 0.55,
+            drift: (Math.random() - 0.5) * 0.004,
+            color: ['#ffd400', '#ffea72', '#fff9d6', '#ffbf2f'][Math.floor(Math.random() * 4)]
+        }));
 
         const instance = { rafId: null, particles };
         BlackHoleInstances.set(canvasId, instance);
@@ -77,80 +81,65 @@
         {
             ctx.clearRect(0, 0, size, size);
 
-            // — Outer glow halo (accretion disc atmosphere)
             const halo = ctx.createRadialGradient(cx, cy, coreRadius * 0.5, cx, cy, orbitRadius * 1.5);
-            halo.addColorStop(0,   'rgb(238 248 47 / 0.44)');
+            halo.addColorStop(0, 'rgb(238 248 47 / 0.44)');
             halo.addColorStop(0.5, 'rgb(224 135 42 / 0.33)');
-            halo.addColorStop(1,   'rgba(0, 0, 0, 0)');
+            halo.addColorStop(1, 'rgba(0, 0, 0, 0)');
             ctx.fillStyle = halo;
             ctx.beginPath();
             ctx.arc(cx, cy, orbitRadius * 1.5, 0, Math.PI * 2);
             ctx.fill();
 
-            // — Black hole core (absolute void)
             const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
-            core.addColorStop(0,    'rgba(0, 0, 0, 1)');
+            core.addColorStop(0, 'rgba(0, 0, 0, 1)');
             core.addColorStop(0.75, 'rgba(0, 0, 0, 0.96)');
-            core.addColorStop(1,    'rgba(10, 6, 2, 0.55)');
+            core.addColorStop(1, 'rgba(10, 6, 2, 0.55)');
             ctx.fillStyle = core;
             ctx.beginPath();
             ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
             ctx.fill();
 
-            // — Event horizon ring
             ctx.strokeStyle = 'rgb(253 240 8 / 0.98)';
             ctx.lineWidth = 1.2;
             ctx.beginPath();
             ctx.arc(cx, cy, coreRadius + 1.8, 0, Math.PI * 2);
             ctx.stroke();
 
-            // — Inner photon ring (thinner, subtler)
             ctx.strokeStyle = 'rgb(140 225 248 / 0.42)';
             ctx.lineWidth = 0.6;
             ctx.beginPath();
             ctx.arc(cx, cy, coreRadius + 3.2, 0, Math.PI * 2);
             ctx.stroke();
 
-            // — Orbiting particles (drawn in two passes for depth)
-            //   Pass 1: particles with sin(angle) > 0  — "behind" the disc (dimmed)
-            //   Pass 2: particles with sin(angle) <= 0 — "in front" of the disc (bright)
             for (let pass = 0; pass < 2; pass++)
             {
                 for (const p of particles)
                 {
-                    // Only draw each particle in its correct depth pass
                     const isBehind = Math.sin(p.angle) > 0;
                     if (pass === 0 && !isBehind) continue;
-                    if (pass === 1 && isBehind)  continue;
+                    if (pass === 1 && isBehind) continue;
 
-                    // Advance orbit
                     p.angle += p.speed;
-                    p.dist  += p.drift;
+                    p.dist += p.drift;
 
-                    // Clamp orbit distance
-                    if (p.dist < orbitRadius * 0.52) p.drift =  Math.abs(p.drift);
+                    if (p.dist < orbitRadius * 0.52) p.drift = Math.abs(p.drift);
                     if (p.dist > orbitRadius * 1.38) p.drift = -Math.abs(p.drift);
 
-                    // Flatten to ellipse — y axis compressed to simulate disc angle
                     const x = cx + Math.cos(p.angle) * p.dist;
                     const y = cy + Math.sin(p.angle) * p.dist * 0.38;
-
-                    // Depth-based alpha — particles behind the disc are much fainter
                     const depthAlpha = isBehind ? p.alpha * 0.28 : p.alpha;
 
-                    // Particle glow
                     if (!isBehind)
                     {
                         const glow = ctx.createRadialGradient(x, y, 0, x, y, p.size * 3.5);
-                        glow.addColorStop(0,   `rgba(242, 193, 79, ${depthAlpha * 0.5})`);
-                        glow.addColorStop(1,   'rgba(0, 0, 0, 0)');
+                        glow.addColorStop(0, `rgba(242, 193, 79, ${depthAlpha * 0.5})`);
+                        glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
                         ctx.fillStyle = glow;
                         ctx.beginPath();
                         ctx.arc(x, y, p.size * 3.5, 0, Math.PI * 2);
                         ctx.fill();
                     }
 
-                    // Particle core dot
                     ctx.beginPath();
                     ctx.arc(x, y, p.size, 0, Math.PI * 2);
                     ctx.fillStyle = `rgba(242, 193, 79, ${depthAlpha})`;

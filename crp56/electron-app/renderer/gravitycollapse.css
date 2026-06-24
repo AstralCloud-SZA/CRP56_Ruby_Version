@@ -115,25 +115,22 @@ body[data-page="gravity-collapse"] .bg-slides {
 
 .brand-wrap { display: flex; align-items: center; gap: var(--space-3, 12px); }
 
-.brand-mark.gravity-mark {
+.brand-mark.gravity-mark
+{
     width: 46px;
     height: 46px;
     display: grid;
     place-items: center;
     border-radius: 14px;
     background: linear-gradient(135deg, rgba(255,219,122,0.95), rgba(211,74,31,0.95));
-    box-shadow:
-            0 0 22px rgba(242,193,79,0.30),
-            inset 0 0 14px rgba(255,255,255,0.12);
+    box-shadow: 0 0 22px rgba(242,193,79,0.30), inset 0 0 14px rgba(255,255,255,0.12);
 }
 
 .mini-black-hole {
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    background:
-            radial-gradient(circle at 35% 35%, rgba(255,255,255,0.75), transparent 18%),
-            radial-gradient(circle at center, rgba(14,10,18,0.9), rgba(0,0,0,1) 68%);
+    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.75), transparent 18%), radial-gradient(circle at center, rgba(14,10,18,0.9), rgba(0,0,0,1) 68%);
     box-shadow:
             0 0 0 5px rgba(255,210,120,0.06),
             0 0 16px rgba(255,122,45,0.42),

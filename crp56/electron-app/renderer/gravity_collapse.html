@@ -193,51 +193,15 @@
         </aside>
     </div>
 </div>
-<!-- ===================== FINAL SEAL MODAL ===================== -->
-<dialog class="collapse-seal-dialog" id="collapseSealDialog" aria-labelledby="sealTitle">
-    <form method="dialog" class="collapse-seal-panel">
-        <div class="seal-aura" aria-hidden="true">
-            <div class="seal-core"></div>
-            <div class="seal-ring seal-ring-a"></div>
-            <div class="seal-ring seal-ring-b"></div>
-        </div>
-
-        <div class="seal-kicker">Carrera // Final sanction</div>
-        <h2 id="sealTitle" class="seal-title">Open the Abyssal Judgment?</h2>
-
-        <p class="seal-copy">
-            This is the final collapse seal. Once released, the singularity proceeds with irreversible destruction of the selected target.
-        </p>
-
-        <div class="seal-target-box">
-            <div class="seal-label">Condemned target</div>
-            <div class="seal-target" id="sealTargetPath">No target selected</div>
-            <div class="seal-meta">
-                <span id="sealTargetType">—</span>
-                <span id="sealTargetMode">—</span>
-            </div>
-        </div>
-
-        <label class="seal-check">
-            <input type="checkbox" id="sealAcknowledge" />
-            <span>I accept Carrera’s final judgment and understand this cannot be reversed.</span>
-        </label>
-
-        <div class="seal-actions">
-            <button type="submit" value="cancel" class="secondary-btn gravity-btn">Hold fire</button>
-            <button type="submit" value="confirm" class="theme-button gravity-execute" id="sealConfirmBtn" disabled>
-                Release Collapse
-            </button>
-        </div>
-    </form>
-</dialog>
 
 <script src="./particle_system.js"></script>
 <script src="./gravitional_collapse.js"></script>
 <script src="./app.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        if (window.ParticleFX && ParticleFX.blackHole) {
+    document.addEventListener('DOMContentLoaded', () =>
+    {
+        if (window.ParticleFX && ParticleFX.blackHole)
+        {
             ParticleFX.blackHole('blackHoleMark', 52, 28);
             ParticleFX.blackHole('blackHoleRail', 54, 28);
         }
