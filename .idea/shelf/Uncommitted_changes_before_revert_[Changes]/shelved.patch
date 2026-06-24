@@ -1,0 +1,1133 @@
+Index: crp56/electron-app/renderer/gravitycollapse.css
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/* ============================================================\r\n   GRAVITY COLLAPSE  —  Carrera / Tensura themed destruction page\r\n   Fully updated cinematic version for the animated renderer\r\n   Drop-in replacement for gravitycollapse.css\r\n   Relies on Base_style.css tokens (--space-*, --radius-*, --text-*)\r\n   ============================================================ */\r\n\r\n:root {\r\n    --gravity-bg:        #070402;\r\n    --gravity-bg-2:      #150c06;\r\n    --gravity-bg-3:      #241108;\r\n    --gravity-text:      #f6e7c8;\r\n    --gravity-muted:     rgba(246, 231, 200, 0.66);\r\n    --gravity-faint:     rgba(246, 231, 200, 0.42);\r\n\r\n    --gravity-border:    rgba(255, 196, 92, 0.18);\r\n    --gravity-border-2:  rgba(255, 196, 92, 0.40);\r\n    --gravity-border-hot: rgba(255, 126, 69, 0.52);\r\n\r\n    --gravity-gold:      #f2c14f;\r\n    --gravity-gold-2:    #ffdb7a;\r\n    --gravity-gold-3:    #ffe9b0;\r\n    --gravity-red:       #d34a1f;\r\n    --gravity-red-2:     #ff7a45;\r\n    --gravity-red-3:     #ffb18a;\r\n    --gravity-danger:    #ff5a3c;\r\n    --gravity-ok:        #7ad6a0;\r\n\r\n    --gold-gradient:     linear-gradient(135deg, #ffdb7a, #f2c14f 45%, #d34a1f);\r\n    --collapse-gradient: linear-gradient(135deg, #ffb56f, #ff7a45 36%, #d34a1f 68%, #6e1808 100%);\r\n    --ember-gradient:    radial-gradient(circle at center, rgba(255,190,92,0.26), rgba(211,74,31,0.14) 45%, rgba(0,0,0,0) 72%);\r\n\r\n    --glow:              0 0 22px rgba(242, 193, 79, 0.45);\r\n    --gravity-shadow:    0 24px 70px rgba(0, 0, 0, 0.6);\r\n    --collapse-shadow:\r\n            0 0 24px rgba(255, 120, 50, 0.18),\r\n            0 0 56px rgba(255, 120, 50, 0.14),\r\n            0 0 120px rgba(255, 90, 60, 0.10);\r\n\r\n    --shake-fast:        0.11s linear infinite;\r\n    --shake-med:         0.18s linear infinite;\r\n    --pulse-fast:        0.9s ease-in-out infinite;\r\n    --pulse-med:         1.6s ease-in-out infinite;\r\n    --ring-wave:         2.3s ease-out infinite;\r\n}\r\n\r\n* { box-sizing: border-box; }\r\nhtml, body { height: 100%; margin: 0; }\r\n\r\nbody[data-page=\"gravity-collapse\"] {\r\n    overflow: hidden;\r\n    color: var(--gravity-text);\r\n    background:\r\n            radial-gradient(circle at 50% 18%, rgba(255, 125, 61, 0.18), transparent 24%),\r\n            radial-gradient(circle at 50% 45%, rgba(242, 193, 79, 0.08), transparent 32%),\r\n            radial-gradient(circle at 50% 100%, rgba(90, 28, 10, 0.28), transparent 40%),\r\n            linear-gradient(160deg, var(--gravity-bg), var(--gravity-bg-2) 58%, #050302 100%);\r\n    font-family: var(--font-body, \"Inter\", system-ui, sans-serif);\r\n}\r\n\r\nbody[data-page=\"gravity-collapse\"] .bg-slides {\r\n    background:\r\n            radial-gradient(circle at center, rgba(255, 122, 69, 0.10), transparent 22%),\r\n            linear-gradient(180deg, rgba(0,0,0,0.94), rgba(12,7,5,0.97));\r\n}\r\n\r\n/* ---------- shell / layout ---------- */\r\n.shell {\r\n    display: grid;\r\n    grid-template-columns: 1fr 92px;\r\n    gap: var(--space-4, 16px);\r\n    height: 100vh;\r\n    padding: var(--space-4, 16px);\r\n}\r\n\r\n.gravity-chamber {\r\n    min-width: 0;\r\n    display: flex;\r\n    flex-direction: column;\r\n    border: 1px solid var(--gravity-border);\r\n    border-radius: calc(var(--radius-xl, 20px) + 4px);\r\n    background:\r\n            linear-gradient(180deg, rgba(255,255,255,0.03), transparent 24%),\r\n            linear-gradient(180deg, rgba(255,170,70,0.02), transparent 55%),\r\n            rgba(0,0,0,0.46);\r\n    box-shadow: var(--gravity-shadow);\r\n    overflow: hidden;\r\n    position: relative;\r\n}\r\n\r\n.gravity-chamber::before {\r\n    content: \"\";\r\n    position: absolute;\r\n    inset: 0;\r\n    pointer-events: none;\r\n    background:\r\n            radial-gradient(circle at 50% 0%, rgba(255,220,150,0.04), transparent 26%),\r\n            linear-gradient(180deg, rgba(255,255,255,0.02), transparent 14%);\r\n    z-index: 0;\r\n}\r\n\r\n/* ---------- top bar ---------- */\r\n.gravity-topbar {\r\n    position: relative;\r\n    z-index: 2;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    gap: var(--space-4, 16px);\r\n    padding: var(--space-4, 16px) var(--space-5, 20px);\r\n    background: rgba(0,0,0,0.52);\r\n    border-bottom: 1px solid rgba(255,255,255,0.05);\r\n    backdrop-filter: blur(10px);\r\n}\r\n\r\n.brand-wrap { display: flex; align-items: center; gap: var(--space-3, 12px); }\r\n\r\n.brand-mark.gravity-mark\r\n{\r\n    width: 46px;\r\n    height: 46px;\r\n    display: grid;\r\n    place-items: center;\r\n    border-radius: 14px;\r\n    background: linear-gradient(135deg, rgba(255,219,122,0.95), rgba(211,74,31,0.95));\r\n    box-shadow: 0 0 22px rgba(242,193,79,0.30), inset 0 0 14px rgba(255,255,255,0.12);\r\n}\r\n\r\n.mini-black-hole {\r\n    width: 26px;\r\n    height: 26px;\r\n    border-radius: 50%;\r\n    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.75), transparent 18%), radial-gradient(circle at center, rgba(14,10,18,0.9), rgba(0,0,0,1) 68%);\r\n    box-shadow:\r\n            0 0 0 5px rgba(255,210,120,0.06),\r\n            0 0 16px rgba(255,122,45,0.42),\r\n            0 0 28px rgba(255,170,70,0.20),\r\n            inset 0 0 10px rgba(255,255,255,0.08);\r\n    animation: miniOrbitGlow 2.8s ease-in-out infinite;\r\n}\r\n\r\n.eyebrow {\r\n    font-size: var(--text-xs, 11px);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.18em;\r\n    color: rgba(255,219,122,0.7);\r\n}\r\n\r\n.page-title {\r\n    margin: 2px 0 0;\r\n    font-family: var(--font-display, \"Inter\", sans-serif);\r\n    font-size: clamp(1.3rem, 1rem + 1vw, 1.8rem);\r\n    line-height: 1;\r\n    text-shadow: 0 0 18px rgba(255,180,90,0.10);\r\n}\r\n\r\n.top-controls { display: flex; gap: var(--space-2, 8px); align-items: center; }\r\n\r\n.chip {\r\n    font-size: var(--text-xs, 11px);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.12em;\r\n    padding: 0.45rem 0.7rem;\r\n    border-radius: 999px;\r\n    border: 1px solid var(--gravity-border);\r\n    white-space: nowrap;\r\n    backdrop-filter: blur(8px);\r\n}\r\n\r\n.danger-chip {\r\n    color: #ffd2a3;\r\n    border-color: rgba(255,122,69,0.35);\r\n    background: rgba(255,122,69,0.08);\r\n}\r\n\r\n.danger-chip[data-armed=\"true\"] {\r\n    color: #fff;\r\n    border-color: var(--gravity-danger);\r\n    background: rgba(255,90,60,0.22);\r\n    box-shadow:\r\n            0 0 16px rgba(255,90,60,0.35),\r\n            0 0 34px rgba(255,90,60,0.12);\r\n    animation: armBlink 1.1s ease-in-out infinite;\r\n}\r\n\r\n.gravity-badge {\r\n    color: var(--gravity-gold-2);\r\n    border-color: rgba(255,196,92,0.28);\r\n    background: rgba(255,255,255,0.03);\r\n}\r\n\r\n.gravity-badge[data-guard=\"off\"] {\r\n    color: var(--gravity-danger);\r\n    border-color: var(--gravity-danger);\r\n    background: rgba(255,90,60,0.1);\r\n}\r\n\r\n@keyframes armBlink {\r\n    0%,100% { opacity: 1; transform: translateY(0); }\r\n    50% { opacity: 0.58; transform: translateY(-1px); }\r\n}\r\n\r\n@keyframes miniOrbitGlow {\r\n    0%,100% {\r\n        transform: scale(1);\r\n        box-shadow:\r\n                0 0 0 5px rgba(255,210,120,0.06),\r\n                0 0 16px rgba(255,122,45,0.42),\r\n                0 0 28px rgba(255,170,70,0.20),\r\n                inset 0 0 10px rgba(255,255,255,0.08);\r\n    }\r\n    50% {\r\n        transform: scale(1.06);\r\n        box-shadow:\r\n                0 0 0 7px rgba(255,210,120,0.08),\r\n                0 0 20px rgba(255,122,45,0.52),\r\n                0 0 38px rgba(255,170,70,0.28),\r\n                inset 0 0 12px rgba(255,255,255,0.12);\r\n    }\r\n}\r\n\r\n/* ---------- main grid ---------- */\r\n.gravity-grid {\r\n    position: relative;\r\n    z-index: 1;\r\n    flex: 1;\r\n    display: grid;\r\n    grid-template-columns: 1.25fr 0.95fr;\r\n    gap: var(--space-5, 20px);\r\n    padding: var(--space-5, 20px);\r\n    min-height: 0;\r\n    overflow: hidden;\r\n}\r\n\r\n/* ---------- the singularity stage ---------- */\r\n.gravity-stage {\r\n    position: relative;\r\n    border: 1px solid var(--gravity-border);\r\n    border-radius: calc(var(--radius-xl, 20px) + 6px);\r\n    overflow: hidden;\r\n    background:\r\n            radial-gradient(circle at 50% 46%, rgba(255,190,92,0.12), transparent 18%),\r\n            radial-gradient(circle at 50% 50%, rgba(180,70,30,0.18), transparent 34%),\r\n            linear-gradient(180deg, rgba(10,7,5,0.94), rgba(4,3,2,0.99));\r\n    box-shadow:\r\n            inset 0 0 90px rgba(0,0,0,0.74),\r\n            inset 0 0 180px rgba(255,130,60,0.03),\r\n            0 0 42px rgba(255,170,70,0.08);\r\n    transition:\r\n            box-shadow 0.35s ease,\r\n            border-color 0.35s ease,\r\n            filter 0.35s ease;\r\n    isolation: isolate;\r\n}\r\n\r\n.singularity-canvas {\r\n    position: absolute;\r\n    inset: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    display: block;\r\n    z-index: 1;\r\n}\r\n\r\n/* global veil */\r\n.gravity-stage::before {\r\n    content: \"\";\r\n    position: absolute;\r\n    inset: 0;\r\n    z-index: 2;\r\n    pointer-events: none;\r\n    background:\r\n            radial-gradient(circle at 50% 46%, transparent 0 14%, rgba(0,0,0,0.08) 21%, rgba(0,0,0,0.55) 61%, rgba(0,0,0,0.92) 100%),\r\n            linear-gradient(120deg, rgba(255,255,255,0.04), transparent 34%, rgba(255,255,255,0.02));\r\n    opacity: 1;\r\n    transition: opacity 0.3s ease;\r\n}\r\n\r\n/* inner frame */\r\n.gravity-stage::after {\r\n    content: \"\";\r\n    position: absolute;\r\n    inset: 14px;\r\n    z-index: 2;\r\n    pointer-events: none;\r\n    border-radius: inherit;\r\n    border: 1px solid rgba(255,185,97,0.12);\r\n    box-shadow:\r\n            inset 0 0 24px rgba(255,156,68,0.05),\r\n            inset 0 0 40px rgba(255,210,140,0.02);\r\n}\r\n\r\n/* cinematic overlays */\r\n.gravity-stage .stage-flare,\r\n.gravity-stage .stage-rings,\r\n.gravity-stage .stage-embers {\r\n    position: absolute;\r\n    inset: 0;\r\n    pointer-events: none;\r\n}\r\n\r\n.gravity-stage .stage-flare {\r\n    z-index: 2;\r\n    background:\r\n            radial-gradient(circle at 50% 46%, rgba(255,244,210,0.10), rgba(255,180,92,0.06) 10%, rgba(190,72,28,0.05) 22%, rgba(0,0,0,0) 44%);\r\n    mix-blend-mode: screen;\r\n    opacity: 0.75;\r\n}\r\n\r\n.gravity-stage .stage-rings {\r\n    z-index: 2;\r\n    background:\r\n            radial-gradient(circle at 50% 46%, transparent 0 13%, rgba(255,215,140,0.10) 14%, transparent 15.5%),\r\n            radial-gradient(circle at 50% 46%, transparent 0 19%, rgba(255,175,90,0.08) 20%, transparent 21.4%),\r\n            radial-gradient(circle at 50% 46%, transparent 0 27%, rgba(255,122,69,0.05) 28%, transparent 29.5%);\r\n    opacity: 0.36;\r\n    animation: ringBreathe 4.2s ease-in-out infinite;\r\n}\r\n\r\n.gravity-stage .stage-embers {\r\n    z-index: 2;\r\n    background:\r\n            radial-gradient(circle at 50% 46%, rgba(255,190,92,0.10), transparent 16%),\r\n            radial-gradient(circle at 36% 54%, rgba(255,122,69,0.05), transparent 12%),\r\n            radial-gradient(circle at 64% 40%, rgba(255,219,122,0.04), transparent 10%);\r\n    opacity: 0.8;\r\n    animation: emberPulse 3.8s ease-in-out infinite;\r\n}\r\n\r\n@keyframes ringBreathe {\r\n    0%,100% { transform: scale(1); opacity: 0.26; }\r\n    50% { transform: scale(1.025); opacity: 0.44; }\r\n}\r\n\r\n@keyframes emberPulse {\r\n    0%,100% { opacity: 0.52; filter: blur(0px); }\r\n    50% { opacity: 0.92; filter: blur(2px); }\r\n}\r\n\r\n/* stage state visuals */\r\n.gravity-stage[data-state=\"idle\"] {\r\n    border-color: rgba(255,196,92,0.14);\r\n}\r\n\r\n.gravity-stage[data-state=\"charged\"] {\r\n    border-color: var(--gravity-border-2);\r\n    box-shadow:\r\n            inset 0 0 90px rgba(0,0,0,0.70),\r\n            inset 0 0 120px rgba(255,170,70,0.04),\r\n            0 0 28px rgba(255,170,70,0.12),\r\n            0 0 60px rgba(255,170,70,0.18);\r\n}\r\n\r\n.gravity-stage[data-state=\"charged\"] .stage-rings {\r\n    opacity: 0.5;\r\n    animation-duration: 2.6s;\r\n}\r\n\r\n.gravity-stage[data-state=\"armed\"] {\r\n    border-color: rgba(255,122,69,0.58);\r\n    filter: saturate(1.08);\r\n    box-shadow:\r\n            inset 0 0 90px rgba(0,0,0,0.66),\r\n            inset 0 0 160px rgba(255,122,69,0.06),\r\n            0 0 36px rgba(255,122,69,0.18),\r\n            0 0 70px rgba(255,90,60,0.28),\r\n            0 0 120px rgba(255,90,60,0.10);\r\n}\r\n\r\n.gravity-stage[data-state=\"armed\"] .stage-flare {\r\n    opacity: 0.95;\r\n    animation: armedCorePulse 1.4s ease-in-out infinite;\r\n}\r\n\r\n.gravity-stage[data-state=\"armed\"] .stage-rings {\r\n    opacity: 0.6;\r\n    animation-duration: 1.6s;\r\n}\r\n\r\n.gravity-stage[data-state=\"collapsing\"] {\r\n    border-color: var(--gravity-danger);\r\n    animation: stageShake 0.11s linear infinite;\r\n    filter: saturate(1.14) contrast(1.04);\r\n    box-shadow:\r\n            inset 0 0 110px rgba(0,0,0,0.76),\r\n            inset 0 0 180px rgba(255,110,50,0.08),\r\n            0 0 40px rgba(255,90,60,0.24),\r\n            0 0 90px rgba(255,90,60,0.34),\r\n            0 0 180px rgba(255,170,70,0.12);\r\n}\r\n\r\n.gravity-stage[data-state=\"collapsing\"]::before {\r\n    opacity: 0.88;\r\n}\r\n\r\n.gravity-stage[data-state=\"collapsing\"] .stage-flare {\r\n    opacity: 1;\r\n    animation: collapseFlashPulse 0.65s ease-in-out infinite;\r\n}\r\n\r\n.gravity-stage[data-state=\"collapsing\"] .stage-rings {\r\n    opacity: 0.82;\r\n    animation: collapseRingWave 1.15s linear infinite;\r\n}\r\n\r\n.gravity-stage[data-state=\"collapsing\"] .stage-embers {\r\n    opacity: 1;\r\n    animation: emberFlicker 0.7s linear infinite;\r\n}\r\n\r\n.gravity-stage[data-state=\"done\"] {\r\n    border-color: var(--gravity-ok);\r\n    filter: saturate(1.02);\r\n    box-shadow:\r\n            inset 0 0 100px rgba(0,0,0,0.72),\r\n            inset 0 0 140px rgba(255,226,160,0.04),\r\n            0 0 36px rgba(255,214,120,0.10),\r\n            0 0 58px rgba(122,214,160,0.20),\r\n            0 0 88px rgba(122,214,160,0.10);\r\n}\r\n\r\n.gravity-stage[data-state=\"done\"] .stage-flare {\r\n    opacity: 0.55;\r\n    animation: doneAfterglow 2.2s ease-in-out infinite;\r\n}\r\n\r\n.gravity-stage[data-state=\"done\"] .stage-rings {\r\n    opacity: 0.22;\r\n    animation-duration: 3.6s;\r\n}\r\n\r\n@keyframes armedCorePulse {\r\n    0%,100% {\r\n        transform: scale(1);\r\n        opacity: 0.78;\r\n        filter: blur(0px);\r\n    }\r\n    50% {\r\n        transform: scale(1.02);\r\n        opacity: 1;\r\n        filter: blur(1px);\r\n    }\r\n}\r\n\r\n@keyframes collapseFlashPulse {\r\n    0%,100% {\r\n        opacity: 0.72;\r\n        filter: blur(0px);\r\n    }\r\n    50% {\r\n        opacity: 1;\r\n        filter: blur(3px);\r\n    }\r\n}\r\n\r\n@keyframes collapseRingWave {\r\n    0% {\r\n        transform: scale(0.96);\r\n        opacity: 0.4;\r\n    }\r\n    50% {\r\n        transform: scale(1.02);\r\n        opacity: 0.9;\r\n    }\r\n    100% {\r\n        transform: scale(1.08);\r\n        opacity: 0.28;\r\n    }\r\n}\r\n\r\n@keyframes emberFlicker {\r\n    0%,100% { opacity: 0.75; transform: translateY(0) scale(1); }\r\n    25% { opacity: 1; transform: translateY(-2px) scale(1.01); }\r\n    50% { opacity: 0.86; transform: translateY(1px) scale(1.03); }\r\n    75% { opacity: 1; transform: translateY(-1px) scale(1.01); }\r\n}\r\n\r\n@keyframes doneAfterglow {\r\n    0%,100% {\r\n        opacity: 0.42;\r\n        transform: scale(1);\r\n    }\r\n    50% {\r\n        opacity: 0.68;\r\n        transform: scale(1.018);\r\n    }\r\n}\r\n\r\n@keyframes stageShake {\r\n    0%   { transform: translate(0,0); }\r\n    20%  { transform: translate(-1px, 1px); }\r\n    40%  { transform: translate(1px, -1px); }\r\n    60%  { transform: translate(-2px, 0); }\r\n    80%  { transform: translate(1px, 1px); }\r\n    100% { transform: translate(0,0); }\r\n}\r\n\r\n/* readout (top-left of stage) */\r\n.stage-readout {\r\n    position: absolute;\r\n    top: var(--space-5, 20px);\r\n    left: var(--space-5, 20px);\r\n    z-index: 3;\r\n    max-width: 60%;\r\n}\r\n\r\n.kicker {\r\n    font-size: var(--text-xs, 11px);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.16em;\r\n    color: rgba(255,219,122,0.7);\r\n}\r\n\r\n.readout-line {\r\n    margin-top: 4px;\r\n    font-family: var(--font-display, monospace);\r\n    font-size: clamp(1rem, 0.7rem + 1vw, 1.4rem);\r\n    letter-spacing: 0.08em;\r\n    color: var(--gravity-gold-2);\r\n    text-shadow:\r\n            0 0 18px rgba(255,180,90,0.5),\r\n            0 0 36px rgba(255,122,69,0.12);\r\n}\r\n\r\n.readout-sub {\r\n    margin-top: 4px;\r\n    font-size: var(--text-sm, 13px);\r\n    color: var(--gravity-muted);\r\n    max-width: 40ch;\r\n}\r\n\r\n/* overlay (bottom of stage) */\r\n.stage-overlay {\r\n    position: absolute;\r\n    left: 0;\r\n    right: 0;\r\n    bottom: 0;\r\n    z-index: 3;\r\n    padding: var(--space-6, 24px);\r\n    display: grid;\r\n    gap: var(--space-3, 12px);\r\n    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.42) 26%, rgba(0,0,0,0.84));\r\n}\r\n\r\n.stage-overlay h2 {\r\n    margin: 0;\r\n    font-family: var(--font-display, sans-serif);\r\n    font-size: clamp(1.5rem, 1rem + 2vw, 2.6rem);\r\n    line-height: 1;\r\n    max-width: 18ch;\r\n    text-shadow: 0 0 26px rgba(255,180,90,0.12);\r\n}\r\n\r\n.stage-overlay p {\r\n    margin: 0;\r\n    max-width: 60ch;\r\n    color: var(--gravity-muted);\r\n    line-height: 1.6;\r\n}\r\n\r\n/* collapse progress */\r\n.collapse-progress {\r\n    position: absolute;\r\n    left: var(--space-6,24px);\r\n    right: var(--space-6,24px);\r\n    bottom: var(--space-6,24px);\r\n    z-index: 4;\r\n    display: grid;\r\n    gap: var(--space-2,8px);\r\n    padding: var(--space-4,16px);\r\n    border: 1px solid rgba(255,122,69,0.4);\r\n    border-radius: var(--radius-lg,14px);\r\n    background: rgba(0,0,0,0.62);\r\n    backdrop-filter: blur(10px);\r\n    box-shadow:\r\n            inset 0 0 0 1px rgba(255,255,255,0.03),\r\n            0 0 34px rgba(255,90,60,0.10);\r\n}\r\n\r\n.cp-bar {\r\n    height: 12px;\r\n    border-radius: 999px;\r\n    overflow: hidden;\r\n    background: rgba(0,0,0,0.6);\r\n    border: 1px solid rgba(255,255,255,0.06);\r\n}\r\n\r\n.cp-fill\r\n{\r\n    width: 0%;\r\n    height: 100%;\r\n    background: linear-gradient(90deg, var(--gravity-red), var(--gravity-red-2), var(--gravity-gold-2));\r\n    box-shadow: 0 0 18px rgba(255,122,69,0.5), 0 0 36px rgba(255,122,69,0.15);\r\n    transition: width 0.2s ease;\r\n}\r\n\r\n.cp-meta\r\n{\r\n    display: flex;\r\n    justify-content: space-between;\r\n    font-size: var(--text-xs,11px);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.12em;\r\n    color: var(--gravity-muted);\r\n}\r\n\r\n.cp-file\r\n{\r\n    font-size: var(--text-xs,11px);\r\n    color: rgba(255,219,122,0.7);\r\n    font-family: monospace;\r\n    white-space: nowrap;\r\n    overflow: hidden;\r\n    text-overflow: ellipsis;\r\n}\r\n\r\n/* ---------- side controls ---------- */\r\n.gravity-side\r\n{\r\n    display: grid;\r\n    gap: var(--space-4,16px);\r\n    align-content: start;\r\n    overflow-y: auto;\r\n    padding-right: 4px;\r\n}\r\n\r\n.gravity-side::-webkit-scrollbar { width: 8px; }\r\n.gravity-side::-webkit-scrollbar-thumb\r\n{\r\n    background: rgba(255,196,92,0.2);\r\n    border-radius: 8px;\r\n}\r\n\r\n.system-panel.gravity-card\r\n{\r\n    border: 1px solid var(--gravity-border);\r\n    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.16)), linear-gradient(180deg, rgba(255,170,70,0.02), transparent 58%);\r\n    backdrop-filter: blur(14px);\r\n    border-radius: var(--radius-xl,20px);\r\n    padding: var(--space-5,20px);\r\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 0 0 1px rgba(255,255,255,0.01);\r\n}\r\n\r\n.panel-title\r\n{\r\n    margin: 0 0 var(--space-4,16px);\r\n    font-family: var(--font-display, sans-serif);\r\n    font-size: var(--text-lg,16px);\r\n}\r\n\r\n/* target */\r\n.target-card\r\n{\r\n    padding: var(--space-4,16px);\r\n    border: 1px solid var(--gravity-border);\r\n    border-radius: var(--radius-lg,14px);\r\n    background: rgba(0,0,0,0.26);\r\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);\r\n}\r\n\r\n.target-card[data-blocked=\"true\"] {\r\n    border-color: var(--gravity-danger);\r\n    background: rgba(255,90,60,0.08);\r\n}\r\n\r\n.target-label,\r\n.mini-label\r\n{\r\n    font-size: var(--text-xs,11px);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.16em;\r\n    color: rgba(255,219,122,0.68);\r\n}\r\n\r\n.target-value\r\n{\r\n    margin-top: var(--space-2,8px);\r\n    font-size: var(--text-sm,13px);\r\n    color: var(--gravity-text);\r\n    word-break: break-all;\r\n    font-family: monospace;\r\n}\r\n\r\n.target-meta\r\n{\r\n    display: flex;\r\n    gap: var(--space-2,8px);\r\n    margin-top: var(--space-3,12px);\r\n    flex-wrap: wrap;\r\n}\r\n\r\n.tm-chip\r\n{\r\n    font-size: var(--text-xs,11px);\r\n    padding: 3px 8px;\r\n    border-radius: 999px;\r\n    border: 1px solid var(--gravity-border);\r\n    color: var(--gravity-muted);\r\n    background: rgba(255,255,255,0.02);\r\n}\r\n\r\n.target-actions\r\n{\r\n    display: flex;\r\n    gap: var(--space-2,8px);\r\n    margin-top: var(--space-4,16px);\r\n    flex-wrap: wrap;\r\n}\r\n\r\n.secondary-btn.gravity-btn,\r\n.theme-button\r\n{\r\n    cursor: pointer;\r\n    border-radius: var(--radius-sm,10px);\r\n    border: 1px solid rgba(255,196,92,0.22);\r\n    background: rgba(255,255,255,0.03);\r\n    color: var(--gravity-text);\r\n    padding: 0.6rem 0.9rem;\r\n    font-size: var(--text-sm,13px);\r\n    font-weight: 600;\r\n    transition: all 0.18s ease;\r\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);\r\n}\r\n\r\n.secondary-btn.gravity-btn:hover,\r\n.theme-button:hover\r\n{\r\n    border-color: var(--gravity-border-2);\r\n    background: rgba(255,255,255,0.06);\r\n    transform: translateY(-1px);\r\n}\r\n\r\n.gravity-btn:disabled,\r\n.theme-button:disabled\r\n{\r\n    opacity: 0.4;\r\n    cursor: not-allowed;\r\n    transform: none;\r\n}\r\n\r\n.warning-box\r\n{\r\n    margin-top: var(--space-4,16px);\r\n    padding: var(--space-4,16px);\r\n    border: 1px dashed rgba(255,122,69,0.4);\r\n    border-radius: var(--radius-lg,14px);\r\n    background: rgba(255,122,69,0.06);\r\n    color: rgba(255,210,163,0.88);\r\n    line-height: 1.5;\r\n    font-size: var(--text-sm,13px);\r\n    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.015);\r\n}\r\n\r\n.warning-box[data-blocked=\"true\"] {\r\n    border-color: var(--gravity-danger);\r\n    color: #ffd0c4;\r\n    background: rgba(255,90,60,0.1);\r\n}\r\n\r\n/* lock rows */\r\n.setting-row.gravity-row {\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    gap: var(--space-4,16px);\r\n    padding: var(--space-3,12px) 0;\r\n    border-bottom: 1px solid rgba(255,255,255,0.04);\r\n}\r\n\r\n.setting-row.gravity-row:last-of-type { border-bottom: none; }\r\n.setting-copy { min-width: 0; }\r\n\r\n.subtle\r\n{\r\n    font-size: var(--text-xs,11px);\r\n    color: var(--gravity-muted);\r\n    margin-top: 2px;\r\n}\r\n\r\n.gravity-input\r\n{\r\n    width: 100%;\r\n    max-width: 200px;\r\n    min-height: 44px;\r\n    padding: 0.7rem 0.9rem;\r\n    border-radius: var(--radius-sm,10px);\r\n    border: 1px solid rgba(255,196,92,0.22);\r\n    background: rgba(0,0,0,0.36);\r\n    color: var(--gravity-text);\r\n    outline: none;\r\n    font-size: var(--text-sm,13px);\r\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);\r\n}\r\n\r\n.gravity-input:focus\r\n{\r\n    border-color: rgba(255,122,69,0.6);\r\n    box-shadow: 0 0 0 3px rgba(255,122,69,0.12), 0 0 22px rgba(255,122,69,0.08);\r\n}\r\n\r\nselect.gravity-input { cursor: pointer; }\r\n\r\n.lock-actions\r\n{\r\n    display: grid;\r\n    gap: var(--space-2,8px);\r\n    margin-top: var(--space-4,16px);\r\n}\r\n\r\n.gravity-mini-btn\r\n{\r\n    background: rgba(255,196,92,0.08);\r\n}\r\n\r\n.gravity-mini-btn:not(:disabled):hover\r\n{\r\n    background: rgba(255,196,92,0.16);\r\n}\r\n\r\n.gravity-execute\r\n{\r\n    background: linear-gradient(135deg, #ff7a45, #d34a1f);\r\n    color: #fff;\r\n    border-color: transparent;\r\n}\r\n\r\n.gravity-execute:not(:disabled)\r\n{\r\n    box-shadow: 0 0 20px rgba(255,90,60,0.35), 0 0 44px rgba(255,90,60,0.12);\r\n    animation: armBlink 1.4s ease-in-out infinite;\r\n}\r\n\r\n.gravity-execute:not(:disabled):hover\r\n{\r\n    transform: translateY(-1px);\r\n}\r\n\r\n/* threat meter */\r\n.threat-meter { display: grid; gap: var(--space-2,8px); }\r\n\r\n.threat-track\r\n{\r\n    height: 10px;\r\n    border-radius: 999px;\r\n    overflow: hidden;\r\n    background: rgba(0,0,0,0.45);\r\n    border: 1px solid rgba(255,255,255,0.05);\r\n}\r\n\r\n.threat-fill\r\n{\r\n    width: 6%;\r\n    height: 100%;\r\n    background: linear-gradient(90deg, rgba(255,122,69,0.95), rgba(242,193,79,0.95));\r\n    box-shadow: 0 0 16px rgba(255,122,69,0.28), 0 0 28px rgba(255,122,69,0.10);\r\n    transition: width 0.3s ease;\r\n}\r\n\r\n.threat-meta\r\n{\r\n    display: flex;\r\n    justify-content: space-between;\r\n    color: var(--gravity-muted);\r\n    font-size: var(--text-xs,11px);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.12em;\r\n}\r\n\r\n.status-list.gravity-status\r\n{\r\n    display: grid;\r\n    gap: var(--space-2,8px);\r\n    margin-top: var(--space-4,16px);\r\n}\r\n\r\n.status-card\r\n{\r\n    position: relative;\r\n    padding: var(--space-3,12px) var(--space-4,16px);\r\n    border: 1px solid var(--gravity-border);\r\n    border-radius: var(--radius-lg,14px);\r\n    background: rgba(0,0,0,0.24);\r\n    display: flex;\r\n    flex-direction: column;\r\n    gap: 2px;\r\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);\r\n}\r\n\r\n.status-name { font-size: var(--text-sm,13px); font-weight: 600; }\r\n.status-detail { font-size: var(--text-xs,11px); color: var(--gravity-muted); }\r\n\r\n.status-card .dot\r\n{\r\n    position: absolute;\r\n    top: 50%;\r\n    right: var(--space-4,16px);\r\n    transform: translateY(-50%);\r\n    width: 10px;\r\n    height: 10px;\r\n    border-radius: 50%;\r\n    background: rgba(255,122,69,0.5);\r\n    box-shadow: 0 0 10px rgba(255,122,69,0.5);\r\n}\r\n\r\n.status-card[data-ok=\"true\"] .dot\r\n{\r\n    background: var(--gravity-ok);\r\n    box-shadow: 0 0 10px rgba(122,214,160,0.6);\r\n}\r\n\r\n.status-card[data-ok=\"true\"]\r\n{\r\n    border-color: rgba(122,214,160,0.3);\r\n}\r\n\r\n/* footer */\r\n.gravity-footer\r\n{\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: space-between;\r\n    padding: var(--space-3,12px) var(--space-5,20px);\r\n    border-top: 1px solid rgba(255,255,255,0.05);\r\n    background: rgba(0,0,0,0.52);\r\n    font-size: var(--text-xs,11px);\r\n    color: var(--gravity-muted);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.12em;\r\n    position: relative;\r\n    z-index: 2;\r\n}\r\n\r\n/* ---------- rail ---------- */\r\n.rail\r\n{\r\n    border: 1px solid var(--gravity-border);\r\n    border-radius: var(--radius-xl,20px);\r\n    background: linear-gradient(180deg, rgba(0,0,0,0.88), rgba(0,0,0,0.72));\r\n    backdrop-filter: blur(18px);\r\n    box-shadow: var(--gravity-shadow);\r\n    display: flex;\r\n    flex-direction: column;\r\n    align-items: center;\r\n    gap: var(--space-6,24px);\r\n    padding: var(--space-5,20px) var(--space-3,12px);\r\n    border-left: 4px solid rgba(255,234,0,0.9);\r\n}\r\n\r\n.rail-logo\r\n{\r\n    display: grid;\r\n    place-items: center;\r\n    width: 100%;\r\n    padding-bottom: var(--space-5,20px);\r\n    color: var(--gravity-gold-2);\r\n    filter: drop-shadow(0 0 8px var(--gravity-gold));\r\n}\r\n\r\n.rail-nav { display: grid; gap: var(--space-3,12px); }\r\n\r\n.nav-btn\r\n{\r\n    min-height: 50px;\r\n    min-width: 56px;\r\n    border: 1px solid transparent;\r\n    background: transparent;\r\n    color: var(--gravity-muted);\r\n    display: grid;\r\n    place-items: center;\r\n    text-decoration: none;\r\n    font-size: var(--text-sm,13px);\r\n    font-weight: 600;\r\n    text-transform: uppercase;\r\n    transition: all 0.18s ease;\r\n    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);\r\n}\r\n\r\n.nav-btn.active\r\n{\r\n    color: #000;\r\n    background: var(--gold-gradient);\r\n    box-shadow: var(--glow);\r\n}\r\n\r\n.nav-btn:hover:not(.active)\r\n{\r\n    color: var(--gravity-text);\r\n    background: rgba(255,255,255,0.05);\r\n    transform: translateX(-3px);\r\n}\r\n\r\n.rail-bottom { margin-top: auto; }\r\n\r\n.rail-note\r\n{\r\n    font-size: var(--text-xs,11px);\r\n    line-height: 1.45;\r\n    text-align: center;\r\n    color: var(--gravity-muted);\r\n    letter-spacing: 0.08em;\r\n    text-transform: uppercase;\r\n    border: 1px dashed var(--gravity-border);\r\n    padding: var(--space-3,12px);\r\n}\r\n\r\n/* ---------- final seal dialog ---------- */\r\n.collapse-seal-dialog\r\n{\r\n    padding: 0;\r\n    border: none;\r\n    background: transparent;\r\n    max-width: min(560px, calc(100vw - 32px));\r\n    width: 100%;\r\n    overflow: visible;\r\n}\r\n\r\n.collapse-seal-dialog::backdrop\r\n{\r\n    background: radial-gradient(circle at center, rgba(255,122,69,0.14), rgba(0,0,0,0.74) 48%, rgba(0,0,0,0.92) 100%);\r\n    backdrop-filter: blur(10px);\r\n}\r\n\r\n.collapse-seal-panel {\r\n    position: relative;\r\n    display: grid;\r\n    gap: var(--space-4, 16px);\r\n    padding: var(--space-6, 24px);\r\n    border-radius: calc(var(--radius-xl, 20px) + 4px);\r\n    border: 1px solid rgba(255, 196, 92, 0.28);\r\n    background:\r\n            linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),\r\n            radial-gradient(circle at 50% 0%, rgba(255,190,92,0.08), transparent 32%),\r\n            linear-gradient(180deg, rgba(14,8,5,0.97), rgba(5,3,2,0.98));\r\n    box-shadow: 0 24px 90px rgba(0,0,0,0.65), 0 0 40px rgba(255,122,69,0.12), inset 0 0 0 1px rgba(255,255,255,0.03);\r\n    color: var(--gravity-text);\r\n}\r\n\r\n.seal-aura\r\n{\r\n    position: relative;\r\n    width: 132px;\r\n    height: 132px;\r\n    margin: 0 auto var(--space-2, 8px);\r\n    display: grid;\r\n    place-items: center;\r\n}\r\n\r\n.seal-core {\r\n    width: 34px;\r\n    height: 34px;\r\n    border-radius: 50%;\r\n    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.88), rgba(255,222,170,0.4) 20%, rgba(0,0,0,0.94) 52%, rgba(0,0,0,1) 72%);\r\n    box-shadow: 0 0 0 10px rgba(255,210,120,0.05), 0 0 24px rgba(255,160,70,0.36), 0 0 56px rgba(255,90,60,0.18);\r\n    animation: sealCorePulse 1.8s ease-in-out infinite;\r\n}\r\n\r\n.seal-ring\r\n{\r\n    position: absolute;\r\n    inset: 50%;\r\n    border-radius: 50%;\r\n    transform: translate(-50%, -50%);\r\n    border: 1px solid rgba(255,210,120,0.30);\r\n    box-shadow: 0 0 24px rgba(255,170,70,0.18), inset 0 0 20px rgba(255,170,70,0.06);\r\n}\r\n\r\n.seal-ring-a\r\n{\r\n    width: 86px;\r\n    height: 86px;\r\n    animation: sealSpinA 5s linear infinite;\r\n}\r\n\r\n.seal-ring-b\r\n{\r\n    width: 122px;\r\n    height: 122px;\r\n    border-color: rgba(255,122,69,0.26);\r\n    animation: sealSpinB 8s linear infinite;\r\n}\r\n\r\n.seal-kicker\r\n{\r\n    font-size: var(--text-xs, 11px);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.18em;\r\n    color: rgba(255,219,122,0.74);\r\n    text-align: center;\r\n}\r\n\r\n.seal-title\r\n{\r\n    margin: 0;\r\n    text-align: center;\r\n    font-family: var(--font-display, \"Inter\", sans-serif);\r\n    font-size: clamp(1.45rem, 1rem + 1.2vw, 2rem);\r\n    line-height: 1.05;\r\n}\r\n\r\n.seal-copy\r\n{\r\n    margin: 0 auto;\r\n    max-width: 44ch;\r\n    text-align: center;\r\n    color: var(--gravity-muted);\r\n    line-height: 1.65;\r\n}\r\n\r\n.seal-target-box\r\n{\r\n    padding: var(--space-4, 16px);\r\n    border-radius: var(--radius-lg, 14px);\r\n    border: 1px solid rgba(255,122,69,0.24);\r\n    background: linear-gradient(180deg, rgba(255,122,69,0.08), rgba(255,255,255,0.01)), rgba(0,0,0,0.24);\r\n}\r\n\r\n.seal-label\r\n{\r\n    font-size: var(--text-xs, 11px);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.16em;\r\n    color: rgba(255,219,122,0.72);\r\n}\r\n\r\n.seal-target\r\n{\r\n    margin-top: var(--space-2, 8px);\r\n    font-family: monospace;\r\n    font-size: var(--text-sm, 13px);\r\n    color: var(--gravity-text);\r\n    word-break: break-all;\r\n}\r\n\r\n.seal-meta\r\n{\r\n    display: flex;\r\n    gap: var(--space-2, 8px);\r\n    flex-wrap: wrap;\r\n    margin-top: var(--space-3, 12px);\r\n    color: var(--gravity-faint, rgba(246, 231, 200, 0.42));\r\n    font-size: var(--text-xs, 11px);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.12em;\r\n}\r\n\r\n.seal-meta span\r\n{\r\n    padding: 0.32rem 0.55rem;\r\n    border-radius: 999px;\r\n    border: 1px solid rgba(255,196,92,0.16);\r\n    background: rgba(255,255,255,0.02);\r\n}\r\n\r\n.seal-check\r\n{\r\n    display: flex;\r\n    gap: var(--space-3, 12px);\r\n    align-items: flex-start;\r\n    padding: var(--space-3, 12px) 0;\r\n    color: var(--gravity-muted);\r\n    line-height: 1.55;\r\n    font-size: var(--text-sm, 13px);\r\n}\r\n\r\n.seal-check input\r\n{\r\n    margin-top: 2px;\r\n    accent-color: var(--gravity-danger);\r\n    inline-size: 18px;\r\n    block-size: 18px;\r\n    flex: 0 0 auto;\r\n}\r\n\r\n.seal-actions\r\n{\r\n    display: flex;\r\n    gap: var(--space-3, 12px);\r\n    justify-content: flex-end;\r\n    flex-wrap: wrap;\r\n}\r\n\r\n@keyframes sealSpinA\r\n{\r\n    from { transform: translate(-50%, -50%) rotate(0deg); }\r\n    to   { transform: translate(-50%, -50%) rotate(360deg); }\r\n}\r\n\r\n@keyframes sealSpinB\r\n{\r\n    from { transform: translate(-50%, -50%) rotate(360deg) scale(1); }\r\n    50%  { transform: translate(-50%, -50%) rotate(180deg) scale(1.04); }\r\n    to   { transform: translate(-50%, -50%) rotate(0deg) scale(1); }\r\n}\r\n\r\n@keyframes sealCorePulse\r\n{\r\n    0%, 100%\r\n    {\r\n        transform: scale(1);\r\n        box-shadow: 0 0 0 10px rgba(255,210,120,0.05), 0 0 24px rgba(255,160,70,0.36), 0 0 56px rgba(255,90,60,0.18);\r\n    }\r\n    50%\r\n    {\r\n        transform: scale(1.08);\r\n        box-shadow: 0 0 0 14px rgba(255,210,120,0.07), 0 0 36px rgba(255,180,90,0.48), 0 0 78px rgba(255,90,60,0.24);\r\n    }\r\n}\r\n\r\n@media (max-width: 640px)\r\n{\r\n    .collapse-seal-panel { padding: var(--space-5, 20px); }\r\n    .seal-actions { flex-direction: column; }\r\n    .seal-actions > * { width: 100%; }\r\n}\r\n\r\n/* ---------- responsive ---------- */\r\n@media (max-width: 1080px)\r\n{\r\n    .gravity-grid\r\n    {\r\n        grid-template-columns: 1fr;\r\n        overflow-y: auto;\r\n    }\r\n    .gravity-stage {\r\n        min-height: 48vh;\r\n    }\r\n}\r\n\r\n@media (max-width: 980px)\r\n{\r\n    .rail { display: none; }\r\n    .shell { grid-template-columns: 1fr; }\r\n}\r\n\r\n@media (max-width: 720px)\r\n{\r\n    .target-actions { flex-direction: column; }\r\n    .setting-row.gravity-row { flex-direction: column; align-items: flex-start; }\r\n    .gravity-input { max-width: 100%; }\r\n    .stage-readout { max-width: 78%; }\r\n    .collapse-progress\r\n    {\r\n        left: var(--space-4,16px);\r\n        right: var(--space-4,16px);\r\n        bottom: var(--space-4,16px);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crp56/electron-app/renderer/gravitycollapse.css b/crp56/electron-app/renderer/gravitycollapse.css
+--- a/crp56/electron-app/renderer/gravitycollapse.css	(revision 2b2352358a8688e0a39629b092bacd06bf647830)
++++ b/crp56/electron-app/renderer/gravitycollapse.css	(date 1782327372067)
+@@ -585,17 +585,17 @@
+     border: 1px solid rgba(255,255,255,0.06);
+ }
+ 
+-.cp-fill
+-{
++.cp-fill {
+     width: 0%;
+     height: 100%;
+     background: linear-gradient(90deg, var(--gravity-red), var(--gravity-red-2), var(--gravity-gold-2));
+-    box-shadow: 0 0 18px rgba(255,122,69,0.5), 0 0 36px rgba(255,122,69,0.15);
++    box-shadow:
++            0 0 18px rgba(255,122,69,0.5),
++            0 0 36px rgba(255,122,69,0.15);
+     transition: width 0.2s ease;
+ }
+ 
+-.cp-meta
+-{
++.cp-meta {
+     display: flex;
+     justify-content: space-between;
+     font-size: var(--text-xs,11px);
+@@ -604,8 +604,7 @@
+     color: var(--gravity-muted);
+ }
+ 
+-.cp-file
+-{
++.cp-file {
+     font-size: var(--text-xs,11px);
+     color: rgba(255,219,122,0.7);
+     font-family: monospace;
+@@ -615,8 +614,7 @@
+ }
+ 
+ /* ---------- side controls ---------- */
+-.gravity-side
+-{
++.gravity-side {
+     display: grid;
+     gap: var(--space-4,16px);
+     align-content: start;
+@@ -625,32 +623,32 @@
+ }
+ 
+ .gravity-side::-webkit-scrollbar { width: 8px; }
+-.gravity-side::-webkit-scrollbar-thumb
+-{
++.gravity-side::-webkit-scrollbar-thumb {
+     background: rgba(255,196,92,0.2);
+     border-radius: 8px;
+ }
+ 
+-.system-panel.gravity-card
+-{
++.system-panel.gravity-card {
+     border: 1px solid var(--gravity-border);
+-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.16)), linear-gradient(180deg, rgba(255,170,70,0.02), transparent 58%);
++    background:
++            linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.16)),
++            linear-gradient(180deg, rgba(255,170,70,0.02), transparent 58%);
+     backdrop-filter: blur(14px);
+     border-radius: var(--radius-xl,20px);
+     padding: var(--space-5,20px);
+-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 0 0 1px rgba(255,255,255,0.01);
++    box-shadow:
++            inset 0 1px 0 rgba(255,255,255,0.03),
++            0 0 0 1px rgba(255,255,255,0.01);
+ }
+ 
+-.panel-title
+-{
++.panel-title {
+     margin: 0 0 var(--space-4,16px);
+     font-family: var(--font-display, sans-serif);
+     font-size: var(--text-lg,16px);
+ }
+ 
+ /* target */
+-.target-card
+-{
++.target-card {
+     padding: var(--space-4,16px);
+     border: 1px solid var(--gravity-border);
+     border-radius: var(--radius-lg,14px);
+@@ -664,16 +662,14 @@
+ }
+ 
+ .target-label,
+-.mini-label
+-{
++.mini-label {
+     font-size: var(--text-xs,11px);
+     text-transform: uppercase;
+     letter-spacing: 0.16em;
+     color: rgba(255,219,122,0.68);
+ }
+ 
+-.target-value
+-{
++.target-value {
+     margin-top: var(--space-2,8px);
+     font-size: var(--text-sm,13px);
+     color: var(--gravity-text);
+@@ -681,16 +677,14 @@
+     font-family: monospace;
+ }
+ 
+-.target-meta
+-{
++.target-meta {
+     display: flex;
+     gap: var(--space-2,8px);
+     margin-top: var(--space-3,12px);
+     flex-wrap: wrap;
+ }
+ 
+-.tm-chip
+-{
++.tm-chip {
+     font-size: var(--text-xs,11px);
+     padding: 3px 8px;
+     border-radius: 999px;
+@@ -699,8 +693,7 @@
+     background: rgba(255,255,255,0.02);
+ }
+ 
+-.target-actions
+-{
++.target-actions {
+     display: flex;
+     gap: var(--space-2,8px);
+     margin-top: var(--space-4,16px);
+@@ -708,8 +701,7 @@
+ }
+ 
+ .secondary-btn.gravity-btn,
+-.theme-button
+-{
++.theme-button {
+     cursor: pointer;
+     border-radius: var(--radius-sm,10px);
+     border: 1px solid rgba(255,196,92,0.22);
+@@ -723,23 +715,20 @@
+ }
+ 
+ .secondary-btn.gravity-btn:hover,
+-.theme-button:hover
+-{
++.theme-button:hover {
+     border-color: var(--gravity-border-2);
+     background: rgba(255,255,255,0.06);
+     transform: translateY(-1px);
+ }
+ 
+ .gravity-btn:disabled,
+-.theme-button:disabled
+-{
++.theme-button:disabled {
+     opacity: 0.4;
+     cursor: not-allowed;
+     transform: none;
+ }
+ 
+-.warning-box
+-{
++.warning-box {
+     margin-top: var(--space-4,16px);
+     padding: var(--space-4,16px);
+     border: 1px dashed rgba(255,122,69,0.4);
+@@ -770,15 +759,13 @@
+ .setting-row.gravity-row:last-of-type { border-bottom: none; }
+ .setting-copy { min-width: 0; }
+ 
+-.subtle
+-{
++.subtle {
+     font-size: var(--text-xs,11px);
+     color: var(--gravity-muted);
+     margin-top: 2px;
+ }
+ 
+-.gravity-input
+-{
++.gravity-input {
+     width: 100%;
+     max-width: 200px;
+     min-height: 44px;
+@@ -792,54 +779,50 @@
+     box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+ }
+ 
+-.gravity-input:focus
+-{
++.gravity-input:focus {
+     border-color: rgba(255,122,69,0.6);
+-    box-shadow: 0 0 0 3px rgba(255,122,69,0.12), 0 0 22px rgba(255,122,69,0.08);
++    box-shadow:
++            0 0 0 3px rgba(255,122,69,0.12),
++            0 0 22px rgba(255,122,69,0.08);
+ }
+ 
+ select.gravity-input { cursor: pointer; }
+ 
+-.lock-actions
+-{
++.lock-actions {
+     display: grid;
+     gap: var(--space-2,8px);
+     margin-top: var(--space-4,16px);
+ }
+ 
+-.gravity-mini-btn
+-{
++.gravity-mini-btn {
+     background: rgba(255,196,92,0.08);
+ }
+ 
+-.gravity-mini-btn:not(:disabled):hover
+-{
++.gravity-mini-btn:not(:disabled):hover {
+     background: rgba(255,196,92,0.16);
+ }
+ 
+-.gravity-execute
+-{
++.gravity-execute {
+     background: linear-gradient(135deg, #ff7a45, #d34a1f);
+     color: #fff;
+     border-color: transparent;
+ }
+ 
+-.gravity-execute:not(:disabled)
+-{
+-    box-shadow: 0 0 20px rgba(255,90,60,0.35), 0 0 44px rgba(255,90,60,0.12);
++.gravity-execute:not(:disabled) {
++    box-shadow:
++            0 0 20px rgba(255,90,60,0.35),
++            0 0 44px rgba(255,90,60,0.12);
+     animation: armBlink 1.4s ease-in-out infinite;
+ }
+ 
+-.gravity-execute:not(:disabled):hover
+-{
++.gravity-execute:not(:disabled):hover {
+     transform: translateY(-1px);
+ }
+ 
+ /* threat meter */
+ .threat-meter { display: grid; gap: var(--space-2,8px); }
+ 
+-.threat-track
+-{
++.threat-track {
+     height: 10px;
+     border-radius: 999px;
+     overflow: hidden;
+@@ -847,17 +830,17 @@
+     border: 1px solid rgba(255,255,255,0.05);
+ }
+ 
+-.threat-fill
+-{
++.threat-fill {
+     width: 6%;
+     height: 100%;
+     background: linear-gradient(90deg, rgba(255,122,69,0.95), rgba(242,193,79,0.95));
+-    box-shadow: 0 0 16px rgba(255,122,69,0.28), 0 0 28px rgba(255,122,69,0.10);
++    box-shadow:
++            0 0 16px rgba(255,122,69,0.28),
++            0 0 28px rgba(255,122,69,0.10);
+     transition: width 0.3s ease;
+ }
+ 
+-.threat-meta
+-{
++.threat-meta {
+     display: flex;
+     justify-content: space-between;
+     color: var(--gravity-muted);
+@@ -866,15 +849,13 @@
+     letter-spacing: 0.12em;
+ }
+ 
+-.status-list.gravity-status
+-{
++.status-list.gravity-status {
+     display: grid;
+     gap: var(--space-2,8px);
+     margin-top: var(--space-4,16px);
+ }
+ 
+-.status-card
+-{
++.status-card {
+     position: relative;
+     padding: var(--space-3,12px) var(--space-4,16px);
+     border: 1px solid var(--gravity-border);
+@@ -889,8 +870,7 @@
+ .status-name { font-size: var(--text-sm,13px); font-weight: 600; }
+ .status-detail { font-size: var(--text-xs,11px); color: var(--gravity-muted); }
+ 
+-.status-card .dot
+-{
++.status-card .dot {
+     position: absolute;
+     top: 50%;
+     right: var(--space-4,16px);
+@@ -902,20 +882,17 @@
+     box-shadow: 0 0 10px rgba(255,122,69,0.5);
+ }
+ 
+-.status-card[data-ok="true"] .dot
+-{
++.status-card[data-ok="true"] .dot {
+     background: var(--gravity-ok);
+     box-shadow: 0 0 10px rgba(122,214,160,0.6);
+ }
+ 
+-.status-card[data-ok="true"]
+-{
++.status-card[data-ok="true"] {
+     border-color: rgba(122,214,160,0.3);
+ }
+ 
+ /* footer */
+-.gravity-footer
+-{
++.gravity-footer {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+@@ -931,8 +908,7 @@
+ }
+ 
+ /* ---------- rail ---------- */
+-.rail
+-{
++.rail {
+     border: 1px solid var(--gravity-border);
+     border-radius: var(--radius-xl,20px);
+     background: linear-gradient(180deg, rgba(0,0,0,0.88), rgba(0,0,0,0.72));
+@@ -946,8 +922,7 @@
+     border-left: 4px solid rgba(255,234,0,0.9);
+ }
+ 
+-.rail-logo
+-{
++.rail-logo {
+     display: grid;
+     place-items: center;
+     width: 100%;
+@@ -958,8 +933,7 @@
+ 
+ .rail-nav { display: grid; gap: var(--space-3,12px); }
+ 
+-.nav-btn
+-{
++.nav-btn {
+     min-height: 50px;
+     min-width: 56px;
+     border: 1px solid transparent;
+@@ -975,15 +949,13 @@
+     clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+ }
+ 
+-.nav-btn.active
+-{
++.nav-btn.active {
+     color: #000;
+     background: var(--gold-gradient);
+     box-shadow: var(--glow);
+ }
+ 
+-.nav-btn:hover:not(.active)
+-{
++.nav-btn:hover:not(.active) {
+     color: var(--gravity-text);
+     background: rgba(255,255,255,0.05);
+     transform: translateX(-3px);
+@@ -991,8 +963,7 @@
+ 
+ .rail-bottom { margin-top: auto; }
+ 
+-.rail-note
+-{
++.rail-note {
+     font-size: var(--text-xs,11px);
+     line-height: 1.45;
+     text-align: center;
+@@ -1003,221 +974,9 @@
+     padding: var(--space-3,12px);
+ }
+ 
+-/* ---------- final seal dialog ---------- */
+-.collapse-seal-dialog
+-{
+-    padding: 0;
+-    border: none;
+-    background: transparent;
+-    max-width: min(560px, calc(100vw - 32px));
+-    width: 100%;
+-    overflow: visible;
+-}
+-
+-.collapse-seal-dialog::backdrop
+-{
+-    background: radial-gradient(circle at center, rgba(255,122,69,0.14), rgba(0,0,0,0.74) 48%, rgba(0,0,0,0.92) 100%);
+-    backdrop-filter: blur(10px);
+-}
+-
+-.collapse-seal-panel {
+-    position: relative;
+-    display: grid;
+-    gap: var(--space-4, 16px);
+-    padding: var(--space-6, 24px);
+-    border-radius: calc(var(--radius-xl, 20px) + 4px);
+-    border: 1px solid rgba(255, 196, 92, 0.28);
+-    background:
+-            linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
+-            radial-gradient(circle at 50% 0%, rgba(255,190,92,0.08), transparent 32%),
+-            linear-gradient(180deg, rgba(14,8,5,0.97), rgba(5,3,2,0.98));
+-    box-shadow: 0 24px 90px rgba(0,0,0,0.65), 0 0 40px rgba(255,122,69,0.12), inset 0 0 0 1px rgba(255,255,255,0.03);
+-    color: var(--gravity-text);
+-}
+-
+-.seal-aura
+-{
+-    position: relative;
+-    width: 132px;
+-    height: 132px;
+-    margin: 0 auto var(--space-2, 8px);
+-    display: grid;
+-    place-items: center;
+-}
+-
+-.seal-core {
+-    width: 34px;
+-    height: 34px;
+-    border-radius: 50%;
+-    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.88), rgba(255,222,170,0.4) 20%, rgba(0,0,0,0.94) 52%, rgba(0,0,0,1) 72%);
+-    box-shadow: 0 0 0 10px rgba(255,210,120,0.05), 0 0 24px rgba(255,160,70,0.36), 0 0 56px rgba(255,90,60,0.18);
+-    animation: sealCorePulse 1.8s ease-in-out infinite;
+-}
+-
+-.seal-ring
+-{
+-    position: absolute;
+-    inset: 50%;
+-    border-radius: 50%;
+-    transform: translate(-50%, -50%);
+-    border: 1px solid rgba(255,210,120,0.30);
+-    box-shadow: 0 0 24px rgba(255,170,70,0.18), inset 0 0 20px rgba(255,170,70,0.06);
+-}
+-
+-.seal-ring-a
+-{
+-    width: 86px;
+-    height: 86px;
+-    animation: sealSpinA 5s linear infinite;
+-}
+-
+-.seal-ring-b
+-{
+-    width: 122px;
+-    height: 122px;
+-    border-color: rgba(255,122,69,0.26);
+-    animation: sealSpinB 8s linear infinite;
+-}
+-
+-.seal-kicker
+-{
+-    font-size: var(--text-xs, 11px);
+-    text-transform: uppercase;
+-    letter-spacing: 0.18em;
+-    color: rgba(255,219,122,0.74);
+-    text-align: center;
+-}
+-
+-.seal-title
+-{
+-    margin: 0;
+-    text-align: center;
+-    font-family: var(--font-display, "Inter", sans-serif);
+-    font-size: clamp(1.45rem, 1rem + 1.2vw, 2rem);
+-    line-height: 1.05;
+-}
+-
+-.seal-copy
+-{
+-    margin: 0 auto;
+-    max-width: 44ch;
+-    text-align: center;
+-    color: var(--gravity-muted);
+-    line-height: 1.65;
+-}
+-
+-.seal-target-box
+-{
+-    padding: var(--space-4, 16px);
+-    border-radius: var(--radius-lg, 14px);
+-    border: 1px solid rgba(255,122,69,0.24);
+-    background: linear-gradient(180deg, rgba(255,122,69,0.08), rgba(255,255,255,0.01)), rgba(0,0,0,0.24);
+-}
+-
+-.seal-label
+-{
+-    font-size: var(--text-xs, 11px);
+-    text-transform: uppercase;
+-    letter-spacing: 0.16em;
+-    color: rgba(255,219,122,0.72);
+-}
+-
+-.seal-target
+-{
+-    margin-top: var(--space-2, 8px);
+-    font-family: monospace;
+-    font-size: var(--text-sm, 13px);
+-    color: var(--gravity-text);
+-    word-break: break-all;
+-}
+-
+-.seal-meta
+-{
+-    display: flex;
+-    gap: var(--space-2, 8px);
+-    flex-wrap: wrap;
+-    margin-top: var(--space-3, 12px);
+-    color: var(--gravity-faint, rgba(246, 231, 200, 0.42));
+-    font-size: var(--text-xs, 11px);
+-    text-transform: uppercase;
+-    letter-spacing: 0.12em;
+-}
+-
+-.seal-meta span
+-{
+-    padding: 0.32rem 0.55rem;
+-    border-radius: 999px;
+-    border: 1px solid rgba(255,196,92,0.16);
+-    background: rgba(255,255,255,0.02);
+-}
+-
+-.seal-check
+-{
+-    display: flex;
+-    gap: var(--space-3, 12px);
+-    align-items: flex-start;
+-    padding: var(--space-3, 12px) 0;
+-    color: var(--gravity-muted);
+-    line-height: 1.55;
+-    font-size: var(--text-sm, 13px);
+-}
+-
+-.seal-check input
+-{
+-    margin-top: 2px;
+-    accent-color: var(--gravity-danger);
+-    inline-size: 18px;
+-    block-size: 18px;
+-    flex: 0 0 auto;
+-}
+-
+-.seal-actions
+-{
+-    display: flex;
+-    gap: var(--space-3, 12px);
+-    justify-content: flex-end;
+-    flex-wrap: wrap;
+-}
+-
+-@keyframes sealSpinA
+-{
+-    from { transform: translate(-50%, -50%) rotate(0deg); }
+-    to   { transform: translate(-50%, -50%) rotate(360deg); }
+-}
+-
+-@keyframes sealSpinB
+-{
+-    from { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
+-    50%  { transform: translate(-50%, -50%) rotate(180deg) scale(1.04); }
+-    to   { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+-}
+-
+-@keyframes sealCorePulse
+-{
+-    0%, 100%
+-    {
+-        transform: scale(1);
+-        box-shadow: 0 0 0 10px rgba(255,210,120,0.05), 0 0 24px rgba(255,160,70,0.36), 0 0 56px rgba(255,90,60,0.18);
+-    }
+-    50%
+-    {
+-        transform: scale(1.08);
+-        box-shadow: 0 0 0 14px rgba(255,210,120,0.07), 0 0 36px rgba(255,180,90,0.48), 0 0 78px rgba(255,90,60,0.24);
+-    }
+-}
+-
+-@media (max-width: 640px)
+-{
+-    .collapse-seal-panel { padding: var(--space-5, 20px); }
+-    .seal-actions { flex-direction: column; }
+-    .seal-actions > * { width: 100%; }
+-}
+-
+ /* ---------- responsive ---------- */
+-@media (max-width: 1080px)
+-{
+-    .gravity-grid
+-    {
++@media (max-width: 1080px) {
++    .gravity-grid {
+         grid-template-columns: 1fr;
+         overflow-y: auto;
+     }
+@@ -1226,20 +985,17 @@
+     }
+ }
+ 
+-@media (max-width: 980px)
+-{
++@media (max-width: 980px) {
+     .rail { display: none; }
+     .shell { grid-template-columns: 1fr; }
+ }
+ 
+-@media (max-width: 720px)
+-{
++@media (max-width: 720px) {
+     .target-actions { flex-direction: column; }
+     .setting-row.gravity-row { flex-direction: column; align-items: flex-start; }
+     .gravity-input { max-width: 100%; }
+     .stage-readout { max-width: 78%; }
+-    .collapse-progress
+-    {
++    .collapse-progress {
+         left: var(--space-4,16px);
+         right: var(--space-4,16px);
+         bottom: var(--space-4,16px);
+Index: crp56/electron-app/renderer/gravitional_collapse.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/* ============================================================\r\n   GRAVITY COLLAPSE — renderer logic\r\n   - Singularity / accretion-disk canvas with full collapse + explosion sequence\r\n   - Lock state machine (target -> password -> COLLAPSE -> arm -> execute)\r\n   - IPC bridge to Electron main (window.collapseAPI)\r\n   - Degrades to DEMO mode in a plain browser (no real deletion)\r\n   ============================================================ */\r\n(() => {\r\n    \"use strict\";\r\n\r\n    /* ---------- config ---------- */\r\n    const CONFIRM_PHRASE = \"COLLAPSE\";\r\n    const HAS_API = typeof window !== \"undefined\" && !!window.collapseAPI;\r\n\r\n    /* ---------- element refs ---------- */\r\n    const $ = (id) => document.getElementById(id);\r\n    const stage          = $(\"collapseStage\");\r\n    const readoutPhase   = $(\"readoutPhase\");\r\n    const readoutSub     = $(\"readoutSub\");\r\n    const pathEl         = $(\"selectedTargetPath\");\r\n    const targetCard     = $(\"targetCard\");\r\n    const targetWarning  = $(\"targetWarning\");\r\n    const targetMeta     = $(\"targetMeta\");\r\n    const tmType         = $(\"tmType\");\r\n    const tmItems        = $(\"tmItems\");\r\n    const tmSize         = $(\"tmSize\");\r\n\r\n    const pickFolderBtn  = $(\"pickFolderBtn\");\r\n    const pickDriveBtn   = $(\"pickDriveBtn\");\r\n    const clearBtn       = $(\"clearTargetBtn\");\r\n\r\n    const wipeMode       = $(\"wipeMode\");\r\n    const pwInput        = $(\"collapsePassword\");\r\n    const confirmInput   = $(\"collapseConfirm\");\r\n    const armBtn         = $(\"armBtn\");\r\n    const executeBtn     = $(\"executeBtn\");\r\n    const abortBtn       = $(\"abortBtn\");\r\n\r\n    const progressWrap   = $(\"collapseProgress\");\r\n    const cpFill         = $(\"cpFill\");\r\n    const cpLabel        = $(\"cpLabel\");\r\n    const cpPct          = $(\"cpPct\");\r\n    const cpFile         = $(\"cpFile\");\r\n\r\n    const threatFill     = $(\"threatFill\");\r\n    const threatLevel    = $(\"threatLevel\");\r\n    const armChip        = $(\"armChip\");\r\n    const guardChip      = $(\"guardChip\");\r\n    const collapseStatus = $(\"collapseStatus\");\r\n\r\n    const stTarget   = $(\"stTarget\");\r\n    const stArm      = $(\"stArm\");\r\n    const stCollapse = $(\"stCollapse\");\r\n\r\n    const sealDialog       = $(\"collapseSealDialog\");\r\n    const sealTargetPath   = $(\"sealTargetPath\");\r\n    const sealTargetType   = $(\"sealTargetType\");\r\n    const sealTargetMode   = $(\"sealTargetMode\");\r\n    const sealAcknowledge  = $(\"sealAcknowledge\");\r\n    const sealConfirmBtn   = $(\"sealConfirmBtn\");\r\n\r\n    /* ---------- state ---------- */\r\n    const state = {\r\n        target:      null,   // { path, type:'folder'|'drive', items, size, blocked, reason }\r\n        armed:       false,\r\n        collapsing:  false,\r\n        pwVerified:  false,\r\n        pwChecking:  false,\r\n    };\r\n\r\n    /* ============================================================\r\n       SINGULARITY CANVAS\r\n       Phases: idle | charge | implode | crush | explode | settle\r\n       ============================================================ */\r\n    const canvas = $(\"singularityCanvas\");\r\n    const ctx    = canvas ? canvas.getContext(\"2d\") : null;\r\n    const DPR    = Math.min(window.devicePixelRatio || 1, 2);\r\n\r\n    let cw = 0, ch = 0, raf = 0, intensity = 0.18;\r\n\r\n    const particles  = [];   // inward-drawn orbital dust\r\n    const debris     = [];   // outward-blasted shards post-explosion\r\n    const shockwaves = [];   // expanding ring bursts\r\n\r\n    /* ---------- sequence state machine ---------- */\r\n    const seq = {\r\n        phase:         \"idle\",  // idle | charge | implode | crush | explode | settle\r\n        phaseStart:    0,\r\n        flash:         0,       // 0..1 white flash overlay\r\n        shake:         0,       // 0..1 screen-shake magnitude\r\n        manualIntensity: 0.18,  // intensity set by UI when in idle\r\n        autoResetAt:   0,       // timestamp to force reset (used by settle)\r\n    };\r\n\r\n    /* ---------- math helpers ---------- */\r\n    function nowMs()         { return performance.now(); }\r\n    function clamp(v, a, b)  { return Math.max(a, Math.min(b, v)); }\r\n    function lerp(a, b, t)   { return a + (b - a) * clamp(t, 0, 1); }\r\n    function easeOutCubic(t) { t = clamp(t,0,1); return 1 - Math.pow(1-t, 3); }\r\n    function easeInCubic(t)  { t = clamp(t,0,1); return t*t*t; }\r\n    function easeInOut(t)    { t = clamp(t,0,1); return t < 0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }\r\n    function rand(a, b)      { return a + Math.random() * (b - a); }\r\n    function center()        { return { cx: cw * 0.5, cy: ch * 0.46 }; }\r\n\r\n    /* ---------- canvas resize ---------- */\r\n    function resize()\r\n    {\r\n        if (!canvas || !ctx) return;\r\n        const r = canvas.getBoundingClientRect();\r\n        cw = Math.max(1, Math.floor(r.width));\r\n        ch = Math.max(1, Math.floor(r.height));\r\n        canvas.width  = Math.floor(cw * DPR);\r\n        canvas.height = Math.floor(ch * DPR);\r\n        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);\r\n    }\r\n\r\n    /* ---------- particle spawners ---------- */\r\n    function spawn(n, bias = 1)\r\n    {\r\n        const { cx, cy } = center();\r\n        const maxR = Math.min(cw, ch) * (0.22 + 0.20 * bias);\r\n        for (let i = 0; i < n; i++)\r\n        {\r\n            const a = Math.random() * Math.PI * 2;\r\n            particles.push({\r\n                x: cx + Math.cos(a) * rand(24, maxR),\r\n                y: cy + Math.sin(a) * rand(24, maxR),\r\n                vx: rand(-0.35, 0.35), vy: rand(-0.35, 0.35),\r\n                life: rand(100, 320), size: rand(0.8, 2.8),\r\n                hue: rand(18, 54), orbit: rand(0.002, 0.01),\r\n            });\r\n        }\r\n\r\n    }\r\n\r\n    function spawnDebris(count, power = 1)\r\n    {\r\n        const { cx, cy } = center();\r\n\r\n        for (let i = 0; i < count; i++)\r\n        {\r\n            const a = Math.random() * Math.PI * 2;\r\n            const speed = rand(2.5, 8.5) * power;\r\n            debris.push({\r\n                x: cx, y: cy,\r\n                vx: Math.cos(a) * speed,\r\n                vy: Math.sin(a) * speed * rand(0.7, 1.15),\r\n                drag: rand(0.965, 0.985),\r\n                size: rand(1.2, 4.2), life: rand(24, 60),\r\n                hue: rand(14, 52), alpha: rand(0.65, 1.0),\r\n            });\r\n        }\r\n\r\n    }\r\n\r\n    function addShockwave(power = 1)\r\n    {\r\n        shockwaves.push({\r\n            r: 12,\r\n            width:  10 + power * 12,\r\n            alpha:  0.82,\r\n            speed:  11 + power * 9,\r\n            max:    Math.max(cw, ch) * (0.62 + power * 0.16),\r\n        });\r\n    }\r\n\r\n    /* ---------- sequence control API (called by UI code) ---------- */\r\n\r\n    // Reset to a calm idle (also auto-called after settle completes)\r\n    function resetSequence(toIntensity = 0.18)\r\n    {\r\n        seq.phase = \"idle\";\r\n        seq.phaseStart = nowMs();\r\n        seq.flash = 0; seq.shake = 0;\r\n        seq.manualIntensity = toIntensity;\r\n        seq.autoResetAt = 0;\r\n    }\r\n\r\n    // Called when execute() begins — starts the charge/implode build-up\r\n    function playCollapseSequence()\r\n    {\r\n        seq.phase = \"charge\";\r\n        seq.phaseStart = nowMs();\r\n        seq.flash = 0; seq.shake = 0.4;\r\n        seq.autoResetAt = 0;\r\n        if (particles.length < 90) spawn(40, 1.2);\r\n    }\r\n\r\n    // Called from onProgress() — keeps visual phase aligned with real wipe progress\r\n    function holdCrush(progressPct)\r\n    {\r\n        if (seq.phase === \"explode\" || seq.phase === \"settle\") {return;}\r\n\r\n        const pct = clamp((progressPct || 0) / 100, 0, 1);\r\n        const now = nowMs();\r\n\r\n        const inChargeRange = pct < 0.22;\r\n        const inImplodeRange = pct >= 0.22 && pct < 0.62;\r\n\r\n        let nextPhase = \"crush\";\r\n\r\n        if (inChargeRange)\r\n        {\r\n            nextPhase = \"charge\";\r\n        } else if (inImplodeRange)\r\n        {\r\n            nextPhase = \"implode\";\r\n        }\r\n\r\n        if (seq.phase !== nextPhase)\r\n        {\r\n            seq.phase = nextPhase;\r\n            seq.phaseStart = now;\r\n        }\r\n    }\r\n\r\n    // Called when onDone(true) fires — detonates the explosion\r\n    function triggerExplosion()\r\n    {\r\n        seq.phase = \"explode\";\r\n        seq.phaseStart = nowMs();\r\n        seq.flash = 1.0; seq.shake = 1.0;\r\n        addShockwave(1.2);\r\n        addShockwave(0.75);\r\n        setTimeout(() => addShockwave(0.55), 120);   // staggered second ring\r\n        spawnDebris(140, 1.2);\r\n    }\r\n\r\n    // Called when onDone(false) / abort fires — gentle de-escalation\r\n    function playFailureRecover()\r\n    {\r\n        seq.phase = \"settle\";\r\n        seq.phaseStart = nowMs();\r\n        seq.flash = 0; seq.shake = 0.18;\r\n        seq.autoResetAt = nowMs() + 1400;\r\n    }\r\n\r\n    /* ---------- per-frame helpers ---------- */\r\n\r\n    function phaseT(durationMs)\r\n    {\r\n        return clamp((nowMs() - seq.phaseStart) / durationMs, 0, 1);\r\n    }\r\n\r\n    function phaseIntensity()\r\n    {\r\n        switch (seq.phase)\r\n        {\r\n            case \"idle\":    return seq.manualIntensity;\r\n            case \"charge\":  return lerp(seq.manualIntensity, 0.95, easeInOut(phaseT(900)));\r\n            case \"implode\": return lerp(0.95, 1.22, easeInCubic(phaseT(700)));\r\n            case \"crush\":   return 1.26;\r\n            case \"explode\": return lerp(1.30, 0.88, easeOutCubic(phaseT(700)));\r\n            case \"settle\":  return lerp(0.82, 0.18, easeOutCubic(phaseT(1700)));\r\n            default:        return seq.manualIntensity;\r\n        }\r\n    }\r\n\r\n    // Advances phase transitions automatically; called once per draw frame\r\n    function updateSequence()\r\n    {\r\n        switch (seq.phase)\r\n        {\r\n            case \"charge\":\r\n                if (phaseT(900) >= 1) { seq.phase = \"implode\"; seq.phaseStart = nowMs(); }\r\n                break;\r\n            case \"implode\":\r\n                if (phaseT(700) >= 1) { seq.phase = \"crush\";   seq.phaseStart = nowMs(); }\r\n                break;\r\n            case \"explode\":\r\n                if (phaseT(700) >= 1)\r\n                {\r\n                    seq.phase = \"settle\"; seq.phaseStart = nowMs();\r\n                    seq.shake = 0.22;\r\n                }\r\n                break;\r\n            case \"settle\":\r\n                if (phaseT(1700) >= 1) resetSequence(0.18);\r\n                break;\r\n        }\r\n        if (seq.autoResetAt && nowMs() >= seq.autoResetAt) resetSequence(0.18);\r\n\r\n        // decay flash + shake every frame\r\n        seq.flash = Math.max(0, seq.flash * 0.88);\r\n        seq.shake = Math.max(0, seq.shake * 0.91);\r\n    }\r\n\r\n    /* ---------- draw sub-routines ---------- */\r\n\r\n    function drawBackdrop(cx, cy, v)\r\n    {\r\n        const isExploding = seq.phase === \"explode\";\r\n        const bg = ctx.createRadialGradient(cx, cy, 16, cx, cy, Math.max(cw, ch) * 0.65);\r\n        bg.addColorStop(0,    `rgba(255,210,128,${0.08 + v * 0.18})`);\r\n        bg.addColorStop(0.18, `rgba(214,94,34,${0.09 + v * (isExploding ? 0.28 : 0.14)})`);\r\n        bg.addColorStop(0.42, \"rgba(52,22,10,0.24)\");\r\n        bg.addColorStop(0.78, \"rgba(8,4,2,0.10)\");\r\n        bg.addColorStop(1,    \"rgba(0,0,0,0)\");\r\n        ctx.fillStyle = bg;\r\n        ctx.fillRect(0, 0, cw, ch);\r\n\r\n        // Extra vignette during implosion crush\r\n        if (seq.phase === \"implode\" || seq.phase === \"crush\")\r\n        {\r\n            const vig = ctx.createRadialGradient(cx, cy, 10, cx, cy, Math.max(cw, ch) * 0.52);\r\n            vig.addColorStop(0,    \"rgba(0,0,0,0)\");\r\n            vig.addColorStop(0.42, \"rgba(0,0,0,0.14)\");\r\n            vig.addColorStop(1,    \"rgba(0,0,0,0.58)\");\r\n            ctx.fillStyle = vig;\r\n            ctx.fillRect(0, 0, cw, ch);\r\n        }\r\n    }\r\n\r\n    function drawRings(cx, cy, t, v)\r\n    {\r\n        let implodeBias = 0;\r\n\r\n        if (seq.phase === \"implode\" || seq.phase === \"crush\")\r\n        {\r\n            implodeBias = 1;\r\n        }\r\n\r\n        let explodeT = 0;\r\n        if (seq.phase === \"explode\")\r\n        {\r\n            explodeT = easeOutCubic(phaseT(600));\r\n        }\r\n\r\n        for (let i = 0; i < 6; i++)\r\n        {\r\n            const baseR     = Math.min(cw, ch) * (0.10 + i * 0.074);\r\n            const collapse  = 1 - v * 0.16 - implodeBias * 0.26;\r\n            const expand    = 1 + explodeT * (0.12 + i * 0.04);\r\n            const wobble    = 1 + Math.sin(t * (0.9 + i * 0.18)) * (0.008 + v * 0.006);\r\n            const r         = baseR * collapse * expand * wobble;\r\n\r\n            const alphaBase = 0.14 + i * 0.055 + v * 0.13;\r\n            const spinBase  = (1.12 + i * 0.22) * (1 + v * 2.8);\r\n            const arcStart  = t * (0.16 + i * 0.03) * (1 + v * 2.2);\r\n            const arcLen    = Math.PI * (1.12 + i * 0.17 + implodeBias * 0.22);\r\n\r\n            ctx.beginPath();\r\n            ctx.strokeStyle = `rgba(${160+i*14},${90+i*18},${38+i*9},${alphaBase})`;\r\n            ctx.lineWidth   = 1 + i * 1.25 + v * 0.7;\r\n            ctx.shadowBlur  = 18 + i * 6 + v * 26;\r\n            ctx.shadowColor = explodeT > 0.05 ? \"rgba(255,218,140,0.65)\" : \"rgba(255,170,80,0.34)\";\r\n            ctx.arc(cx, cy, r, arcStart, arcStart + arcLen);\r\n            ctx.stroke();\r\n        }\r\n        ctx.shadowBlur = 0;\r\n    }\r\n\r\n    function drawCore(cx, cy, t, v)\r\n    {\r\n        const pulse        = 0.5 + Math.sin(t * (2.2 + v * 3)) * 0.18;\r\n        const implodeBoost = (seq.phase === \"implode\" || seq.phase === \"crush\") ? 0.44 : 0;\r\n        const explodeBoost = seq.phase === \"explode\" ? 0.88 * (1 - phaseT(500)) : 0;\r\n        const coreR        = Math.min(cw, ch) * (0.068 + pulse * 0.010) * (1 + v * 0.32 + implodeBoost + explodeBoost);\r\n\r\n        const grad = ctx.createRadialGradient(cx - 16, cy - 16, 2, cx, cy, coreR * 3.9);\r\n        grad.addColorStop(0,    \"rgba(255,255,255,0.97)\");\r\n        grad.addColorStop(0.05, \"rgba(255,245,214,0.94)\");\r\n        grad.addColorStop(0.16, \"rgba(255,192,96,0.55)\");\r\n        grad.addColorStop(0.34, \"rgba(214,88,28,0.18)\");\r\n        grad.addColorStop(1,    \"rgba(0,0,0,0)\");\r\n        ctx.fillStyle = grad;\r\n        ctx.beginPath();\r\n        ctx.arc(cx, cy, coreR * 2.9, 0, Math.PI * 2);\r\n        ctx.fill();\r\n\r\n        // Event horizon (black disk) — expands during implosion\r\n        const holeScale = (seq.phase === \"implode\" || seq.phase === \"crush\") ? 1.28 : 0.94;\r\n        ctx.fillStyle = \"rgba(0,0,0,0.97)\";\r\n        ctx.beginPath();\r\n        ctx.arc(cx, cy, coreR * holeScale, 0, Math.PI * 2);\r\n        ctx.fill();\r\n    }\r\n\r\n    function updateAndDrawParticles(cx, cy, v)\r\n    {\r\n        // Spawn rate increases with phase intensity\r\n        const spawnRate = 0.12 + v * 0.46 + (seq.phase === \"charge\" ? 0.22 : 0);\r\n        if (Math.random() < spawnRate && particles.length < 270) spawn(1 + Math.floor(v * 4), 1.2);\r\n\r\n        const strongPull  = seq.phase === \"implode\" || seq.phase === \"crush\";\r\n        const explodePush = seq.phase === \"explode\";\r\n        const explodePct  = explodePush ? (1 - phaseT(500)) : 0;\r\n\r\n        for (let i = particles.length - 1; i >= 0; i--)\r\n        {\r\n            const p  = particles[i];\r\n            const dx = cx - p.x, dy = cy - p.y;\r\n            const d  = Math.max(16, Math.hypot(dx, dy));\r\n            const nx = dx / d, ny = dy / d;\r\n\r\n            if (strongPull)\r\n            {\r\n                const f  = 0.10 + v * 0.18;\r\n                const tg = p.orbit * 40;\r\n                p.vx += nx * f + (-ny * tg);\r\n                p.vy += ny * f + ( nx * tg);\r\n            } else if (explodePush)\r\n            {\r\n                p.vx -= nx * explodePct * 0.9;\r\n                p.vy -= ny * explodePct * 0.9;\r\n            } else\r\n            {\r\n                const f = (0.018 + v * 0.08) / d * 28;\r\n                p.vx += nx * f; p.vy += ny * f;\r\n            }\r\n\r\n            p.vx *= strongPull ? 0.988 : 0.993;\r\n            p.vy *= strongPull ? 0.988 : 0.993;\r\n            p.x  += p.vx; p.y += p.vy;\r\n            p.life -= strongPull ? 1.9 : 1;\r\n\r\n            const alpha = Math.max(0, p.life / 300);\r\n            ctx.beginPath();\r\n            ctx.fillStyle  = `hsla(${p.hue},100%,72%,${alpha})`;\r\n            ctx.shadowBlur = strongPull ? 18 : 10;\r\n            ctx.shadowColor = strongPull ? \"rgba(255,210,130,0.95)\" : \"rgba(255,190,90,0.80)\";\r\n            ctx.arc(p.x, p.y, p.size * (strongPull ? 1.18 : 1), 0, Math.PI * 2);\r\n            ctx.fill();\r\n\r\n            if (p.life <= 0 || d < 8) particles.splice(i, 1);\r\n        }\r\n        ctx.shadowBlur = 0;\r\n    }\r\n\r\n    function updateAndDrawShockwaves(cx, cy)\r\n    {\r\n        for (let i = shockwaves.length - 1; i >= 0; i--) {\r\n            const s = shockwaves[i];\r\n            s.r     += s.speed;\r\n            s.alpha *= 0.954;\r\n            s.width *= 0.992;\r\n\r\n            ctx.beginPath();\r\n            ctx.arc(cx, cy, s.r, 0, Math.PI * 2);\r\n            ctx.lineWidth   = s.width;\r\n            ctx.strokeStyle = `rgba(255,228,170,${s.alpha})`;\r\n            ctx.shadowBlur  = 26;\r\n            ctx.shadowColor = `rgba(255,214,140,${s.alpha * 0.9})`;\r\n            ctx.stroke();\r\n\r\n            if (s.alpha < 0.025 || s.r > s.max) shockwaves.splice(i, 1);\r\n        }\r\n        ctx.shadowBlur = 0;\r\n    }\r\n\r\n    function updateAndDrawDebris()\r\n    {\r\n        for (let i = debris.length - 1; i >= 0; i--) {\r\n            const d = debris[i];\r\n            d.vx *= d.drag; d.vy *= d.drag;\r\n            d.x  += d.vx;  d.y  += d.vy;\r\n            d.life  -= 1;\r\n            d.alpha *= 0.972;\r\n\r\n            ctx.beginPath();\r\n            ctx.fillStyle   = `hsla(${d.hue},100%,65%,${d.alpha})`;\r\n            ctx.shadowBlur  = 13;\r\n            ctx.shadowColor = `rgba(255,150,90,${d.alpha})`;\r\n            ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);\r\n            ctx.fill();\r\n\r\n            if (d.life <= 0 || d.alpha < 0.025) debris.splice(i, 1);\r\n        }\r\n        ctx.shadowBlur = 0;\r\n    }\r\n\r\n    function drawFlash()\r\n    {\r\n        if (seq.flash < 0.01) return;\r\n        ctx.fillStyle = `rgba(255,244,218,${seq.flash * 0.86})`;\r\n        ctx.fillRect(0, 0, cw, ch);\r\n    }\r\n\r\n    /* ---------- main draw loop ---------- */\r\n    function draw()\r\n    {\r\n        if (!ctx) return;\r\n        updateSequence();\r\n\r\n        const t  = performance.now() * 0.001;\r\n        const { cx, cy } = center();\r\n        const v  = phaseIntensity();\r\n        const sx = seq.shake > 0.01 ? rand(-5, 5) * seq.shake : 0;\r\n        const sy = seq.shake > 0.01 ? rand(-5, 5) * seq.shake : 0;\r\n\r\n        ctx.clearRect(0, 0, cw, ch);\r\n        ctx.save();\r\n        ctx.translate(sx, sy);\r\n\r\n        drawBackdrop(cx, cy, v);\r\n        drawRings(cx, cy, t, v);\r\n        drawCore(cx, cy, t, v);\r\n        updateAndDrawParticles(cx, cy, v);\r\n        updateAndDrawShockwaves(cx, cy);\r\n        updateAndDrawDebris();\r\n        drawFlash();\r\n\r\n        ctx.restore();\r\n        raf = requestAnimationFrame(draw);\r\n    }\r\n\r\n    function setIntensity(v)\r\n    {\r\n        intensity = clamp(v, 0, 1);\r\n        if (seq.phase === \"idle\") seq.manualIntensity = intensity;\r\n    }\r\n\r\n    if (canvas)\r\n    {\r\n        const ro = new ResizeObserver(resize);\r\n        ro.observe(canvas);\r\n        resize();\r\n        spawn(48, 1.2);\r\n        resetSequence(0.18);\r\n        draw();\r\n    }\r\n\r\n    /* ============================================================\r\n       UI HELPERS\r\n       ============================================================ */\r\n    function setStageState(s) { if (stage) stage.dataset.state = s; }\r\n    function setReadout(phase, sub)\r\n    {\r\n        if (readoutPhase) readoutPhase.textContent = phase;\r\n        if (sub != null && readoutSub) readoutSub.textContent = sub;\r\n    }\r\n    function setStatusCard(card, ok, detail)\r\n    {\r\n        if (!card) return;\r\n        card.dataset.ok = ok ? \"true\" : \"false\";\r\n        const d = card.querySelector(\".status-detail\");\r\n        if (d && detail) d.textContent = detail;\r\n    }\r\n    function setThreat(level, label)\r\n    {\r\n        if (threatFill)  threatFill.style.width = level + \"%\";\r\n        if (threatLevel) threatLevel.textContent = label;\r\n    }\r\n    function fmtBytes(n)\r\n    {\r\n        if (n == null) return \"—\";\r\n        const u = [\"B\",\"KB\",\"MB\",\"GB\",\"TB\"]; let i = 0;\r\n        while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }\r\n        return n.toFixed(n < 10 && i > 0 ? 1 : 0) + \" \" + u[i];\r\n    }\r\n\r\n    /* ============================================================\r\n       TARGET HANDLING\r\n       ============================================================ */\r\n    function renderTarget()\r\n    {\r\n        const tg = state.target;\r\n        if (!tg)\r\n        {\r\n            pathEl.textContent = \"No target selected\";\r\n            targetCard.dataset.blocked = \"false\";\r\n            targetWarning.dataset.blocked = \"false\";\r\n            targetWarning.textContent = \"Collapse is irreversible. The system drive, the app drive, and protected roots are blocked by the gravity guard.\";\r\n            targetMeta.hidden = true;\r\n            setStatusCard(stTarget, false, \"Pending\");\r\n            setReadout(\"CORE IDLE\", \"Select a target to charge the singularity.\");\r\n            setStageState(\"idle\");\r\n            setThreat(6, \"IDLE\");\r\n            setIntensity(0.18);\r\n            updateLockUI();\r\n            return;\r\n        }\r\n\r\n        pathEl.textContent    = tg.path;\r\n\r\n        if (tg.type === \"drive\")\r\n        {\r\n            tmType.textContent = \"Drive\";\r\n        } else\r\n        {\r\n            tmType.textContent = \"Folder\";\r\n        }\r\n\r\n        if (tg.items == null)\r\n        {\r\n            tmItems.textContent = \"— items\";\r\n        } else\r\n        {\r\n            tmItems.textContent = tg.items + \" items\";\r\n        }\r\n\r\n        if (tg.size == null)\r\n        {\r\n            tmSize.textContent = \"— size\";\r\n        } else\r\n        {\r\n            tmSize.textContent = fmtBytes(tg.size);\r\n        }\r\n\r\n        targetMeta.hidden = false;\r\n\r\n        if (tg.blocked)\r\n        {\r\n            targetCard.dataset.blocked    = \"true\";\r\n            targetWarning.dataset.blocked = \"true\";\r\n            targetWarning.textContent     = \"⛔ Guard blocked this target: \" + (tg.reason || \"protected path\") + \". Pick a folder or a non-system drive.\";\r\n            setStatusCard(stTarget, false, \"Blocked\");\r\n            setReadout(\"TARGET REJECTED\", tg.reason || \"Protected path.\");\r\n            setStageState(\"idle\");\r\n            setThreat(6, \"BLOCKED\");\r\n            setIntensity(0.18);\r\n        } else\r\n        {\r\n            targetCard.dataset.blocked    = \"false\";\r\n            targetWarning.dataset.blocked = \"false\";\r\n            targetWarning.textContent     = \"⚠ This target will be permanently destroyed. There is no recovery.\";\r\n            setStatusCard(stTarget, true, \"Locked\");\r\n            setReadout(\"TARGET LOCKED\", tg.path);\r\n            setStageState(\"charged\");\r\n            setThreat(45, \"CHARGED\");\r\n            setIntensity(0.45);\r\n        }\r\n        updateLockUI();\r\n    }\r\n\r\n    async function pickTarget(kind)\r\n    {\r\n        if (state.collapsing) return;\r\n        let picked = null;\r\n\r\n        if (HAS_API)\r\n        {\r\n            picked = await window.collapseAPI.selectTarget(kind);\r\n        } else\r\n        {\r\n            const demo    = kind === \"drive\" ? \"E:\\\\\" : \"C:\\\\Users\\\\Izm\\\\Desktop\\\\DemoFolder\";\r\n            const blocked = /^[A-Za-z]:\\\\?$/.test(demo) && demo.toUpperCase().startsWith(\"C\");\r\n            picked = { path: demo, type: kind, items: 1284, size: 5.4 * 1024 ** 3, blocked, reason: blocked ? \"System drive (demo)\" : \"\" };\r\n        }\r\n\r\n        if (!picked) return;\r\n        state.target = picked;\r\n        state.armed  = false;\r\n        renderTarget();\r\n    }\r\n\r\n    /* ============================================================\r\n       LOCK STATE MACHINE\r\n       ============================================================ */\r\n    function lockSatisfied()\r\n    {\r\n        if (!state.target) return false;\r\n        if (state.target.blocked) return false;\r\n        if (!state.pwVerified) return false;\r\n        return confirmInput.value.trim().toUpperCase() === CONFIRM_PHRASE;\r\n\r\n\r\n    }\r\n\r\n    let pwDebounce = null;\r\n    function scheduleVerify()\r\n    {\r\n        state.pwVerified = false;\r\n        clearTimeout(pwDebounce);\r\n        const candidate = pwInput.value;\r\n        if (!candidate) { updateLockUI(); return; }\r\n        pwDebounce = setTimeout(async () =>\r\n        {\r\n            state.pwChecking = true;\r\n            let ok = false;\r\n            try {\r\n                ok = HAS_API ? await window.collapseAPI.verifyPassword(candidate) : candidate.length > 0;\r\n            } catch { ok = false; }\r\n            state.pwChecking = false;\r\n            if (pwInput.value === candidate) {\r\n                state.pwVerified = !!ok;\r\n                if (!ok) flash(pwInput);\r\n                updateLockUI();\r\n            }\r\n        }, 250);\r\n    }\r\n\r\n    function updateLockUI()\r\n    {\r\n        const ready = lockSatisfied();\r\n        armBtn.disabled     = !ready || state.collapsing || state.armed;\r\n        executeBtn.disabled = !state.armed || state.collapsing;\r\n\r\n        if (state.collapsing)\r\n        {\r\n            collapseStatus.textContent = \"Collapsing target…\";\r\n            return;\r\n        }\r\n        if (state.armed)\r\n        {\r\n            armChip.textContent = \"ARMED\";\r\n            armChip.classList.add(\"danger-chip\");\r\n            armChip.dataset.armed = \"true\";\r\n            setStatusCard(stArm, true, \"Armed\");\r\n            setStageState(\"armed\");\r\n            setThreat(92, \"MAX\");\r\n            setIntensity(0.8);\r\n            setReadout(\"SEQUENCE ARMED\", \"Execute to begin the collapse.\");\r\n            collapseStatus.textContent = \"Armed — awaiting execute\";\r\n        } else\r\n        {\r\n            armChip.textContent   = ready ? \"Ready to arm\" : \"Disarmed\";\r\n            armChip.dataset.armed = \"false\";\r\n            setStatusCard(stArm, false, ready ? \"Ready\" : \"Disarmed\");\r\n            if (state.target && !state.target.blocked)\r\n            {\r\n                setStageState(\"charged\");\r\n                setThreat(ready ? 60 : 45, ready ? \"PRIMED\" : \"CHARGED\");\r\n                setIntensity(ready ? 0.55 : 0.45);\r\n            }\r\n            collapseStatus.textContent = state.target ? (state.target.blocked ? \"Target blocked\" : \"Target locked\") : \"Awaiting target\";\r\n        }\r\n    }\r\n\r\n    function arm()\r\n    {\r\n        if (!lockSatisfied()) { flash(armBtn); return; }\r\n        state.armed = true;\r\n        abortBtn.hidden = false;\r\n        updateLockUI();\r\n    }\r\n\r\n    function abort()\r\n    {\r\n        state.armed = false;\r\n        abortBtn.hidden = true;\r\n        if (state.collapsing) playFailureRecover();\r\n        if (HAS_API && state.collapsing) window.collapseAPI.abort();\r\n        updateLockUI();\r\n    }\r\n\r\n    function flash(el)\r\n    {\r\n        if (!el) return;\r\n        el.animate(\r\n            [{ outline: \"2px solid #ff5a3c\" }, { outline: \"2px solid transparent\" }],\r\n            { duration: 500, iterations: 2 }\r\n        );\r\n    }\r\n\r\n    /* ============================================================\r\n       EXECUTE COLLAPSE\r\n       ============================================================ */\r\n    function openFinalSeal(tg)\r\n    {\r\n        return new Promise((resolve) =>\r\n        {\r\n            if (!sealDialog)\r\n            {\r\n                resolve(true);\r\n                return;\r\n            }\r\n\r\n            sealTargetPath.textContent = tg?.path || \"No target selected\";\r\n            sealTargetType.textContent = tg?.type === \"drive\" ? \"Drive target\" : \"Folder target\";\r\n            sealTargetMode.textContent = \"Mode: \" + wipeMode.value.toUpperCase();\r\n            sealAcknowledge.checked = false;\r\n            sealConfirmBtn.disabled = true;\r\n\r\n            const onCheck = () =>\r\n            {\r\n                sealConfirmBtn.disabled = !sealAcknowledge.checked;\r\n            };\r\n\r\n            const onClose = () =>\r\n            {\r\n                sealAcknowledge.removeEventListener(\"change\", onCheck);\r\n                sealDialog.removeEventListener(\"close\", onClose);\r\n                resolve(sealDialog.returnValue === \"confirm\" && sealAcknowledge.checked);\r\n            };\r\n\r\n            sealAcknowledge.addEventListener(\"change\", onCheck);\r\n            sealDialog.addEventListener(\"close\", onClose, { once: true });\r\n\r\n            if (typeof sealDialog.showModal === \"function\")\r\n            {\r\n                sealDialog.showModal();\r\n            } else\r\n            {\r\n                resolve(window.confirm(\"Final seal: release the collapse?\"));\r\n            }\r\n        });\r\n    }\r\n\r\n    async function execute()\r\n    {\r\n        if (!state.armed || state.collapsing) return;\r\n        const tg = state.target;\r\n        if (!tg || tg.blocked) return;\r\n\r\n        let ok = true;\r\n        if (HAS_API)\r\n        {\r\n            ok = await window.collapseAPI.confirmDestroy(tg.path, wipeMode.value);\r\n        } else\r\n        {\r\n            ok = window.confirm(`DEMO: permanently collapse \"${tg.path}\"?\\n(No files are touched in browser preview.)`);\r\n        }\r\n        if (!ok) return;\r\n\r\n        const finalSealOk = await openFinalSeal(tg);\r\n        if (!finalSealOk)\r\n        {\r\n            flash(executeBtn);\r\n            return;\r\n        }\r\n\r\n        state.collapsing = true;\r\n        abortBtn.hidden = false;\r\n        setStageState(\"collapsing\");\r\n        setReadout(\"COLLAPSING\", \"Field pressure rising…\");\r\n        setThreat(100, \"CRITICAL\");\r\n        setIntensity(1);\r\n        progressWrap.hidden = false;\r\n        updateLockUI();\r\n        setStatusCard(stCollapse, false, \"Collapsing\");\r\n\r\n        try\r\n        {\r\n            if (HAS_API)\r\n            {\r\n                await window.collapseAPI.run({ path: tg.path, type: tg.type, mode: wipeMode.value, password: pwInput.value }, onProgress);\r\n            } else\r\n            {\r\n                await demoRun();\r\n            }\r\n            onDone(true);\r\n        } catch (err)\r\n        {\r\n            onDone(false, err && err.message ? err.message : String(err));\r\n        }\r\n    }\r\n\r\n    function onProgress(p)\r\n    {\r\n        const pct = Math.round(p.pct != null ? p.pct : (p.total ? (p.done / p.total) * 100 : 0));\r\n        cpFill.style.width = pct + \"%\";\r\n        cpPct.textContent  = pct + \"%\";\r\n        if (p.phase)   cpLabel.textContent = p.phase;\r\n        if (p.current) cpFile.textContent  = p.current;\r\n        holdCrush(pct);             // ← keep canvas phase synced with real wipe progress\r\n        setReadout(\"COLLAPSING\", (p.phase || \"Crushing\") + \" · \" + pct + \"%\");\r\n    }\r\n\r\n    function onDone(success, errMsg)\r\n    {\r\n        state.collapsing = false;\r\n        state.armed      = false;\r\n        abortBtn.hidden  = true;\r\n\r\n        if (success)\r\n        {\r\n            triggerExplosion();     // ← detonate: flash + shockwaves + debris, then auto-settle\r\n\r\n            cpFill.style.width = \"100%\";\r\n            cpPct.textContent  = \"100%\";\r\n            cpLabel.textContent = \"Collapse complete\";\r\n            cpFile.textContent  = state.target ? state.target.path + \" erased\" : \"\";\r\n\r\n            setStageState(\"done\");\r\n            setReadout(\"SINGULARITY STABLE\", \"Target erased. Field collapsed.\");\r\n            setStatusCard(stCollapse, true, \"Erased\");\r\n            setThreat(0, \"EMPTY\");\r\n            setIntensity(0.25);\r\n            collapseStatus.textContent = \"Collapse complete\";\r\n            state.target = null;\r\n\r\n            setTimeout(() => { progressWrap.hidden = true; renderTarget(); }, 2600);\r\n        } else\r\n        {\r\n            playFailureRecover();   // ← gentle de-escalation\r\n\r\n            setStageState(\"charged\");\r\n            setReadout(\"COLLAPSE FAILED\", errMsg || \"Aborted.\");\r\n            setStatusCard(stCollapse, false, \"Failed\");\r\n            cpLabel.textContent    = \"Failed: \" + (errMsg || \"aborted\");\r\n            collapseStatus.textContent = \"Collapse failed\";\r\n            setTimeout(() => { progressWrap.hidden = true; }, 2600);\r\n        }\r\n        updateLockUI();\r\n    }\r\n\r\n    // DEMO fake progress (browser preview only)\r\n    function demoRun()\r\n    {\r\n        return new Promise((resolve) =>\r\n        {\r\n            let pct = 0;\r\n            const phases = [\"Sealing field\", \"Overwriting\", \"Crushing\", \"Erasing\"];\r\n            const id = setInterval(() =>\r\n            {\r\n                pct += rand(2, 7);\r\n                if (pct >= 100) { pct = 100; clearInterval(id); resolve(); }\r\n                onProgress({\r\n                    pct,\r\n                    phase:   phases[Math.min(phases.length - 1, Math.floor(pct / 26))],\r\n                    current: \"demo/file_\" + Math.floor(pct) + \".bin\",\r\n                });\r\n            }, 180);\r\n        });\r\n    }\r\n\r\n    /* ============================================================\r\n       WIRE EVENTS\r\n       ============================================================ */\r\n    pickFolderBtn && pickFolderBtn.addEventListener(\"click\", () => pickTarget(\"folder\"));\r\n    pickDriveBtn  && pickDriveBtn.addEventListener(\"click\", () => pickTarget(\"drive\"));\r\n    clearBtn      && clearBtn.addEventListener(\"click\", () => {state.target = null; state.armed = false; renderTarget();});\r\n\r\n    pwInput && pwInput.addEventListener(\"input\", () => {state.armed = false; armChip.dataset.armed = \"false\"; scheduleVerify();});\r\n    confirmInput && confirmInput.addEventListener(\"input\", () => {state.armed = false; armChip.dataset.armed = \"false\"; updateLockUI();});\r\n    wipeMode && wipeMode.addEventListener(\"change\", updateLockUI);\r\n\r\n    armBtn     && armBtn.addEventListener(\"click\", arm);\r\n    executeBtn && executeBtn.addEventListener(\"click\", execute);\r\n    abortBtn   && abortBtn.addEventListener(\"click\", abort);\r\n\r\n    // Guard chip\r\n    if (HAS_API && window.collapseAPI.guardStatus)\r\n    {\r\n        window.collapseAPI.guardStatus().then((on) =>\r\n        {\r\n            guardChip.textContent  = \"System guard: \" + (on ? \"ON\" : \"OFF\");\r\n            guardChip.dataset.guard = on ? \"on\" : \"off\";\r\n        }).catch(() => {});\r\n    } else\r\n    {\r\n        guardChip.textContent   = HAS_API ? \"System guard: ON\" : \"Demo mode (no IPC)\";\r\n        if (!HAS_API) guardChip.dataset.guard = \"off\";\r\n    }\r\n\r\n    // Boot\r\n    renderTarget();\r\n    window.addEventListener(\"beforeunload\", () => raf && cancelAnimationFrame(raf));\r\n})();
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/crp56/electron-app/renderer/gravitional_collapse.js b/crp56/electron-app/renderer/gravitional_collapse.js
+--- a/crp56/electron-app/renderer/gravitional_collapse.js	(revision 2b2352358a8688e0a39629b092bacd06bf647830)
++++ b/crp56/electron-app/renderer/gravitional_collapse.js	(date 1782327372066)
+@@ -52,13 +52,6 @@
+     const stArm      = $("stArm");
+     const stCollapse = $("stCollapse");
+ 
+-    const sealDialog       = $("collapseSealDialog");
+-    const sealTargetPath   = $("sealTargetPath");
+-    const sealTargetType   = $("sealTargetType");
+-    const sealTargetMode   = $("sealTargetMode");
+-    const sealAcknowledge  = $("sealAcknowledge");
+-    const sealConfirmBtn   = $("sealConfirmBtn");
+-
+     /* ---------- state ---------- */
+     const state = {
+         target:      null,   // { path, type:'folder'|'drive', items, size, blocked, reason }
+@@ -119,8 +112,7 @@
+     {
+         const { cx, cy } = center();
+         const maxR = Math.min(cw, ch) * (0.22 + 0.20 * bias);
+-        for (let i = 0; i < n; i++)
+-        {
++        for (let i = 0; i < n; i++) {
+             const a = Math.random() * Math.PI * 2;
+             particles.push({
+                 x: cx + Math.cos(a) * rand(24, maxR),
+@@ -130,15 +122,12 @@
+                 hue: rand(18, 54), orbit: rand(0.002, 0.01),
+             });
+         }
+-
+     }
+ 
+     function spawnDebris(count, power = 1)
+     {
+         const { cx, cy } = center();
+-
+-        for (let i = 0; i < count; i++)
+-        {
++        for (let i = 0; i < count; i++) {
+             const a = Math.random() * Math.PI * 2;
+             const speed = rand(2.5, 8.5) * power;
+             debris.push({
+@@ -150,7 +139,6 @@
+                 hue: rand(14, 52), alpha: rand(0.65, 1.0),
+             });
+         }
+-
+     }
+ 
+     function addShockwave(power = 1)
+@@ -189,29 +177,12 @@
+     // Called from onProgress() — keeps visual phase aligned with real wipe progress
+     function holdCrush(progressPct)
+     {
+-        if (seq.phase === "explode" || seq.phase === "settle") {return;}
+-
++        if (seq.phase === "explode" || seq.phase === "settle") return;
+         const pct = clamp((progressPct || 0) / 100, 0, 1);
+         const now = nowMs();
+-
+-        const inChargeRange = pct < 0.22;
+-        const inImplodeRange = pct >= 0.22 && pct < 0.62;
+-
+-        let nextPhase = "crush";
+-
+-        if (inChargeRange)
+-        {
+-            nextPhase = "charge";
+-        } else if (inImplodeRange)
+-        {
+-            nextPhase = "implode";
+-        }
+-
+-        if (seq.phase !== nextPhase)
+-        {
+-            seq.phase = nextPhase;
+-            seq.phaseStart = now;
+-        }
++        if (pct < 0.22)       { if (seq.phase !== "charge")  { seq.phase = "charge";  seq.phaseStart = now; } }
++        else if (pct < 0.62)  { if (seq.phase !== "implode") { seq.phase = "implode"; seq.phaseStart = now; } }
++        else                  { if (seq.phase !== "crush")   { seq.phase = "crush";   seq.phaseStart = now; } }
+     }
+ 
+     // Called when onDone(true) fires — detonates the explosion
+@@ -244,8 +215,7 @@
+ 
+     function phaseIntensity()
+     {
+-        switch (seq.phase)
+-        {
++        switch (seq.phase) {
+             case "idle":    return seq.manualIntensity;
+             case "charge":  return lerp(seq.manualIntensity, 0.95, easeInOut(phaseT(900)));
+             case "implode": return lerp(0.95, 1.22, easeInCubic(phaseT(700)));
+@@ -259,8 +229,7 @@
+     // Advances phase transitions automatically; called once per draw frame
+     function updateSequence()
+     {
+-        switch (seq.phase)
+-        {
++        switch (seq.phase) {
+             case "charge":
+                 if (phaseT(900) >= 1) { seq.phase = "implode"; seq.phaseStart = nowMs(); }
+                 break;
+@@ -268,8 +237,7 @@
+                 if (phaseT(700) >= 1) { seq.phase = "crush";   seq.phaseStart = nowMs(); }
+                 break;
+             case "explode":
+-                if (phaseT(700) >= 1)
+-                {
++                if (phaseT(700) >= 1) {
+                     seq.phase = "settle"; seq.phaseStart = nowMs();
+                     seq.shake = 0.22;
+                 }
+@@ -300,8 +268,7 @@
+         ctx.fillRect(0, 0, cw, ch);
+ 
+         // Extra vignette during implosion crush
+-        if (seq.phase === "implode" || seq.phase === "crush")
+-        {
++        if (seq.phase === "implode" || seq.phase === "crush") {
+             const vig = ctx.createRadialGradient(cx, cy, 10, cx, cy, Math.max(cw, ch) * 0.52);
+             vig.addColorStop(0,    "rgba(0,0,0,0)");
+             vig.addColorStop(0.42, "rgba(0,0,0,0.14)");
+@@ -313,21 +280,10 @@
+ 
+     function drawRings(cx, cy, t, v)
+     {
+-        let implodeBias = 0;
+-
+-        if (seq.phase === "implode" || seq.phase === "crush")
+-        {
+-            implodeBias = 1;
+-        }
++        const implodeBias = (seq.phase === "implode" || seq.phase === "crush") ? 1 : 0;
++        const explodeT    = seq.phase === "explode" ? easeOutCubic(phaseT(600)) : 0;
+ 
+-        let explodeT = 0;
+-        if (seq.phase === "explode")
+-        {
+-            explodeT = easeOutCubic(phaseT(600));
+-        }
+-
+-        for (let i = 0; i < 6; i++)
+-        {
++        for (let i = 0; i < 6; i++) {
+             const baseR     = Math.min(cw, ch) * (0.10 + i * 0.074);
+             const collapse  = 1 - v * 0.16 - implodeBias * 0.26;
+             const expand    = 1 + explodeT * (0.12 + i * 0.04);
+@@ -386,25 +342,21 @@
+         const explodePush = seq.phase === "explode";
+         const explodePct  = explodePush ? (1 - phaseT(500)) : 0;
+ 
+-        for (let i = particles.length - 1; i >= 0; i--)
+-        {
++        for (let i = particles.length - 1; i >= 0; i--) {
+             const p  = particles[i];
+             const dx = cx - p.x, dy = cy - p.y;
+             const d  = Math.max(16, Math.hypot(dx, dy));
+             const nx = dx / d, ny = dy / d;
+ 
+-            if (strongPull)
+-            {
++            if (strongPull) {
+                 const f  = 0.10 + v * 0.18;
+                 const tg = p.orbit * 40;
+                 p.vx += nx * f + (-ny * tg);
+                 p.vy += ny * f + ( nx * tg);
+-            } else if (explodePush)
+-            {
++            } else if (explodePush) {
+                 p.vx -= nx * explodePct * 0.9;
+                 p.vy -= ny * explodePct * 0.9;
+-            } else
+-            {
++            } else {
+                 const f = (0.018 + v * 0.08) / d * 28;
+                 p.vx += nx * f; p.vy += ny * f;
+             }
+@@ -555,8 +507,7 @@
+     function renderTarget()
+     {
+         const tg = state.target;
+-        if (!tg)
+-        {
++        if (!tg) {
+             pathEl.textContent = "No target selected";
+             targetCard.dataset.blocked = "false";
+             targetWarning.dataset.blocked = "false";
+@@ -572,35 +523,12 @@
+         }
+ 
+         pathEl.textContent    = tg.path;
+-
+-        if (tg.type === "drive")
+-        {
+-            tmType.textContent = "Drive";
+-        } else
+-        {
+-            tmType.textContent = "Folder";
+-        }
+-
+-        if (tg.items == null)
+-        {
+-            tmItems.textContent = "— items";
+-        } else
+-        {
+-            tmItems.textContent = tg.items + " items";
+-        }
+-
+-        if (tg.size == null)
+-        {
+-            tmSize.textContent = "— size";
+-        } else
+-        {
+-            tmSize.textContent = fmtBytes(tg.size);
+-        }
+-
+-        targetMeta.hidden = false;
++        tmType.textContent    = tg.type === "drive" ? "Drive" : "Folder";
++        tmItems.textContent   = tg.items != null ? tg.items + " items" : "— items";
++        tmSize.textContent    = tg.size  != null ? fmtBytes(tg.size) : "— size";
++        targetMeta.hidden     = false;
+ 
+-        if (tg.blocked)
+-        {
++        if (tg.blocked) {
+             targetCard.dataset.blocked    = "true";
+             targetWarning.dataset.blocked = "true";
+             targetWarning.textContent     = "⛔ Guard blocked this target: " + (tg.reason || "protected path") + ". Pick a folder or a non-system drive.";
+@@ -609,8 +537,7 @@
+             setStageState("idle");
+             setThreat(6, "BLOCKED");
+             setIntensity(0.18);
+-        } else
+-        {
++        } else {
+             targetCard.dataset.blocked    = "false";
+             targetWarning.dataset.blocked = "false";
+             targetWarning.textContent     = "⚠ This target will be permanently destroyed. There is no recovery.";
+@@ -628,11 +555,9 @@
+         if (state.collapsing) return;
+         let picked = null;
+ 
+-        if (HAS_API)
+-        {
++        if (HAS_API) {
+             picked = await window.collapseAPI.selectTarget(kind);
+-        } else
+-        {
++        } else {
+             const demo    = kind === "drive" ? "E:\\" : "C:\\Users\\Izm\\Desktop\\DemoFolder";
+             const blocked = /^[A-Za-z]:\\?$/.test(demo) && demo.toUpperCase().startsWith("C");
+             picked = { path: demo, type: kind, items: 1284, size: 5.4 * 1024 ** 3, blocked, reason: blocked ? "System drive (demo)" : "" };
+@@ -649,12 +574,8 @@
+        ============================================================ */
+     function lockSatisfied()
+     {
+-        if (!state.target) return false;
+-        if (state.target.blocked) return false;
+-        if (!state.pwVerified) return false;
+-        return confirmInput.value.trim().toUpperCase() === CONFIRM_PHRASE;
+-
+-
++        return !!state.target && !state.target.blocked && state.pwVerified
++            && confirmInput.value.trim().toUpperCase() === CONFIRM_PHRASE;
+     }
+ 
+     let pwDebounce = null;
+@@ -686,13 +607,11 @@
+         armBtn.disabled     = !ready || state.collapsing || state.armed;
+         executeBtn.disabled = !state.armed || state.collapsing;
+ 
+-        if (state.collapsing)
+-        {
++        if (state.collapsing) {
+             collapseStatus.textContent = "Collapsing target…";
+             return;
+         }
+-        if (state.armed)
+-        {
++        if (state.armed) {
+             armChip.textContent = "ARMED";
+             armChip.classList.add("danger-chip");
+             armChip.dataset.armed = "true";
+@@ -702,18 +621,18 @@
+             setIntensity(0.8);
+             setReadout("SEQUENCE ARMED", "Execute to begin the collapse.");
+             collapseStatus.textContent = "Armed — awaiting execute";
+-        } else
+-        {
++        } else {
+             armChip.textContent   = ready ? "Ready to arm" : "Disarmed";
+             armChip.dataset.armed = "false";
+             setStatusCard(stArm, false, ready ? "Ready" : "Disarmed");
+-            if (state.target && !state.target.blocked)
+-            {
++            if (state.target && !state.target.blocked) {
+                 setStageState("charged");
+                 setThreat(ready ? 60 : 45, ready ? "PRIMED" : "CHARGED");
+                 setIntensity(ready ? 0.55 : 0.45);
+             }
+-            collapseStatus.textContent = state.target ? (state.target.blocked ? "Target blocked" : "Target locked") : "Awaiting target";
++            collapseStatus.textContent = state.target
++                ? (state.target.blocked ? "Target blocked" : "Target locked")
++                : "Awaiting target";
+         }
+     }
+ 
+@@ -746,47 +665,6 @@
+     /* ============================================================
+        EXECUTE COLLAPSE
+        ============================================================ */
+-    function openFinalSeal(tg)
+-    {
+-        return new Promise((resolve) =>
+-        {
+-            if (!sealDialog)
+-            {
+-                resolve(true);
+-                return;
+-            }
+-
+-            sealTargetPath.textContent = tg?.path || "No target selected";
+-            sealTargetType.textContent = tg?.type === "drive" ? "Drive target" : "Folder target";
+-            sealTargetMode.textContent = "Mode: " + wipeMode.value.toUpperCase();
+-            sealAcknowledge.checked = false;
+-            sealConfirmBtn.disabled = true;
+-
+-            const onCheck = () =>
+-            {
+-                sealConfirmBtn.disabled = !sealAcknowledge.checked;
+-            };
+-
+-            const onClose = () =>
+-            {
+-                sealAcknowledge.removeEventListener("change", onCheck);
+-                sealDialog.removeEventListener("close", onClose);
+-                resolve(sealDialog.returnValue === "confirm" && sealAcknowledge.checked);
+-            };
+-
+-            sealAcknowledge.addEventListener("change", onCheck);
+-            sealDialog.addEventListener("close", onClose, { once: true });
+-
+-            if (typeof sealDialog.showModal === "function")
+-            {
+-                sealDialog.showModal();
+-            } else
+-            {
+-                resolve(window.confirm("Final seal: release the collapse?"));
+-            }
+-        });
+-    }
+-
+     async function execute()
+     {
+         if (!state.armed || state.collapsing) return;
+@@ -794,44 +672,37 @@
+         if (!tg || tg.blocked) return;
+ 
+         let ok = true;
+-        if (HAS_API)
+-        {
++        if (HAS_API) {
+             ok = await window.collapseAPI.confirmDestroy(tg.path, wipeMode.value);
+-        } else
+-        {
++        } else {
+             ok = window.confirm(`DEMO: permanently collapse "${tg.path}"?\n(No files are touched in browser preview.)`);
+         }
+         if (!ok) return;
+ 
+-        const finalSealOk = await openFinalSeal(tg);
+-        if (!finalSealOk)
+-        {
+-            flash(executeBtn);
+-            return;
+-        }
+-
+         state.collapsing = true;
+-        abortBtn.hidden = false;
++        abortBtn.hidden  = false;
++
+         setStageState("collapsing");
+         setReadout("COLLAPSING", "Field pressure rising…");
+         setThreat(100, "CRITICAL");
+         setIntensity(1);
++        playCollapseSequence();     // ← start charge → implode → crush animation
++
+         progressWrap.hidden = false;
+         updateLockUI();
+         setStatusCard(stCollapse, false, "Collapsing");
+ 
+-        try
+-        {
+-            if (HAS_API)
+-            {
+-                await window.collapseAPI.run({ path: tg.path, type: tg.type, mode: wipeMode.value, password: pwInput.value }, onProgress);
+-            } else
+-            {
++        try {
++            if (HAS_API) {
++                await window.collapseAPI.run(
++                    { path: tg.path, type: tg.type, mode: wipeMode.value, password: pwInput.value },
++                    onProgress
++                );
++            } else {
+                 await demoRun();
+             }
+             onDone(true);
+-        } catch (err)
+-        {
++        } catch (err) {
+             onDone(false, err && err.message ? err.message : String(err));
+         }
+     }
+@@ -853,8 +724,7 @@
+         state.armed      = false;
+         abortBtn.hidden  = true;
+ 
+-        if (success)
+-        {
++        if (success) {
+             triggerExplosion();     // ← detonate: flash + shockwaves + debris, then auto-settle
+ 
+             cpFill.style.width = "100%";
+@@ -871,8 +741,7 @@
+             state.target = null;
+ 
+             setTimeout(() => { progressWrap.hidden = true; renderTarget(); }, 2600);
+-        } else
+-        {
++        } else {
+             playFailureRecover();   // ← gentle de-escalation
+ 
+             setStageState("charged");
+@@ -910,10 +779,16 @@
+        ============================================================ */
+     pickFolderBtn && pickFolderBtn.addEventListener("click", () => pickTarget("folder"));
+     pickDriveBtn  && pickDriveBtn.addEventListener("click", () => pickTarget("drive"));
+-    clearBtn      && clearBtn.addEventListener("click", () => {state.target = null; state.armed = false; renderTarget();});
++    clearBtn      && clearBtn.addEventListener("click", () => {
++        state.target = null; state.armed = false; renderTarget();
++    });
+ 
+-    pwInput && pwInput.addEventListener("input", () => {state.armed = false; armChip.dataset.armed = "false"; scheduleVerify();});
+-    confirmInput && confirmInput.addEventListener("input", () => {state.armed = false; armChip.dataset.armed = "false"; updateLockUI();});
++    pwInput && pwInput.addEventListener("input", () => {
++        state.armed = false; armChip.dataset.armed = "false"; scheduleVerify();
++    });
++    confirmInput && confirmInput.addEventListener("input", () => {
++        state.armed = false; armChip.dataset.armed = "false"; updateLockUI();
++    });
+     wipeMode && wipeMode.addEventListener("change", updateLockUI);
+ 
+     armBtn     && armBtn.addEventListener("click", arm);
+@@ -921,15 +796,12 @@
+     abortBtn   && abortBtn.addEventListener("click", abort);
+ 
+     // Guard chip
+-    if (HAS_API && window.collapseAPI.guardStatus)
+-    {
+-        window.collapseAPI.guardStatus().then((on) =>
+-        {
++    if (HAS_API && window.collapseAPI.guardStatus) {
++        window.collapseAPI.guardStatus().then((on) => {
+             guardChip.textContent  = "System guard: " + (on ? "ON" : "OFF");
+             guardChip.dataset.guard = on ? "on" : "off";
+         }).catch(() => {});
+-    } else
+-    {
++    } else {
+         guardChip.textContent   = HAS_API ? "System guard: ON" : "Demo mode (no IPC)";
+         if (!HAS_API) guardChip.dataset.guard = "off";
+     }
