@@ -588,7 +588,13 @@ ipcMain.handle('collapse:run', async (event, job) =>
     if (!collapseSecret.verify(job && job.password))
     {
         const msg = 'Password verification failed';
-        collapseLog.record({ path: job && job.path, type: job && job.type, mode: job && job.mode, status: 'failed', error: msg });
+        await collapseLog.record({
+            path: job && job.path,
+            type: job && job.type,
+            mode: job && job.mode,
+            status: 'failed',
+            error: msg
+        });
         return { ok: false, error: msg };
     }
 
@@ -728,11 +734,7 @@ function createWindow()
         title: 'CRP56',
         backgroundColor: '#161616',
         autoHideMenuBar: true,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-            contextIsolation: true,
-            nodeIntegration: false
-        }
+        webPreferences: {preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false}
     });
 
     if (!app.isPackaged)
