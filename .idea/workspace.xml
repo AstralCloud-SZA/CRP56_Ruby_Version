@@ -4,13 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment=" gravity collapse feature and page rework">
-      <change afterPath="$PROJECT_DIR$/crp56/electron-app/collapse_secret.js" afterDir="false" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment=" gravity collapse feature and page rework 2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/preload.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/preload.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/collapse_logger.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/collapse_logger.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/gravitional_collapse.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/gravitional_collapse.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -246,15 +241,7 @@
       <workItem from="1782161074424" duration="1605000" />
       <workItem from="1782162826413" duration="4987000" />
       <workItem from="1782211184776" duration="8141000" />
-      <workItem from="1782303543313" duration="3812000" />
-    </task>
-    <task id="LOCAL-00041" summary="path and requirement patches">
-      <option name="closed" value="true" />
-      <created>1781559679932</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1781559679932</updated>
+      <workItem from="1782303543313" duration="5479000" />
     </task>
     <task id="LOCAL-00042" summary="small decryption TWEAK">
       <option name="closed" value="true" />
@@ -640,7 +627,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782305791636</updated>
     </task>
-    <option name="localTasksCounter" value="90" />
+    <task id="LOCAL-00090" summary=" gravity collapse feature and page rework 2">
+      <option name="closed" value="true" />
+      <created>1782307389962</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1782307389962</updated>
+    </task>
+    <option name="localTasksCounter" value="91" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -713,7 +708,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="font import section changes" />
     <MESSAGE value="distro and forge work 2" />
     <MESSAGE value="distro and forge work 3" />
     <MESSAGE value="Distro ready work fonts added to render and adjustmenst to css" />
@@ -738,6 +732,7 @@
     <MESSAGE value=" gravity collapse feature and page intial work 6" />
     <MESSAGE value=" gravity collapse feature and page intial work 7" />
     <MESSAGE value=" gravity collapse feature and page rework" />
-    <option name="LAST_COMMIT_MESSAGE" value=" gravity collapse feature and page rework" />
+    <MESSAGE value=" gravity collapse feature and page rework 2" />
+    <option name="LAST_COMMIT_MESSAGE" value=" gravity collapse feature and page rework 2" />
   </component>
 </project>
