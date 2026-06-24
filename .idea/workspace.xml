@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment=" gravity collapse feature and page rework 4">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="reverted to work commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/gravity_collapse.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/gravity_collapse.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/gravitycollapse.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/gravitycollapse.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/particle_system.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/particle_system.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +49,7 @@
       </branch-storage>
     </favorite-branches>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -247,6 +246,7 @@
       <workItem from="1782211184776" duration="8141000" />
       <workItem from="1782303543313" duration="5828000" />
       <workItem from="1782325108727" duration="1803000" />
+      <workItem from="1782329973151" duration="1128000" />
     </task>
     <task id="LOCAL-00044" summary="bg music meiko nakahara friday album">
       <option name="closed" value="true" />

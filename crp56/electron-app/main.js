@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, session } = require('electron');
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
@@ -722,7 +722,7 @@ ipcMain.handle('music:list', () =>
     return list;
 });
 
-function createWindow()
+async function createWindow()
 {
     mainWindow = new BrowserWindow({
         width: 1348,
@@ -734,16 +734,22 @@ function createWindow()
         title: 'CRP56',
         backgroundColor: '#161616',
         autoHideMenuBar: true,
-        webPreferences: {preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false}
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: false
+        }
     });
 
     if (!app.isPackaged)
     {
+        await mainWindow.webContents.session.clearCache();
+        await mainWindow.webContents.session.clearStorageData();
         mainWindow.webContents.openDevTools({ mode: 'detach' });
     }
 
     const rendererPath = path.join(__dirname, 'renderer', 'index.html');
-    mainWindow.loadFile(rendererPath);
+    await mainWindow.loadFile(rendererPath);
 
     mainWindow.webContents.on('did-finish-load', () =>
     {

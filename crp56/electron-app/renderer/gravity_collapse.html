@@ -19,7 +19,13 @@
             <header class="topbar gravity-topbar">
                 <div class="brand-wrap">
                     <div class="brand-mark gravity-mark" aria-hidden="true">
-                        <div class="mini-black-hole" id="blackHoleMark"></div>
+                        <canvas
+                                class="mini-black-hole"
+                                id="blackHoleMark"
+                                width="52"
+                                height="52"
+                                aria-hidden="true"
+                        ></canvas>
                     </div>
                     <div>
                         <div class="eyebrow">Carrera // Skill: Gravity Collapse</div>
@@ -35,10 +41,13 @@
 
             <!-- ===================== MAIN GRID ===================== -->
             <section class="gravity-grid">
-
                 <!-- ----- LEFT: the singularity stage ----- -->
                 <article class="gravity-stage" id="collapseStage" data-state="idle">
                     <canvas id="singularityCanvas" class="singularity-canvas" aria-hidden="true"></canvas>
+
+                    <div class="stage-flare" aria-hidden="true"></div>
+                    <div class="stage-rings" aria-hidden="true"></div>
+                    <div class="stage-embers" aria-hidden="true"></div>
 
                     <div class="stage-readout" id="stageReadout">
                         <span class="kicker">Localized collapse field</span>
@@ -55,9 +64,10 @@
                         </p>
                     </div>
 
-                    <!-- collapse progress sweep -->
                     <div class="collapse-progress" id="collapseProgress" hidden>
-                        <div class="cp-bar"><div class="cp-fill" id="cpFill"></div></div>
+                        <div class="cp-bar">
+                            <div class="cp-fill" id="cpFill"></div>
+                        </div>
                         <div class="cp-meta">
                             <span id="cpLabel">Collapsing…</span>
                             <span id="cpPct">0%</span>
@@ -68,8 +78,6 @@
 
                 <!-- ----- RIGHT: controls ----- -->
                 <aside class="gravity-side">
-
-                    <!-- Target -->
                     <section class="system-panel gravity-card">
                         <h2 class="panel-title">Target Node</h2>
 
@@ -95,7 +103,6 @@
                         </div>
                     </section>
 
-                    <!-- Lock -->
                     <section class="system-panel gravity-card">
                         <h2 class="panel-title">Collapse Lock</h2>
 
@@ -117,7 +124,13 @@
                                 <div class="mini-label">Password</div>
                                 <div class="subtle">Required to unlock the chamber.</div>
                             </div>
-                            <input class="gravity-input" id="collapsePassword" type="password" placeholder="Enter password" autocomplete="off" />
+                            <input
+                                    class="gravity-input"
+                                    id="collapsePassword"
+                                    type="password"
+                                    placeholder="Enter password"
+                                    autocomplete="off"
+                            />
                         </div>
 
                         <div class="setting-row gravity-row">
@@ -125,22 +138,35 @@
                                 <div class="mini-label">Confirm phrase</div>
                                 <div class="subtle">Type COLLAPSE to arm.</div>
                             </div>
-                            <input class="gravity-input" id="collapseConfirm" type="text" placeholder="COLLAPSE" autocomplete="off" />
+                            <input
+                                    class="gravity-input"
+                                    id="collapseConfirm"
+                                    type="text"
+                                    placeholder="COLLAPSE"
+                                    autocomplete="off"
+                            />
                         </div>
 
                         <div class="lock-actions">
-                            <button class="theme-button gravity-mini-btn" id="armBtn" type="button" disabled>Arm Sequence</button>
-                            <button class="theme-button gravity-execute" id="executeBtn" type="button" disabled>Execute Collapse</button>
-                            <button class="secondary-btn gravity-btn" id="abortBtn" type="button" hidden>Abort</button>
+                            <button class="theme-button gravity-mini-btn" id="armBtn" type="button" disabled>
+                                Arm Sequence
+                            </button>
+                            <button class="theme-button gravity-execute" id="executeBtn" type="button" disabled>
+                                Execute Collapse
+                            </button>
+                            <button class="secondary-btn gravity-btn" id="abortBtn" type="button" hidden>
+                                Abort
+                            </button>
                         </div>
                     </section>
 
-                    <!-- Status -->
                     <section class="system-panel gravity-card">
                         <h2 class="panel-title">Threat Meter</h2>
 
                         <div class="threat-meter">
-                            <div class="threat-track"><div class="threat-fill" id="threatFill"></div></div>
+                            <div class="threat-track">
+                                <div class="threat-fill" id="threatFill"></div>
+                            </div>
                             <div class="threat-meta">
                                 <span>Gravity pressure</span>
                                 <span id="threatLevel">IDLE</span>
@@ -179,6 +205,7 @@
             <div class="rail-logo" aria-hidden="true">
                 <canvas id="blackHoleRail" width="54" height="54"></canvas>
             </div>
+
             <nav class="rail-nav">
                 <a class="nav-btn" href="./home.html" data-sfx="cursor">Home</a>
                 <a class="nav-btn" href="./encrypt.html" data-sfx="cursor">Enc</a>
@@ -187,6 +214,7 @@
                 <a class="nav-btn" href="./settings.html" data-sfx="cursor">Set</a>
                 <a class="nav-btn" href="./about.html" data-sfx="cursor">About</a>
             </nav>
+
             <div class="rail-bottom">
                 <div class="rail-note">Gravity collapse shell active</div>
             </div>
@@ -194,9 +222,60 @@
     </div>
 </div>
 
-<script src="./particle_system.js"></script>
-<script src="./gravitional_collapse.js"></script>
-<script src="./app.js"></script>
+<!-- ===================== FINAL SEAL DIALOG ===================== -->
+<dialog class="collapse-seal-dialog" id="collapseSealDialog">
+    <div class="collapse-seal-panel">
+        <div class="seal-aura" aria-hidden="true">
+            <div class="seal-ring seal-ring-a"></div>
+            <div class="seal-ring seal-ring-b"></div>
+            <div class="seal-core"></div>
+        </div>
+
+        <div class="seal-kicker">Final confirmation</div>
+        <h2 class="seal-title">Authorize gravity collapse</h2>
+        <p class="seal-copy">
+            This action is permanent. Confirm the seal below before the chamber executes.
+        </p>
+
+        <div class="seal-target-box">
+            <div class="seal-label">Target</div>
+            <div class="seal-target" id="sealTargetPath">—</div>
+            <div class="seal-meta">
+                <span id="sealTargetType">—</span>
+                <span id="sealTargetMode">—</span>
+            </div>
+        </div>
+
+        <label class="seal-check">
+            <input type="checkbox" id="sealAcknowledge" />
+            <span>I understand this action is irreversible.</span>
+        </label>
+
+        <div class="seal-actions">
+            <button
+                    class="secondary-btn gravity-btn"
+                    id="sealCancelBtn"
+                    type="button"
+                    onclick="this.closest('dialog').close('cancel')"
+            >
+                Cancel
+            </button>
+            <button
+                    class="theme-button gravity-execute"
+                    id="sealConfirmBtn"
+                    type="button"
+                    disabled
+                    onclick="this.closest('dialog').close('confirm')"
+            >
+                Confirm Collapse
+            </button>
+        </div>
+    </div>
+</dialog>
+
+<script src="./particle_system.js?v=3"></script>
+<script src="./gravitional_collapse.js?v=3"></script>
+<script src="./app.js?v=3"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () =>
     {
