@@ -144,7 +144,7 @@
                 y: cy + Math.sin(a) * rand(24, maxR),
                 vx: rand(-0.35, 0.35), vy: rand(-0.35, 0.35),
                 life: rand(100, 320), size: rand(0.8, 2.8),
-                hue: rand(18, 54), orbit: rand(0.002, 0.01),
+                hue: rand(44, 58), orbit: rand(0.002, 0.01),
             });
         }
 
@@ -164,7 +164,7 @@
                 vy: Math.sin(a) * speed * rand(0.7, 1.15),
                 drag: rand(0.965, 0.985),
                 size: rand(1.2, 4.2), life: rand(24, 60),
-                hue: rand(14, 52), alpha: rand(0.65, 1.0),
+                hue: rand(42, 56), alpha: rand(0.65, 1.0),
             });
         }
 
@@ -172,13 +172,7 @@
 
     function addShockwave(power = 1)
     {
-        shockwaves.push({
-            r: 12,
-            width:  10 + power * 12,
-            alpha:  0.82,
-            speed:  11 + power * 9,
-            max:    Math.max(cw, ch) * (0.62 + power * 0.16),
-        });
+        shockwaves.push({r: 12, width:  10 + power * 12, alpha:  0.82, speed:  11 + power * 9, max:    Math.max(cw, ch) * (0.62 + power * 0.16),});
     }
 
     /* ---------- sequence control API (called by UI code) ---------- */
@@ -297,10 +291,10 @@
     {
         const isExploding = seq.phase === "explode";
         const bg = ctx.createRadialGradient(cx, cy, 16, cx, cy, Math.max(cw, ch) * 0.65);
-        bg.addColorStop(0,    `rgba(255,210,128,${0.08 + v * 0.18})`);
-        bg.addColorStop(0.18, `rgba(214,94,34,${0.09 + v * (isExploding ? 0.28 : 0.14)})`);
-        bg.addColorStop(0.42, "rgba(52,22,10,0.24)");
-        bg.addColorStop(0.78, "rgba(8,4,2,0.10)");
+        bg.addColorStop(0,    `rgba(255,238,150,${0.08 + v * 0.18})`);
+        bg.addColorStop(0.18, `rgba(255,196,40,${0.09 + v * (isExploding ? 0.28 : 0.14)})`);
+        bg.addColorStop(0.42, "rgba(70,52,8,0.24)");
+        bg.addColorStop(0.78, "rgba(10,8,2,0.10)");
         bg.addColorStop(1,    "rgba(0,0,0,0)");
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, cw, ch);
@@ -344,10 +338,10 @@
             const arcLen    = Math.PI * (1.12 + i * 0.17 + implodeBias * 0.22);
 
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(${160+i*14},${90+i*18},${38+i*9},${alphaBase})`;
+            ctx.strokeStyle = `rgba(${235+i*4},${190+i*10},${40+i*14},${alphaBase})`;
             ctx.lineWidth   = 1 + i * 1.25 + v * 0.7;
             ctx.shadowBlur  = 18 + i * 6 + v * 26;
-            ctx.shadowColor = explodeT > 0.05 ? "rgba(255,218,140,0.65)" : "rgba(255,170,80,0.34)";
+            ctx.shadowColor = explodeT > 0.05 ? "rgba(255,244,150,0.65)" : "rgba(255,210,60,0.34)";
             ctx.arc(cx, cy, r, arcStart, arcStart + arcLen);
             ctx.stroke();
         }
@@ -363,9 +357,9 @@
 
         const grad = ctx.createRadialGradient(cx - 16, cy - 16, 2, cx, cy, coreR * 3.9);
         grad.addColorStop(0,    "rgba(255,255,255,0.97)");
-        grad.addColorStop(0.05, "rgba(255,245,214,0.94)");
-        grad.addColorStop(0.16, "rgba(255,192,96,0.55)");
-        grad.addColorStop(0.34, "rgba(214,88,28,0.18)");
+        grad.addColorStop(0.05, "rgba(255,250,210,0.94)");
+        grad.addColorStop(0.16, "rgb(255 207 74 / 0.97)");
+        grad.addColorStop(0.34, "rgba(255,176,20,0.18)");
         grad.addColorStop(1,    "rgba(0,0,0,0)");
         ctx.fillStyle = grad;
         ctx.beginPath();
@@ -420,7 +414,7 @@
             ctx.beginPath();
             ctx.fillStyle  = `hsla(${p.hue},100%,72%,${alpha})`;
             ctx.shadowBlur = strongPull ? 18 : 10;
-            ctx.shadowColor = strongPull ? "rgba(255,210,130,0.95)" : "rgba(255,190,90,0.80)";
+            ctx.shadowColor = strongPull ? "rgba(255,228,120,0.95)" : "rgba(255,210,80,0.80)";
             ctx.arc(p.x, p.y, p.size * (strongPull ? 1.18 : 1), 0, Math.PI * 2);
             ctx.fill();
 
@@ -440,9 +434,9 @@
             ctx.beginPath();
             ctx.arc(cx, cy, s.r, 0, Math.PI * 2);
             ctx.lineWidth   = s.width;
-            ctx.strokeStyle = `rgba(255,228,170,${s.alpha})`;
+            ctx.strokeStyle = `rgba(255,238,150,${s.alpha})`;
             ctx.shadowBlur  = 26;
-            ctx.shadowColor = `rgba(255,214,140,${s.alpha * 0.9})`;
+            ctx.shadowColor = `rgba(255,224,110,${s.alpha * 0.9})`;
             ctx.stroke();
 
             if (s.alpha < 0.025 || s.r > s.max) shockwaves.splice(i, 1);
@@ -462,7 +456,7 @@
             ctx.beginPath();
             ctx.fillStyle   = `hsla(${d.hue},100%,65%,${d.alpha})`;
             ctx.shadowBlur  = 13;
-            ctx.shadowColor = `rgba(255,150,90,${d.alpha})`;
+            ctx.shadowColor = `rgba(255,200,80,${d.alpha})`;
             ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
             ctx.fill();
 
@@ -474,7 +468,7 @@
     function drawFlash()
     {
         if (seq.flash < 0.01) return;
-        ctx.fillStyle = `rgba(255,244,218,${seq.flash * 0.86})`;
+        ctx.fillStyle = `rgba(255,250,224,${seq.flash * 0.86})`;
         ctx.fillRect(0, 0, cw, ch);
     }
 
@@ -740,10 +734,7 @@
     function flash(el)
     {
         if (!el) return;
-        el.animate(
-            [{ outline: "2px solid #ff5a3c" }, { outline: "2px solid transparent" }],
-            { duration: 500, iterations: 2 }
-        );
+        el.animate([{ outline: "2px solid #ffd11a" }, { outline: "2px solid transparent" }], { duration: 500, iterations: 2 });
     }
 
     /* ============================================================
@@ -765,10 +756,7 @@
             sealAcknowledge.checked = false;
             sealConfirmBtn.disabled = true;
 
-            const onCheck = () =>
-            {
-                sealConfirmBtn.disabled = !sealAcknowledge.checked;
-            };
+            const onCheck = () => {sealConfirmBtn.disabled = !sealAcknowledge.checked;};
 
             const onClose = () =>
             {
@@ -937,9 +925,11 @@
     }
 
     renderTarget();
-    window.addEventListener("beforeunload", () => {
+    window.addEventListener("beforeunload", () =>
+    {
         if (raf) cancelAnimationFrame(raf);
         if (ro) ro.disconnect();
         window.removeEventListener("resize", resize);
     });
+
 })();

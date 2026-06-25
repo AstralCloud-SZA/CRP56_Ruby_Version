@@ -204,8 +204,10 @@ function toCrp56Name(fileName)
 
 function setTheme(theme)
 {
+    if (document.body?.dataset?.page === 'gravity-collapse') return;
     if (!THEMES[theme]) return;
     html.dataset.theme = theme;
+
     if (themeStylesheet) themeStylesheet.setAttribute('href', THEMES[theme].href);
     if (themeName) themeName.textContent = THEMES[theme].label;
     if (themeNameCard) themeNameCard.textContent = THEMES[theme].label;
@@ -850,6 +852,21 @@ function initParticles()
 window.addEventListener('DOMContentLoaded', async () =>
 {
     console.log('[CRP56 renderer] DOMContentLoaded');
+
+    const currentPage = document.body?.dataset?.page;
+
+    // Gravity Collapse is self-contained: it has its own CSS, its own
+    // renderer (gravitional_collapse.js) and its own inline black-hole init.
+    // Run ONLY the shared particle field + SFX, then stop — do NOT swap the
+    // theme stylesheet or wire encryption/settings UI that isn't on this page.
+    if (currentPage === 'gravity-collapse')
+    {
+        initParticles();
+        setParticlesEnabled(savedParticlesEnabled(), { persist: false });
+        bindRailAudio();
+        bindDataSfx();
+        return;
+    }
 
     initBackgroundHost();
     initParticles();
