@@ -61,7 +61,7 @@
 
     /* ---------- state ---------- */
     const state = {
-        target:      null,   // { path, type:'folder'|'drive', items, size, blocked, reason }
+        target:      null,
         armed:       false,
         collapsing:  false,
         pwVerified:  false,
@@ -75,21 +75,23 @@
     const canvas = $("singularityCanvas");
     const ctx    = canvas ? canvas.getContext("2d") : null;
     const DPR    = Math.min(window.devicePixelRatio || 1, 2);
+    const MAX_CANVAS_DIM = 8192;
 
     let cw = 0, ch = 0, raf = 0, intensity = 0.18;
+    let ro = null;
 
-    const particles  = [];   // inward-drawn orbital dust
-    const debris     = [];   // outward-blasted shards post-explosion
-    const shockwaves = [];   // expanding ring bursts
+    const particles  = [];
+    const debris     = [];
+    const shockwaves = [];
 
     /* ---------- sequence state machine ---------- */
     const seq = {
-        phase:         "idle",  // idle | charge | implode | crush | explode | settle
+        phase:         "idle",
         phaseStart:    0,
-        flash:         0,       // 0..1 white flash overlay
-        shake:         0,       // 0..1 screen-shake magnitude
-        manualIntensity: 0.18,  // intensity set by UI when in idle
-        autoResetAt:   0,       // timestamp to force reset (used by settle)
+        flash:         0,
+        shake:         0,
+        manualIntensity: 0.18,
+        autoResetAt:   0,
     };
 
     /* ---------- math helpers ---------- */
@@ -105,11 +107,26 @@
     /* ---------- canvas resize ---------- */
     function resize()
     {
-        if (!canvas || !ctx) return;
-        const r = canvas.getBoundingClientRect();
-        cw = Math.max(1, Math.floor(r.width));
-        ch = Math.max(1, Math.floor(r.height));
-        canvas.width  = Math.floor(cw * DPR);
+        if (!canvas || !ctx || !stage) return;
+
+        const r = stage.getBoundingClientRect();
+        const nextCw = Math.max(1, Math.floor(r.width));
+
+        let nextCh = Math.floor(r.height);
+        if (!Number.isFinite(nextCh) || nextCh <= 0 || nextCh > window.innerHeight * 1.5)
+        {
+            nextCh = Math.floor(window.innerHeight * 0.62);
+        }
+        nextCh = Math.max(320, Math.min(nextCh, 900));
+
+        if (nextCw === cw && nextCh === ch) return;
+
+        cw = nextCw;
+        ch = nextCh;
+
+        canvas.style.width = cw + "px";
+        canvas.style.height = ch + "px";
+        canvas.width = Math.floor(cw * DPR);
         canvas.height = Math.floor(ch * DPR);
         ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     }
@@ -166,7 +183,6 @@
 
     /* ---------- sequence control API (called by UI code) ---------- */
 
-    // Reset to a calm idle (also auto-called after settle completes)
     function resetSequence(toIntensity = 0.18)
     {
         seq.phase = "idle";
@@ -176,7 +192,6 @@
         seq.autoResetAt = 0;
     }
 
-    // Called when execute() begins — starts the charge/implode build-up
     function playCollapseSequence()
     {
         seq.phase = "charge";
@@ -186,7 +201,6 @@
         if (particles.length < 90) spawn(40, 1.2);
     }
 
-    // Called from onProgress() — keeps visual phase aligned with real wipe progress
     function holdCrush(progressPct)
     {
         if (seq.phase === "explode" || seq.phase === "settle") {return;}
@@ -214,7 +228,6 @@
         }
     }
 
-    // Called when onDone(true) fires — detonates the explosion
     function triggerExplosion()
     {
         seq.phase = "explode";
@@ -222,11 +235,10 @@
         seq.flash = 1.0; seq.shake = 1.0;
         addShockwave(1.2);
         addShockwave(0.75);
-        setTimeout(() => addShockwave(0.55), 120);   // staggered second ring
+        setTimeout(() => addShockwave(0.55), 120);
         spawnDebris(140, 1.2);
     }
 
-    // Called when onDone(false) / abort fires — gentle de-escalation
     function playFailureRecover()
     {
         seq.phase = "settle";
@@ -234,8 +246,6 @@
         seq.flash = 0; seq.shake = 0.18;
         seq.autoResetAt = nowMs() + 1400;
     }
-
-    /* ---------- per-frame helpers ---------- */
 
     function phaseT(durationMs)
     {
@@ -256,7 +266,6 @@
         }
     }
 
-    // Advances phase transitions automatically; called once per draw frame
     function updateSequence()
     {
         switch (seq.phase)
@@ -280,12 +289,9 @@
         }
         if (seq.autoResetAt && nowMs() >= seq.autoResetAt) resetSequence(0.18);
 
-        // decay flash + shake every frame
         seq.flash = Math.max(0, seq.flash * 0.88);
         seq.shake = Math.max(0, seq.shake * 0.91);
     }
-
-    /* ---------- draw sub-routines ---------- */
 
     function drawBackdrop(cx, cy, v)
     {
@@ -299,7 +305,6 @@
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, cw, ch);
 
-        // Extra vignette during implosion crush
         if (seq.phase === "implode" || seq.phase === "crush")
         {
             const vig = ctx.createRadialGradient(cx, cy, 10, cx, cy, Math.max(cw, ch) * 0.52);
@@ -335,7 +340,6 @@
             const r         = baseR * collapse * expand * wobble;
 
             const alphaBase = 0.14 + i * 0.055 + v * 0.13;
-            const spinBase  = (1.12 + i * 0.22) * (1 + v * 2.8);
             const arcStart  = t * (0.16 + i * 0.03) * (1 + v * 2.2);
             const arcLen    = Math.PI * (1.12 + i * 0.17 + implodeBias * 0.22);
 
@@ -368,7 +372,6 @@
         ctx.arc(cx, cy, coreR * 2.9, 0, Math.PI * 2);
         ctx.fill();
 
-        // Event horizon (black disk) — expands during implosion
         const holeScale = (seq.phase === "implode" || seq.phase === "crush") ? 1.28 : 0.94;
         ctx.fillStyle = "rgba(0,0,0,0.97)";
         ctx.beginPath();
@@ -378,7 +381,6 @@
 
     function updateAndDrawParticles(cx, cy, v)
     {
-        // Spawn rate increases with phase intensity
         const spawnRate = 0.12 + v * 0.46 + (seq.phase === "charge" ? 0.22 : 0);
         if (Math.random() < spawnRate && particles.length < 270) spawn(1 + Math.floor(v * 4), 1.2);
 
@@ -510,10 +512,11 @@
         if (seq.phase === "idle") seq.manualIntensity = intensity;
     }
 
-    if (canvas)
+    if (canvas && stage)
     {
-        const ro = new ResizeObserver(resize);
-        ro.observe(canvas);
+        ro = new ResizeObserver(resize);
+        ro.observe(stage);
+        window.addEventListener("resize", resize);
         resize();
         spawn(48, 1.2);
         resetSequence(0.18);
@@ -817,6 +820,7 @@
         setThreat(100, "CRITICAL");
         setIntensity(1);
         progressWrap.hidden = false;
+        playCollapseSequence();
         updateLockUI();
         setStatusCard(stCollapse, false, "Collapsing");
 
@@ -843,7 +847,7 @@
         cpPct.textContent  = pct + "%";
         if (p.phase)   cpLabel.textContent = p.phase;
         if (p.current) cpFile.textContent  = p.current;
-        holdCrush(pct);             // ← keep canvas phase synced with real wipe progress
+        holdCrush(pct);
         setReadout("COLLAPSING", (p.phase || "Crushing") + " · " + pct + "%");
     }
 
@@ -855,7 +859,7 @@
 
         if (success)
         {
-            triggerExplosion();     // ← detonate: flash + shockwaves + debris, then auto-settle
+            triggerExplosion();
 
             cpFill.style.width = "100%";
             cpPct.textContent  = "100%";
@@ -873,7 +877,7 @@
             setTimeout(() => { progressWrap.hidden = true; renderTarget(); }, 2600);
         } else
         {
-            playFailureRecover();   // ← gentle de-escalation
+            playFailureRecover();
 
             setStageState("charged");
             setReadout("COLLAPSE FAILED", errMsg || "Aborted.");
@@ -885,7 +889,6 @@
         updateLockUI();
     }
 
-    // DEMO fake progress (browser preview only)
     function demoRun()
     {
         return new Promise((resolve) =>
@@ -920,7 +923,6 @@
     executeBtn && executeBtn.addEventListener("click", execute);
     abortBtn   && abortBtn.addEventListener("click", abort);
 
-    // Guard chip
     if (HAS_API && window.collapseAPI.guardStatus)
     {
         window.collapseAPI.guardStatus().then((on) =>
@@ -934,7 +936,10 @@
         if (!HAS_API) guardChip.dataset.guard = "off";
     }
 
-    // Boot
     renderTarget();
-    window.addEventListener("beforeunload", () => raf && cancelAnimationFrame(raf));
+    window.addEventListener("beforeunload", () => {
+        if (raf) cancelAnimationFrame(raf);
+        if (ro) ro.disconnect();
+        window.removeEventListener("resize", resize);
+    });
 })();

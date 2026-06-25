@@ -225,7 +225,8 @@ body[data-page="gravity-collapse"] .bg-slides {
     z-index: 1;
     flex: 1;
     display: grid;
-    grid-template-columns: 1.25fr 0.95fr;
+    grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.95fr);
+    align-items: start;
     gap: var(--space-5, 20px);
     padding: var(--space-5, 20px);
     min-height: 0;
@@ -233,8 +234,13 @@ body[data-page="gravity-collapse"] .bg-slides {
 }
 
 /* ---------- the singularity stage ---------- */
-.gravity-stage {
+.gravity-stage
+{
     position: relative;
+    align-self: start;
+    min-height: 420px;
+    height: min(62vh, 760px);
+    max-height: 760px;
     border: 1px solid var(--gravity-border);
     border-radius: calc(var(--radius-xl, 20px) + 6px);
     overflow: hidden;
@@ -253,7 +259,8 @@ body[data-page="gravity-collapse"] .bg-slides {
     isolation: isolate;
 }
 
-.singularity-canvas {
+.singularity-canvas
+{
     position: absolute;
     inset: 0;
     width: 100%;
@@ -263,7 +270,8 @@ body[data-page="gravity-collapse"] .bg-slides {
 }
 
 /* global veil */
-.gravity-stage::before {
+.gravity-stage::before
+{
     content: "";
     position: absolute;
     inset: 0;
@@ -277,7 +285,8 @@ body[data-page="gravity-collapse"] .bg-slides {
 }
 
 /* inner frame */
-.gravity-stage::after {
+.gravity-stage::after
+{
     content: "";
     position: absolute;
     inset: 14px;
@@ -285,21 +294,21 @@ body[data-page="gravity-collapse"] .bg-slides {
     pointer-events: none;
     border-radius: inherit;
     border: 1px solid rgba(255,185,97,0.12);
-    box-shadow:
-            inset 0 0 24px rgba(255,156,68,0.05),
-            inset 0 0 40px rgba(255,210,140,0.02);
+    box-shadow: inset 0 0 24px rgba(255,156,68,0.05), inset 0 0 40px rgba(255,210,140,0.02);
 }
 
 /* cinematic overlays */
 .gravity-stage .stage-flare,
 .gravity-stage .stage-rings,
-.gravity-stage .stage-embers {
+.gravity-stage .stage-embers
+{
     position: absolute;
     inset: 0;
     pointer-events: none;
 }
 
-.gravity-stage .stage-flare {
+.gravity-stage .stage-flare
+{
     z-index: 2;
     background:
             radial-gradient(circle at 50% 46%, rgba(255,244,210,0.10), rgba(255,180,92,0.06) 10%, rgba(190,72,28,0.05) 22%, rgba(0,0,0,0) 44%);
@@ -307,7 +316,8 @@ body[data-page="gravity-collapse"] .bg-slides {
     opacity: 0.75;
 }
 
-.gravity-stage .stage-rings {
+.gravity-stage .stage-rings
+{
     z-index: 2;
     background:
             radial-gradient(circle at 50% 46%, transparent 0 13%, rgba(255,215,140,0.10) 14%, transparent 15.5%),
@@ -317,7 +327,8 @@ body[data-page="gravity-collapse"] .bg-slides {
     animation: ringBreathe 4.2s ease-in-out infinite;
 }
 
-.gravity-stage .stage-embers {
+.gravity-stage .stage-embers
+{
     z-index: 2;
     background:
             radial-gradient(circle at 50% 46%, rgba(255,190,92,0.10), transparent 16%),
@@ -325,6 +336,11 @@ body[data-page="gravity-collapse"] .bg-slides {
             radial-gradient(circle at 64% 40%, rgba(255,219,122,0.04), transparent 10%);
     opacity: 0.8;
     animation: emberPulse 3.8s ease-in-out infinite;
+}
+
+.gravity-side
+{
+    align-self: start;
 }
 
 @keyframes ringBreathe {
@@ -1214,15 +1230,19 @@ select.gravity-input { cursor: pointer; }
 }
 
 /* ---------- responsive ---------- */
-@media (max-width: 1080px)
-{
-    .gravity-grid
-    {
+@media (max-width: 1100px) {
+    .gravity-grid {
         grid-template-columns: 1fr;
-        overflow-y: auto;
     }
+
     .gravity-stage {
-        min-height: 48vh;
+        min-height: 360px;
+        height: min(56vh, 620px);
+        max-height: 620px;
+    }
+
+    .gravity-side {
+        align-self: stretch;
     }
 }
 

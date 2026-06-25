@@ -4,10 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="reverted to work commit">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="attempt fix 4">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/about.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/decrypt.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/decrypt.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/encrypt.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/encrypt.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/gravitional_collapse.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/gravitional_collapse.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/gravity_collapse.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/gravity_collapse.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/gravitycollapse.css" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/gravitycollapse.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/home.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/settings.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/settings.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -246,15 +254,10 @@
       <workItem from="1782211184776" duration="8141000" />
       <workItem from="1782303543313" duration="5828000" />
       <workItem from="1782325108727" duration="1803000" />
-      <workItem from="1782329973151" duration="1128000" />
-    </task>
-    <task id="LOCAL-00044" summary="bg music meiko nakahara friday album">
-      <option name="closed" value="true" />
-      <created>1781615964636</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1781615964636</updated>
+      <workItem from="1782329973151" duration="1211000" />
+      <workItem from="1782380257793" duration="960000" />
+      <workItem from="1782394921163" duration="643000" />
+      <workItem from="1782408506565" duration="3746000" />
     </task>
     <task id="LOCAL-00045" summary="bg music code setup">
       <option name="closed" value="true" />
@@ -640,7 +643,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782325916520</updated>
     </task>
-    <option name="localTasksCounter" value="93" />
+    <task id="LOCAL-00093" summary="attempt fix 4">
+      <option name="closed" value="true" />
+      <created>1782331161661</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1782331161661</updated>
+    </task>
+    <option name="localTasksCounter" value="94" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -713,7 +724,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Distro ready work fonts added to render and adjustmenst to css" />
     <MESSAGE value="sidebar adjustments and fixes and changes" />
     <MESSAGE value="blackhole logo and icon image files 3" />
     <MESSAGE value="blackhole logo and icon image files 4" />
@@ -738,6 +748,7 @@
     <MESSAGE value=" gravity collapse feature and page rework 2" />
     <MESSAGE value=" gravity collapse feature and page rework 3" />
     <MESSAGE value=" gravity collapse feature and page rework 4" />
-    <option name="LAST_COMMIT_MESSAGE" value=" gravity collapse feature and page rework 4" />
+    <MESSAGE value="attempt fix 4" />
+    <option name="LAST_COMMIT_MESSAGE" value="attempt fix 4" />
   </component>
 </project>

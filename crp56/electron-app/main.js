@@ -749,6 +749,14 @@ async function createWindow()
     }
 
     const rendererPath = path.join(__dirname, 'renderer', 'index.html');
+
+    console.log('[CRP56 path] app.isPackaged =', app.isPackaged);
+    console.log('[CRP56 path] __dirname =', __dirname);
+    console.log('[CRP56 path] app.getAppPath() =', app.getAppPath());
+    console.log('[CRP56 path] process.resourcesPath =', process.resourcesPath);
+    console.log('[CRP56 path] rendererPath =', rendererPath);
+    console.log('[CRP56 path] renderer exists =', fs.existsSync(rendererPath));
+
     await mainWindow.loadFile(rendererPath);
 
     mainWindow.webContents.on('did-finish-load', () =>
