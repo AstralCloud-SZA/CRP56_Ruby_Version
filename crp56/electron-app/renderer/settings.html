@@ -7,8 +7,47 @@
     <link rel="stylesheet" href="./Base_style.css" />
     <link rel="stylesheet" href="./primordial_gold.css" id="themeStylesheet" />
     <link rel="stylesheet" href="./settings.css" />
+    <link rel="stylesheet" href="./titlebar.css"/>
 </head>
 <body data-page="settings">
+
+
+<!-- ============================================================
+     CRP56 — Custom title bar markup
+     Paste this as the FIRST child of <body> on every page.
+     Change the .tb-title text per page (e.g. "Gravity Collapse").
+     ============================================================ -->
+<div class="titlebar" role="banner" aria-label="Title bar">
+    <div class="tb-brand">
+        <span class="tb-mark" aria-hidden="true"></span>
+        <span class="tb-title"><span class="tb-accent">CRP56</span> · SETTINGS </span>
+    </div>
+
+    <div class="tb-controls">
+        <button class="tb-btn tb-min" type="button" title="Minimize" aria-label="Minimize">
+            <svg viewBox="0 0 12 12" aria-hidden="true"><line x1="2" y1="6" x2="10" y2="6"></line></svg>
+        </button>
+
+        <button class="tb-btn tb-max" type="button" title="Maximize / Restore" aria-label="Maximize">
+            <svg class="icon-maximize" viewBox="0 0 12 12" aria-hidden="true">
+                <rect x="2.2" y="2.2" width="7.6" height="7.6" rx="1"></rect>
+            </svg>
+            <svg class="icon-restore" viewBox="0 0 12 12" aria-hidden="true">
+                <rect x="3.4" y="1.6" width="6.4" height="6.4" rx="1"></rect>
+                <rect x="1.6" y="3.6" width="6.4" height="6.4" rx="1"></rect>
+            </svg>
+        </button>
+
+        <button class="tb-btn tb-close" type="button" title="Close" aria-label="Close">
+            <svg viewBox="0 0 12 12" aria-hidden="true">
+                <line x1="2.5" y1="2.5" x2="9.5" y2="9.5"></line>
+                <line x1="9.5" y1="2.5" x2="2.5" y2="9.5"></line>
+            </svg>
+        </button>
+    </div>
+</div>
+
+
 <div class="app">
     <div class="bg-slides" aria-hidden="true"></div>
     <canvas id="particles" aria-hidden="true"></canvas>
@@ -224,6 +263,7 @@
 </div><!-- /.app -->
 <script src="./particle_system.js"></script>
 <script src="./app.js"></script>
+<script src="./titile_bar.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {ParticleFX.blackHole('blackHoleMark', 52, 28);ParticleFX.blackHole('blackHoleRail', 54, 28);});
 </script>

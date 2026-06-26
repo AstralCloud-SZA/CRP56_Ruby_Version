@@ -4,8 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="complete rework and gravity page fixes 17">
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/package.json" afterDir="false" />
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="version update">
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/titile_bar.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/titlebar.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/collapse_logger.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/collapse_logger.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/preload.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/preload.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/about.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/decrypt.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/decrypt.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/encrypt.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/encrypt.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/gravity_collapse.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/gravity_collapse.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/settings.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/settings.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,8 +31,8 @@
       <list>
         <option value="Ruby File" />
         <option value="HTML File" />
-        <option value="CSS File" />
         <option value="JavaScript File" />
+        <option value="CSS File" />
       </list>
     </option>
   </component>
@@ -247,15 +258,8 @@
       <workItem from="1782329973151" duration="1211000" />
       <workItem from="1782380257793" duration="960000" />
       <workItem from="1782394921163" duration="643000" />
-      <workItem from="1782408506565" duration="6761000" />
-    </task>
-    <task id="LOCAL-00047" summary="bg music code setup 4">
-      <option name="closed" value="true" />
-      <created>1781633856657</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1781633856657</updated>
+      <workItem from="1782408506565" duration="7629000" />
+      <workItem from="1782494232623" duration="3471000" />
     </task>
     <task id="LOCAL-00048" summary="bg music code setup 5">
       <option name="closed" value="true" />
@@ -641,7 +645,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782415499483</updated>
     </task>
-    <option name="localTasksCounter" value="96" />
+    <task id="LOCAL-00096" summary="version update">
+      <option name="closed" value="true" />
+      <created>1782415844890</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1782415844890</updated>
+    </task>
+    <option name="localTasksCounter" value="97" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -714,7 +726,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="blackhole logo and icon image files 4" />
     <MESSAGE value="blackhole logo and icon image files 5" />
     <MESSAGE value="blackhole logo and icon image files 6" />
     <MESSAGE value="blackhole logo system integrated with particle effect toggle" />
@@ -739,6 +750,7 @@
     <MESSAGE value="attempt fix 4" />
     <MESSAGE value="attempt fix 5" />
     <MESSAGE value="complete rework and gravity page fixes 17" />
-    <option name="LAST_COMMIT_MESSAGE" value="complete rework and gravity page fixes 17" />
+    <MESSAGE value="version update" />
+    <option name="LAST_COMMIT_MESSAGE" value="version update" />
   </component>
 </project>

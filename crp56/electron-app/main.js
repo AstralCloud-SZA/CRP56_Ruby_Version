@@ -734,6 +734,7 @@ async function createWindow()
         title: 'CRP56',
         backgroundColor: '#161616',
         autoHideMenuBar: true,
+        frame: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,

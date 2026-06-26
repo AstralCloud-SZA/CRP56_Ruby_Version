@@ -1,105 +1,212 @@
 /* ============================================================
    GRAVITY COLLAPSE — audit logger
    ------------------------------------------------------------
-   Records every collapse attempt to a JSON-lines file under the
-   app's userData dir:  <userData>/collapse-audit.log
-   (one JSON object per line — easy to append, tail, and parse.)
+   Stores every collapse event as a pretty-printed JSON array in
+   a plain .txt file INSIDE the project folder:
 
-   Usage from main.js:
-       const collapseLog = require('./collapse-logger');
-       collapseLog.init(app);                 // once, after app ready-ish
-       collapseLog.record({ ... });           // per collapse
-       const entries = await collapseLog.read(100);   // last N entries
+       <project-root>/logs/gravity_collapse.txt
+
+   Interface (matches main.js usage):
+       init(app)          -> returns the absolute log path (and ensures dir/file exist)
+       record(entry)      -> async; appends one entry (auto-stamps id + timestamp)
+       read(limit = 100)  -> async; returns the most recent `limit` entries (newest last)
+       clear()            -> async; empties the log to []
+
+   Notes
+   - "Project folder" = the app directory (__dirname of this file), NOT Electron's
+     userData dir, so the log lives next to your source for long-term storage.
+   - Writes are serialized through a tiny promise queue so concurrent record()
+     calls can't corrupt the JSON array.
+   - Each write is atomic (temp file + rename) to avoid half-written files.
    ============================================================ */
 
-const fs = require('fs');
+"use strict";
+
+const fs = require("fs");
 const fsp = fs.promises;
-const path = require('path');
+const path = require("path");
 
-let LOG_PATH = null;
-let writeChain = Promise.resolve();   // serialize appends so lines never interleave
+/* ---------- module state ---------- */
+let LOG_DIR = null;     // <project>/logs
+let LOG_FILE = null;    // <project>/logs/gravity_collapse.txt
+let counter = 0;        // monotonic id within this process
+let writeChain = Promise.resolve(); // serialization queue
 
-/**
- * Initialize the logger. Pass the Electron `app` so we can resolve userData.
- * Falls back to a path next to this file if app/userData is unavailable.
- */
-function init(app)
+/* Cap how many entries we keep on disk so the file can't grow unbounded.
+   Set to 0 to keep everything. */
+const MAX_ENTRIES = 5000;
+
+/* ---------- helpers ---------- */
+
+function ensurePaths()
 {
+    // Default to this file's directory (the project/app folder) if init() wasn't called.
+    if (!LOG_DIR)
+    {
+        LOG_DIR = path.join(__dirname, "logs");
+        LOG_FILE = path.join(LOG_DIR, "gravity_collapse.txt");
+    }
+}
+
+function readArraySync()
+{
+    ensurePaths();
     try
     {
-        const dir = app && typeof app.getPath === 'function'
-            ? app.getPath('userData')
-            : __dirname;
-        LOG_PATH = path.join(dir, 'collapse-audit.log');
+        const raw = fs.readFileSync(LOG_FILE, "utf8").trim();
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
     }
     catch (_)
     {
-        LOG_PATH = path.join(__dirname, 'collapse-audit.log');
+        return [];
     }
-    return LOG_PATH;
 }
 
-function getPath()
+async function readArray()
 {
-    if (!LOG_PATH) LOG_PATH = path.join(__dirname, 'collapse-audit.log');
-    return LOG_PATH;
+    ensurePaths();
+    try
+    {
+        const raw = (await fsp.readFile(LOG_FILE, "utf8")).trim();
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    }
+    catch (err)
+    {
+        // Missing file or corrupt JSON -> start fresh (and back up corrupt data).
+        if (err && err.code !== "ENOENT")
+        {
+            try
+            {
+                const bak = LOG_FILE + ".corrupt-" + Date.now() + ".bak";
+                await fsp.copyFile(LOG_FILE, bak).catch(() => {});
+            }
+            catch (_) {}
+        }
+        return [];
+    }
+}
+
+async function writeArrayAtomic(arr)
+{
+    ensurePaths();
+    await fsp.mkdir(LOG_DIR, { recursive: true });
+
+    const json = JSON.stringify(arr, null, 2) + "\n";
+    const tmp = LOG_FILE + ".tmp-" + process.pid;
+    await fsp.writeFile(tmp, json, "utf8");
+    await fsp.rename(tmp, LOG_FILE);
+}
+
+/* Push a job onto the serialized write queue. */
+function enqueue(job)
+{
+    const run = writeChain.then(job, job); // run even if a prior job rejected
+    // Keep the chain alive but swallow rejections so one failure doesn't poison the queue.
+    writeChain = run.catch(() => {});
+    return run;
+}
+
+/* ---------- public API ---------- */
+
+/**
+ * Initialize the logger. Call once on app ready.
+ * @param {Electron.App} [app] - optional; reserved for future use.
+ * @returns {string} absolute path to the log file.
+ */
+function init(app)
+{
+    // Project folder = where the app code lives.
+    LOG_DIR = path.join(__dirname, "logs");
+    LOG_FILE = path.join(LOG_DIR, "gravity_collapse.txt");
+
+    try
+    {
+        fs.mkdirSync(LOG_DIR, { recursive: true });
+        if (!fs.existsSync(LOG_FILE))
+        {
+            fs.writeFileSync(LOG_FILE, "[]\n", "utf8");
+        }
+        else
+        {
+            // Validate existing content; reset if unreadable.
+            const arr = readArraySync();
+            if (!Array.isArray(arr)) fs.writeFileSync(LOG_FILE, "[]\n", "utf8");
+            counter = arr.length;
+        }
+    }
+    catch (err)
+    {
+        console.error("[collapse_logger init failed]", err);
+    }
+
+    return LOG_FILE;
 }
 
 /**
- * Append one audit entry. Non-throwing — logging must never break a collapse.
- * @param {object} entry  free-form; common fields below are normalized.
- *   { path, type, mode, status, files, dirs, error, durationMs }
- * @returns {Promise<object>} the full entry that was written (with id + ts)
+ * Append a single collapse event. Auto-adds id + ISO timestamp.
+ * Safe to call without awaiting; writes are serialized.
+ * @param {object} entry
+ * @returns {Promise<object>} the stored entry (with id + timestamp).
  */
-function record(entry = {})
+function record(entry)
 {
-    const full = {
-        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-        ts: new Date().toISOString(),
-        path: entry.path ?? null,
-        type: entry.type ?? null,          // 'folder' | 'drive'
-        mode: entry.mode ?? null,          // 'quick' | 'single' | 'dod' | 'gutmann'
-        status: entry.status ?? 'unknown', // 'completed' | 'failed' | 'aborted' | 'blocked'
-        files: entry.files ?? null,
-        dirs: entry.dirs ?? null,
-        error: entry.error ?? null,
-        durationMs: entry.durationMs ?? null,
+    const stamped = {
+        id: ++counter,
+        timestamp: new Date().toISOString(),
+        ...(entry && typeof entry === "object" ? entry : { value: entry }),
     };
 
-    const line = JSON.stringify(full) + '\n';
-    // chain appends so concurrent calls don't interleave bytes
-    writeChain = writeChain
-        .then(() => fsp.appendFile(getPath(), line, 'utf8'))
-        .catch((e) => { console.error('[collapse-logger] write failed:', e.message); });
+    return enqueue(async () =>
+    {
+        const arr = await readArray();
+        arr.push(stamped);
 
-    return writeChain.then(() => full);
+        // Trim oldest if over the cap.
+        if (MAX_ENTRIES > 0 && arr.length > MAX_ENTRIES)
+        {
+            arr.splice(0, arr.length - MAX_ENTRIES);
+        }
+
+        await writeArrayAtomic(arr);
+        return stamped;
+    });
 }
 
 /**
- * Read the most recent `limit` entries (newest last). Bad lines are skipped.
- * @param {number} limit  max entries to return (default all)
+ * Read the most recent entries.
+ * @param {number} [limit=100] - max entries to return (newest last). 0 = all.
  * @returns {Promise<object[]>}
  */
-async function read(limit = Infinity)
+async function read(limit = 100)
 {
-    let raw;
-    try { raw = await fsp.readFile(getPath(), 'utf8'); }
-    catch (e) { if (e.code === 'ENOENT') return []; throw e; }
+    const arr = await readArray();
+    if (!limit || limit <= 0) return arr;
+    return arr.slice(-limit);
+}
 
-    const entries = raw.split(/\r?\n/).filter(Boolean).map((l) =>
+/**
+ * Empty the log (reset to []).
+ * @returns {Promise<boolean>}
+ */
+function clear()
+{
+    return enqueue(async () =>
     {
-        try { return JSON.parse(l); }
-        catch { return null; }
-    }).filter(Boolean);
-
-    return limit === Infinity ? entries : entries.slice(-limit);
+        await writeArrayAtomic([]);
+        counter = 0;
+        return true;
+    });
 }
 
-/** Delete the entire audit log. Returns true if a file was removed. */
-async function clear()
+/** Absolute path to the active log file (or null before init). */
+function getLogPath()
 {
-    try { await fsp.unlink(getPath()); return true; }
-    catch (e) { if (e.code === 'ENOENT') return false; throw e; }
+    ensurePaths();
+    return LOG_FILE;
 }
 
-module.exports = { init, record, read, clear, getPath };
+module.exports = { init, record, read, clear, getLogPath };

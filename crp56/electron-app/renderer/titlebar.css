@@ -1,0 +1,139 @@
+/* ============================================================
+   CRP56 — Custom frameless title bar
+   Carrera / Tensura themed. Include on every page AFTER Base_style.css.
+   Requires <body> to start with the .titlebar markup (see titlebar.html).
+   ============================================================ */
+
+:root
+{
+    --tb-height: 38px;
+    --tb-gold:   #ffd11a;
+    --tb-gold-2: #ffe45c;
+    --tb-bg-1:   #18130a;
+    --tb-bg-2:   #0f0c06;
+    --tb-border: rgba(255, 209, 26, 0.22);
+    --tb-text:   #f4e9c8;
+    --tb-hover:  rgba(255, 209, 26, 0.14);
+    --tb-close-hover: #d34a1f;
+}
+
+/* Push page content below the fixed bar */
+body {
+    padding-top: var(--tb-height) !important;
+}
+
+.titlebar
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--tb-height);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 0 12px;
+    background: linear-gradient(180deg, var(--tb-bg-1), var(--tb-bg-2));
+    border-bottom: 1px solid var(--tb-border);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.6), 0 0 24px rgba(255, 209, 26, 0.05);
+    user-select: none;
+    -webkit-app-region: drag;          /* whole bar is draggable... */
+}
+
+/* ...except interactive controls */
+.titlebar button,
+.titlebar .tb-controls
+{
+    -webkit-app-region: no-drag;
+}
+
+/* ---------- left: brand ---------- */
+.tb-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+}
+
+.tb-mark
+{
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    background: radial-gradient(circle at 35% 35%, #000 0 30%, var(--tb-gold) 55%, var(--tb-gold-2) 70%, transparent 80%);
+    box-shadow: 0 0 10px rgba(255, 209, 26, 0.55);
+}
+
+.tb-title
+{
+    font-family: var(--font-display, "Cinzel", serif);
+    font-size: 12.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--tb-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tb-title .tb-accent
+{
+    color: var(--tb-gold);
+    text-shadow: 0 0 10px rgba(255, 209, 26, 0.5);
+}
+
+/* ---------- right: window controls ---------- */
+.tb-controls
+{
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+}
+
+.tb-btn
+{
+    width: 46px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: var(--tb-text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    outline: none;
+}
+
+.tb-btn svg
+{
+    width: 11px;
+    height: 11px;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    fill: none;
+    pointer-events: none;
+}
+
+.tb-btn:hover
+{
+    background: var(--tb-hover);
+    color: var(--tb-gold-2);
+}
+
+.tb-btn:active
+{
+    background: rgba(255, 209, 26, 0.22);
+}
+
+.tb-btn.tb-close:hover {
+    background: var(--tb-close-hover);
+    color: #fff;
+}
+
+/* maximize/restore icon swap (driven by body[data-maximized]) */
+.tb-btn .icon-restore { display: none; }
+body[data-maximized="true"] .tb-btn .icon-maximize { display: none; }
+body[data-maximized="true"] .tb-btn .icon-restore  { display: inline; }

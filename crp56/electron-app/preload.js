@@ -254,3 +254,12 @@ contextBridge.exposeInMainWorld('sfx', {
         return ipcRenderer.invoke('sfx:setOutputDevice', id);
     },
 });
+
+
+contextBridge.exposeInMainWorld('winControls', {
+    minimize:       () => ipcRenderer.invoke('win:minimize'),
+    toggleMaximize: () => ipcRenderer.invoke('win:toggle-maximize'),
+    close:          () => ipcRenderer.invoke('win:close'),
+    isMaximized:    () => ipcRenderer.invoke('win:is-maximized'),
+    onMaximizeChange: (cb) => ipcRenderer.on('win:maximize-changed', (_e, val) => cb(val)),
+});
