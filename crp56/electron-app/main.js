@@ -722,6 +722,22 @@ ipcMain.handle('music:list', () =>
     return list;
 });
 
+
+/* -------- Window controls (custom titlebar) -------- */
+ipcMain.handle('win:minimize', () => mainWindow?.minimize());
+
+ipcMain.handle('win:toggle-maximize', () =>
+{
+    if (!mainWindow) return false;
+    if (mainWindow.isMaximized()) mainWindow.unmaximize();
+    else mainWindow.maximize();
+    return mainWindow.isMaximized();
+});
+
+ipcMain.handle('win:close', () => mainWindow?.close());
+
+ipcMain.handle('win:is-maximized', () => !!mainWindow?.isMaximized());
+
 async function createWindow()
 {
     mainWindow = new BrowserWindow({
@@ -751,12 +767,18 @@ async function createWindow()
 
     const rendererPath = path.join(__dirname, 'renderer', 'index.html');
 
-    console.log('[CRP56 path] app.isPackaged =', app.isPackaged);
-    console.log('[CRP56 path] __dirname =', __dirname);
-    console.log('[CRP56 path] app.getAppPath() =', app.getAppPath());
-    console.log('[CRP56 path] process.resourcesPath =', process.resourcesPath);
-    console.log('[CRP56 path] rendererPath =', rendererPath);
-    console.log('[CRP56 path] renderer exists =', fs.existsSync(rendererPath));
+    /* Push maximize state to renderer so the restore/maximize icon stays correct
+       when the user snaps the window or double-clicks the titlebar. */
+    const sendMaxState = () =>
+    {
+        if (mainWindow && !mainWindow.isDestroyed())
+        {
+            mainWindow.webContents.send('win:maximize-changed', mainWindow.isMaximized());
+        }
+    };
+
+    mainWindow.on('maximize',   sendMaxState);
+    mainWindow.on('unmaximize', sendMaxState);
 
     await mainWindow.loadFile(rendererPath);
 
