@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="top bar custom work">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="top bar custom work 2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -248,15 +248,7 @@
       <workItem from="1782380257793" duration="960000" />
       <workItem from="1782394921163" duration="643000" />
       <workItem from="1782408506565" duration="7629000" />
-      <workItem from="1782494232623" duration="4534000" />
-    </task>
-    <task id="LOCAL-00049" summary="bg music code debugging setup">
-      <option name="closed" value="true" />
-      <created>1781635225719</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1781635225719</updated>
+      <workItem from="1782494232623" duration="5839000" />
     </task>
     <task id="LOCAL-00050" summary="bg music code debugging setup 2">
       <option name="closed" value="true" />
@@ -642,7 +634,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782498197429</updated>
     </task>
-    <option name="localTasksCounter" value="98" />
+    <task id="LOCAL-00098" summary="top bar custom work 2">
+      <option name="closed" value="true" />
+      <created>1782499415403</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1782499415403</updated>
+    </task>
+    <option name="localTasksCounter" value="99" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -715,7 +715,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="blackhole logo and icon image files 6" />
     <MESSAGE value="blackhole logo system integrated with particle effect toggle" />
     <MESSAGE value="git publishing integration work" />
     <MESSAGE value="git publishing integration work 3" />
@@ -740,6 +739,7 @@
     <MESSAGE value="complete rework and gravity page fixes 17" />
     <MESSAGE value="version update" />
     <MESSAGE value="top bar custom work" />
-    <option name="LAST_COMMIT_MESSAGE" value="top bar custom work" />
+    <MESSAGE value="top bar custom work 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="top bar custom work 2" />
   </component>
 </project>

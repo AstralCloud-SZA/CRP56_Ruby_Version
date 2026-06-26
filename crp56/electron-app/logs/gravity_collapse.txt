@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "timestamp": "2026-06-26T19:04:13.715Z",
+    "path": "C:\\Users\\devyg\\OneDrive\\Documents\\Visual Studio 2022 - Copy",
+    "type": "folder",
+    "mode": "single",
+    "status": "completed",
+    "files": 1,
+    "dirs": 5,
+    "durationMs": 13
+  },
+  {
+    "id": 2,
+    "timestamp": "2026-06-26T19:08:44.951Z",
+    "path": "S:\\VNs - Copy",
+    "type": "folder",
+    "mode": "gutmann",
+    "status": "completed",
+    "files": 18213,
+    "dirs": 462,
+    "durationMs": 104926
+  }
+]
