@@ -20,5 +20,16 @@
     "files": 18213,
     "dirs": 462,
     "durationMs": 104926
+  },
+  {
+    "id": 3,
+    "timestamp": "2026-06-26T19:56:06.241Z",
+    "path": "S:\\VNs - Copy",
+    "type": "folder",
+    "mode": "dod",
+    "status": "completed",
+    "files": 18213,
+    "dirs": 462,
+    "durationMs": 63085
   }
 ]

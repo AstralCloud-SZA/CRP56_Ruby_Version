@@ -13,6 +13,7 @@ const ALLOWED_CHANNELS = new Set([
     'crp56:decrypt-file',
     'crp56:encrypt-folder',
     'crp56:decrypt-folder',
+    'crp56:active-job',
     'dialog:pick-file',
     'dialog:pick-folder',
     'dialog:pick-save-file',
@@ -25,6 +26,11 @@ const ALLOWED_CHANNELS = new Set([
     'collapse:abort',
     'collapse:log-read',
     'collapse:log-clear',
+    // --- Window controls ---
+    'win:minimize',
+    'win:toggle-maximize',
+    'win:close',
+    'win:is-maximized',
 ]);
 
 function log(...args)
@@ -42,9 +48,14 @@ function invoke(channel, payload)
 
     log('invoke', channel, payload);
 
-    return payload !== undefined ? ipcRenderer.invoke(channel, payload) : ipcRenderer.invoke(channel);
+    return payload !== undefined
+        ? ipcRenderer.invoke(channel, payload)
+        : ipcRenderer.invoke(channel);
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   CRP56 core bridge
+   ─────────────────────────────────────────────────────────────────────────── */
 contextBridge.exposeInMainWorld('crp56', {
     ping: () =>
     {
@@ -106,6 +117,10 @@ contextBridge.exposeInMainWorld('crp56', {
         return invoke('dialog:pick-save-file', options ?? {});
     },
 
+    /**
+     * Subscribe to Ruby progress events.
+     * Returns an unsubscribe function — call it when the operation completes.
+     */
     onProgress: (callback) =>
     {
         log('onProgress() attach');
@@ -121,13 +136,24 @@ contextBridge.exposeInMainWorld('crp56', {
             ipcRenderer.removeListener('crp56:progress', listener);
         };
     },
+
+    /**
+     * Query main for any currently running job (collapse, encrypt, decrypt).
+     * Returns { type, path, mode, startedAt, lastProgress } or null.
+     * Call this on every page load so the UI can re-attach to an in-flight op.
+     */
+    activeJob: () =>
+    {
+        log('activeJob()');
+        return invoke('crp56:active-job');
+    },
 });
 
-/**
- * Gravity Collapse bridge.
- * Exposed as window.collapseAPI so gravitional_collapse.js can drive the
- * destruction chamber. All channels route through the allowlisted invoke().
- */
+/* ─────────────────────────────────────────────────────────────────────────────
+   Gravity Collapse bridge
+   Exposed as window.collapseAPI so gravitional_collapse.js can drive the
+   destruction chamber. All channels route through the allowlisted invoke().
+   ─────────────────────────────────────────────────────────────────────────── */
 contextBridge.exposeInMainWorld('collapseAPI', {
     guardStatus: () =>
     {
@@ -167,8 +193,9 @@ contextBridge.exposeInMainWorld('collapseAPI', {
 
     /**
      * run(job, onProgress) -> Promise<result>
-     * job: { path, type:'folder'|'drive', mode:'quick'|'single'|'dod'|'gutmann' }
+     * job: { path, type:'folder'|'drive', mode:'quick'|'single'|'dod'|'gutmann', password }
      * Progress streams on the 'collapse:progress' channel.
+     * The listener is automatically removed when the promise settles.
      */
     run: (job, onProgress) =>
     {
@@ -182,15 +209,37 @@ contextBridge.exposeInMainWorld('collapseAPI', {
         return invoke('collapse:run', job)
             .finally(() => ipcRenderer.removeListener('collapse:progress', listener));
     },
+
+    /**
+     * onProgress(callback) -> unsubscribe()
+     * Standalone progress subscriber — used when re-attaching to an in-flight
+     * collapse after a tab switch, without calling run() again.
+     */
+    onProgress: (callback) =>
+    {
+        log('collapse.onProgress() attach');
+        const listener = (_event, data) =>
+        {
+            try { callback(data); }
+            catch (e) { log('collapse.onProgress() callback error', e?.message); }
+        };
+        ipcRenderer.on('collapse:progress', listener);
+        return () =>
+        {
+            log('collapse.onProgress() unsubscribe');
+            ipcRenderer.removeListener('collapse:progress', listener);
+        };
+    },
 });
 
-/**
- * FMOD sound effects bridge.
- * Kept separate from the CRP56 IPC allowlist by design.
- */
+/* ─────────────────────────────────────────────────────────────────────────────
+   FMOD sound effects bridge
+   Kept separate from the CRP56 IPC allowlist by design.
+   ─────────────────────────────────────────────────────────────────────────── */
 const ALLOWED_SFX = new Set(['confirm', 'cursor', 'back', 'error']);
 
-contextBridge.exposeInMainWorld('sfx', {
+contextBridge.exposeInMainWorld('sfx',
+    {
     play: (category) =>
     {
         if (!ALLOWED_SFX.has(category))
@@ -255,11 +304,47 @@ contextBridge.exposeInMainWorld('sfx', {
     },
 });
 
-
+/* ─────────────────────────────────────────────────────────────────────────────
+   Window controls bridge
+   Routed through the allowlist like all other invoke() calls.
+   onMaximizeChange returns an unsubscribe so callers can clean up.
+   ─────────────────────────────────────────────────────────────────────────── */
 contextBridge.exposeInMainWorld('winControls', {
-    minimize:       () => ipcRenderer.invoke('win:minimize'),
-    toggleMaximize: () => ipcRenderer.invoke('win:toggle-maximize'),
-    close:          () => ipcRenderer.invoke('win:close'),
-    isMaximized:    () => ipcRenderer.invoke('win:is-maximized'),
-    onMaximizeChange: (cb) => ipcRenderer.on('win:maximize-changed', (_e, val) => cb(val)),
+    minimize: () =>
+    {
+        log('winControls.minimize()');
+        return invoke('win:minimize');
+    },
+    toggleMaximize: () =>
+    {
+        log('winControls.toggleMaximize()');
+        return invoke('win:toggle-maximize');
+    },
+    close: () =>
+    {
+        log('winControls.close()');
+        return invoke('win:close');
+    },
+    isMaximized: () =>
+    {
+        log('winControls.isMaximized()');
+        return invoke('win:is-maximized');
+    },
+
+    /**
+     * onMaximizeChange(cb) -> unsubscribe()
+     * Fires cb(isMaximized: boolean) whenever the window is maximized or
+     * restored — including OS-level snapping and double-click on the titlebar.
+     */
+    onMaximizeChange: (cb) =>
+    {
+        log('winControls.onMaximizeChange() attach');
+        const listener = (_e, val) => cb(val);
+        ipcRenderer.on('win:maximize-changed', listener);
+        return () =>
+        {
+            log('winControls.onMaximizeChange() unsubscribe');
+            ipcRenderer.removeListener('win:maximize-changed', listener);
+        };
+    },
 });

@@ -395,7 +395,7 @@ function playMusic(name, { fadeMs = 1200 } = {})
 
     log('[music] track length ms:', trackLengthMs, '(rc:', lenRc + ')');
     const chanOut = [null];
-    const playRc = FMOD_System_PlaySound(system, newSound, musicGroup, 1, chanOut);
+    const playRc = FMOD_System_PlaySound(system, newSound, musicGroup, 0, chanOut);
     log('[music] PlaySound rc:', playRc);
     check(playRc, 'PlaySound(music)');
     const newChannel = chanOut[0];
@@ -411,7 +411,6 @@ function playMusic(name, { fadeMs = 1200 } = {})
     currentTrackName = track.name;
     currentTrackLength_MS = trackLengthMs;
 
-    newChannelSetPaused(newChannel, false);
     crossfade(oldChannel, oldSound, newChannel, fadeMs);
     dumpMixerState(`after playMusic(${track.name})`);
     log('[music] playing music:', track.name);
@@ -649,6 +648,12 @@ function setMusicVolume(v)
     targetMusicVolume = n;
     log('setMusicVolume -> bus', n, 'targetMusicVolume', targetMusicVolume);
     if (musicGroup) check(FMOD_ChannelGroup_SetVolume(musicGroup, n), 'SetVolume(music)');
+
+    if (currentMusicChannel)
+    {
+        safeCall('Channel_SetVolume(current music)', () => check(FMOD_Channel_SetVolume(currentMusicChannel, targetMusicVolume), 'Channel_SetVolume(current music)'));
+    }
+
     dumpMixerState('after setMusicVolume');
     dumpMusicState('after setMusicVolume');
 }

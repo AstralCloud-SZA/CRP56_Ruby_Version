@@ -1,34 +1,42 @@
 
 
-const output = document.getElementById('output');
+const output          = document.getElementById('output');
 const themeStylesheet = document.getElementById('themeStylesheet');
-const themeName = document.getElementById('themeName');
-const themeNameCard = document.getElementById('themeNameCard');
-const themeToggle = document.getElementById('themeToggle');
-const progressFill = document.querySelector('.progress-fill');
-const html = document.documentElement;
-const body = document.body;
+const themeName       = document.getElementById('themeName');
+const themeNameCard   = document.getElementById('themeNameCard');
+const themeToggle     = document.getElementById('themeToggle');
+const progressFill    = document.querySelector('.progress-fill');
+const html            = document.documentElement;
+const body            = document.body;
 
-const ENCRYPTED_EXTENSION = '.crp56';
-const THEME_STORAGE_KEY = 'crp56-theme';
-const PARTICLE_STORAGE_KEY = 'crp56-particles';
-const SFX_VOL_STORAGE_KEY = 'crp56-sfx-volume';
-const MUSIC_VOL_STORAGE_KEY = 'crp56-music-volume';
+
+const ENCRYPTED_EXTENSION    = '.crp56';
+const THEME_STORAGE_KEY      = 'crp56-theme';
+const PARTICLE_STORAGE_KEY   = 'crp56-particles';
+const SFX_VOL_STORAGE_KEY    = 'crp56-sfx-volume';
+const MUSIC_VOL_STORAGE_KEY  = 'crp56-music-volume';
 const MASTER_VOL_STORAGE_KEY = 'crp56-master-volume';
-const MUTE_STORAGE_KEY = 'crp56-muted';
+const MUTE_STORAGE_KEY       = 'crp56-muted';
 
-let selectedFiles = [];
-let selectedEncryptedFolder = null;
-let selectedFolderOutput = null;
-let progressResetTimer = null;
-let particlesEnabled = true;
-let bgMusicStarted = false;
-let loadedMusicTracks = [];
-let musicUiBound = false;
+
+let selectedFiles            = [];
+let selectedEncryptedFolder  = null;
+let selectedFolderOutput     = null;
+let progressResetTimer       = null;
+let particlesEnabled         = true;
+let bgMusicStarted           = false;
+let loadedMusicTracks        = [];
+let musicUiBound             = false;
+
+/* Active re-attach unsubscribe handle — cleaned up on beforeunload */
+let reattachUnsub = null;
 
 const SFX_THROTTLE_MS = 60;
 const lastSfxAt = {};
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   SFX
+   ─────────────────────────────────────────────────────────────────────────── */
 function playSfx(category)
 {
     if (!window.sfx || typeof window.sfx.play !== 'function')
@@ -43,10 +51,13 @@ function playSfx(category)
     window.sfx.play(category);
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Master volume + mute
+   ─────────────────────────────────────────────────────────────────────────── */
 function bindMasterAndMusic()
 {
     const masterSlider = document.getElementById('masterVolume');
-    const masterLabel = document.getElementById('masterVolumeLabel');
+    const masterLabel  = document.getElementById('masterVolumeLabel');
 
     if (masterSlider)
     {
@@ -60,12 +71,10 @@ function bindMasterAndMusic()
 
         masterSlider.addEventListener('input', () =>
         {
-            const pct = Number(masterSlider.value);
+            const pct     = Number(masterSlider.value);
             const clamped = Number.isFinite(pct) ? Math.max(0, Math.min(100, pct)) : 100;
-
             if (masterLabel) masterLabel.textContent = `${clamped}%`;
             console.log('[CRP56 renderer] master volume input ->', clamped);
-
             if (window.sfx?.setMasterVolume) window.sfx.setMasterVolume(clamped / 100);
             try { localStorage.setItem(MASTER_VOL_STORAGE_KEY, String(clamped)); } catch (_) {}
         });
@@ -73,7 +82,7 @@ function bindMasterAndMusic()
         masterSlider.addEventListener('change', () => playSfx('cursor'));
     }
 
-    const muteBtn = document.getElementById('muteToggle');
+    const muteBtn    = document.getElementById('muteToggle');
     const muteStatus = document.getElementById('muteStatus');
 
     if (muteBtn)
@@ -89,49 +98,37 @@ function bindMasterAndMusic()
         };
 
         render();
-
-        if (window.sfx?.setMuteAll)
-        {
-            window.sfx.setMuteAll(muted);
-        }
+        if (window.sfx?.setMuteAll) window.sfx.setMuteAll(muted);
 
         muteBtn.addEventListener('click', () =>
         {
             muted = !muted;
             console.log('[CRP56 renderer] mute toggle ->', muted);
-
-            if (window.sfx?.setMuteAll)
-            {
-                window.sfx.setMuteAll(muted);
-            }
-
-            try
-            {
-                localStorage.setItem(MUTE_STORAGE_KEY, muted ? 'on' : 'off');
-            }
-            catch (_) {}
-
+            if (window.sfx?.setMuteAll) window.sfx.setMuteAll(muted);
+            try { localStorage.setItem(MUTE_STORAGE_KEY, muted ? 'on' : 'off'); } catch (_) {}
             render();
-
             if (!muted) playSfx('confirm');
         });
     }
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Themes
+   ─────────────────────────────────────────────────────────────────────────── */
 const THEMES = {
     'primordial-gold': { label: 'Primordial Gold', href: './primordial_gold.css' },
-    'hellflare-gold': { label: 'Hellflare Gold', href: './hellflare_gold.css' }
+    'hellflare-gold':  { label: 'Hellflare Gold',  href: './hellflare_gold.css'  },
 };
 
 const BG_IMAGES = {
     'primordial-gold': ['../BG_images/bg1.jpg', '../BG_images/bg3.jpg', '../BG_images/bg5.jpg', '../BG_images/bg7.jpg'],
-    'hellflare-gold': ['../BG_images/bg2.jpg', '../BG_images/bg4.png', '../BG_images/bg6.jpg']
+    'hellflare-gold':  ['../BG_images/bg2.jpg', '../BG_images/bg4.png', '../BG_images/bg6.jpg'],
 };
 
 const BG_INTERVAL_MS = 12000;
-let bgSlidesHost = null;
-let bgCurrentIndex = -1;
-let bgTimerId = null;
+let bgSlidesHost    = null;
+let bgCurrentIndex  = -1;
+let bgTimerId       = null;
 
 function initBackgroundHost()
 {
@@ -144,10 +141,9 @@ function showNextSlide(theme)
     const list = BG_IMAGES[theme] || [];
     if (!list.length) return;
     bgCurrentIndex = (bgCurrentIndex + 1) % list.length;
-    const url = list[bgCurrentIndex];
     const slide = document.createElement('div');
     slide.className = 'bg-slide';
-    slide.style.backgroundImage = `url("${url}")`;
+    slide.style.backgroundImage = `url("${list[bgCurrentIndex]}")`;
     bgSlidesHost.appendChild(slide);
     requestAnimationFrame(() => { requestAnimationFrame(() => slide.classList.add('visible')); });
     bgSlidesHost.querySelectorAll('.bg-slide').forEach((el) =>
@@ -163,20 +159,40 @@ function showNextSlide(theme)
 
 function startBackgroundLoop(theme)
 {
-    if (bgTimerId)
-    {
-        clearInterval(bgTimerId);
-        bgTimerId = null;
-    }
+    if (bgTimerId) { clearInterval(bgTimerId); bgTimerId = null; }
     bgCurrentIndex = -1;
     showNextSlide(theme);
     bgTimerId = setInterval(() => { showNextSlide(html.dataset.theme || theme); }, BG_INTERVAL_MS);
 }
 
-function log(...args)
+function setTheme(theme)
 {
-    console.log('[CRP56 renderer]', ...args);
+    // Gravity Collapse owns its own stylesheet — never let app.js swap it out.
+    if (document.body?.dataset?.page === 'gravity-collapse') return;
+    if (!THEMES[theme]) return;
+    html.dataset.theme = theme;
+    if (themeStylesheet) themeStylesheet.setAttribute('href', THEMES[theme].href);
+    if (themeName)       themeName.textContent     = THEMES[theme].label;
+    if (themeNameCard)   themeNameCard.textContent = THEMES[theme].label;
+    try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch (_) {}
+    if (window.ParticleFX?.resizeCanvas) window.ParticleFX.resizeCanvas();
+    startBackgroundLoop(theme);
 }
+
+function savedTheme()
+{
+    try
+    {
+        const stored = localStorage.getItem(THEME_STORAGE_KEY);
+        if (stored && THEMES[stored]) return stored;
+    } catch (_) {}
+    return null;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Progress bar
+   ─────────────────────────────────────────────────────────────────────────── */
+function log(...args) { console.log('[CRP56 renderer]', ...args); }
 
 function show(data)
 {
@@ -184,10 +200,7 @@ function show(data)
     output.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
 }
 
-function baseName(fullPath)
-{
-    return String(fullPath).split(/[\\/]/).pop();
-}
+function baseName(fullPath) { return String(fullPath).split(/[\\/]/).pop(); }
 
 function ensureCrp56Extension(filePath)
 {
@@ -202,49 +215,15 @@ function toCrp56Name(fileName)
     return `${stem || name}${ENCRYPTED_EXTENSION}`;
 }
 
-function setTheme(theme)
-{
-    if (document.body?.dataset?.page === 'gravity-collapse') return;
-    if (!THEMES[theme]) return;
-    html.dataset.theme = theme;
-
-    if (themeStylesheet) themeStylesheet.setAttribute('href', THEMES[theme].href);
-    if (themeName) themeName.textContent = THEMES[theme].label;
-    if (themeNameCard) themeNameCard.textContent = THEMES[theme].label;
-    try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch (_) {}
-
-    if (window.ParticleFX?.resizeCanvas)
-    {
-        window.ParticleFX.resizeCanvas();
-    }
-
-    startBackgroundLoop(theme);
-}
-
-function savedTheme()
-{
-    try
-    {
-        const stored = localStorage.getItem(THEME_STORAGE_KEY);
-        if (stored && THEMES[stored]) return stored;
-    } catch (_) {}
-    return null;
-}
-
 function setProgress(percent)
 {
     if (!progressFill) return;
-    const clamped = Math.max(0, Math.min(100, percent));
-    progressFill.style.width = `${clamped}%`;
+    progressFill.style.width = `${Math.max(0, Math.min(100, percent))}%`;
 }
 
 function startProgress(label = '')
 {
-    if (progressResetTimer)
-    {
-        clearTimeout(progressResetTimer);
-        progressResetTimer = null;
-    }
+    if (progressResetTimer) { clearTimeout(progressResetTimer); progressResetTimer = null; }
     if (progressFill) progressFill.style.opacity = '1';
     setProgress(2);
     show({ status: label ? `Running ${label}...` : 'Working...' });
@@ -261,6 +240,25 @@ function finishProgress()
     }, 750);
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Progress handler — extracted so re-attach can call it directly
+   ─────────────────────────────────────────────────────────────────────────── */
+function handleProgressUpdate(msg)
+{
+    console.log('[CRP56 renderer] progress event:', msg);
+    if (!msg || msg.event !== 'progress' || !msg.total) return;
+    const percent = Math.round((msg.current / msg.total) * 100);
+    setProgress(percent);
+    const detail = msg.detail ? ` — ${msg.detail}` : '';
+    show({ status: `${msg.stage}: ${msg.current}/${msg.total} (${percent}%)${detail}` });
+}
+
+/* Show the progress bar in a running state — extracted for re-attach use */
+function showProgressUI(label)
+{
+    startProgress(label);
+}
+
 function bindProgressEvents()
 {
     if (!window.crp56 || typeof window.crp56.onProgress !== 'function')
@@ -268,17 +266,8 @@ function bindProgressEvents()
         console.log('[CRP56 renderer] progress bridge missing');
         return;
     }
-
     console.log('[CRP56 renderer] progress bridge attached');
-    window.crp56.onProgress((msg) =>
-    {
-        console.log('[CRP56 renderer] progress event:', msg);
-        if (!msg || msg.event !== 'progress' || !msg.total) return;
-        const percent = Math.round((msg.current / msg.total) * 100);
-        setProgress(percent);
-        const detail = msg.detail ? ` — ${msg.detail}` : '';
-        show({ status: `${msg.stage}: ${msg.current}/${msg.total} (${percent}%)${detail}` });
-    });
+    window.crp56.onProgress(handleProgressUpdate);
 }
 
 async function runAction(label, fn)
@@ -305,6 +294,10 @@ async function runAction(label, fn)
     }
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   UI bindings
+   ─────────────────────────────────────────────────────────────────────────── */
+
 function bindThemeToggle()
 {
     if (!themeToggle) return;
@@ -314,8 +307,6 @@ function bindThemeToggle()
         ParticleFX.blackHole('blackHoleMark', 52, 28);
         ParticleFX.blackHole('blackHoleRail', 54, 28);
         playSfx('confirm');
-        ParticleFX.blackHole('blackHoleMark', 52, 28);
-        ParticleFX.blackHole('blackHoleRail', 54, 28);
         const next = html.dataset.theme === 'primordial-gold' ? 'hellflare-gold' : 'primordial-gold';
         setTheme(next);
     });
@@ -330,15 +321,15 @@ function bindTabButtons()
             playSfx('cursor');
             const target = btn.dataset.tabTarget;
             document.querySelectorAll('[data-tab-target]').forEach((item) => { item.classList.toggle('active', item === btn); });
-            document.querySelectorAll('[data-tab-panel]').forEach((panel) => { panel.classList.toggle('hidden', panel.dataset.tabPanel !== target); });
+            document.querySelectorAll('[data-tab-panel]').forEach((panel)  => { panel.classList.toggle('hidden', panel.dataset.tabPanel !== target); });
         });
     });
 }
 
 function bindSelectionZones()
 {
-    const fileZone = document.getElementById('file-drop-zone');
-    const fileList = document.getElementById('file-list');
+    const fileZone   = document.getElementById('file-drop-zone');
+    const fileList   = document.getElementById('file-list');
     const folderZone = document.getElementById('folder-drop-zone');
     const folderList = document.getElementById('folder-list');
     const isDecryptPage = body?.dataset?.page === 'decrypt';
@@ -350,7 +341,7 @@ function bindSelectionZones()
             const options = { properties: ['openFile', 'multiSelections'] };
             if (isDecryptPage)
             {
-                options.filters = [{ name: 'CRP56 Encrypted', extensions: ['crp56'] }, { name: 'All Files', extensions: ['*'] }];
+                options.filters = [{ name: 'CRP56 Encrypted', extensions: ['crp56'] }, { name: 'All Files', extensions: ['*']  },];
             }
             const result = await window.crp56.pickFile(options);
             if (result.canceled) return;
@@ -373,26 +364,27 @@ function bindSelectionZones()
             if (isDecryptPage)
             {
                 result = await window.crp56.pickFile({
-                    title: 'Select Encrypted Archive to Extract',
+                    title:      'Select Encrypted Archive to Extract',
                     properties: ['openFile'],
-                    filters: [
+                    filters:    [
                         { name: 'CRP56 Encrypted Archive', extensions: ['crp56'] },
-                        { name: 'All Files', extensions: ['*'] }
-                    ]
+                        { name: 'All Files',               extensions: ['*']     },
+                    ],
                 });
             }
             else
             {
                 result = await window.crp56.pickFolder();
             }
+
             if (result.canceled) return;
             selectedEncryptedFolder = result.filePaths[0];
             if (folderList)
             {
                 folderList.style.display = 'block';
-                const icon = isDecryptPage ? '🗄️' : '📂';
-                folderList.innerText = `${icon} ${selectedEncryptedFolder}`;
+                folderList.innerText = `${isDecryptPage ? '🗄️' : '📂'} ${selectedEncryptedFolder}`;
             }
+
             playSfx('cursor');
             log(isDecryptPage ? 'Encrypted archive selected:' : 'Source folder selected:', selectedEncryptedFolder);
         });
@@ -401,22 +393,15 @@ function bindSelectionZones()
 
 function bindPageActions()
 {
-    const btnPing = document.getElementById('btn-ping');
-    const btnVersion = document.getElementById('btn-version');
-    const btnEncrypt = document.getElementById('btn-encrypt');
-    const btnDecrypt = document.getElementById('btn-decrypt');
+    const btnPing        = document.getElementById('btn-ping');
+    const btnVersion     = document.getElementById('btn-version');
+    const btnEncrypt     = document.getElementById('btn-encrypt');
+    const btnDecrypt     = document.getElementById('btn-decrypt');
     const passphraseInput = document.getElementById('passphrase');
-    const plainTextInput = document.getElementById('plain-text');
+    const plainTextInput  = document.getElementById('plain-text');
 
-    if (btnPing)
-    {
-        btnPing.addEventListener('click', async () => { await runAction('ping', () => window.crp56.ping()); });
-    }
-
-    if (btnVersion)
-    {
-        btnVersion.addEventListener('click', async () => { await runAction('version', () => window.crp56.version()); });
-    }
+    if (btnPing)    btnPing.addEventListener('click',    async () => { await runAction('ping',    () => window.crp56.ping()); });
+    if (btnVersion) btnVersion.addEventListener('click', async () => { await runAction('version', () => window.crp56.version()); });
 
     if (btnEncrypt && passphraseInput)
     {
@@ -425,25 +410,31 @@ function bindPageActions()
             const passphrase = passphraseInput.value;
             if (!passphrase) { playSfx('error'); return show({ ok: false, error: 'Passphrase is required' }); }
             const activeTab = document.querySelector('.tab-pill.active')?.dataset.tabTarget;
+
             if (activeTab === 'text' && plainTextInput)
             {
-                const text = plainTextInput.value;
-                const result = await runAction('encrypt_text', () => window.crp56.encryptText(passphrase, text));
+                const result = await runAction('encrypt_text', () => window.crp56.encryptText(passphrase, plainTextInput.value));
                 if (result?.ok && result.result) plainTextInput.value = result.result;
             }
             else if (activeTab === 'file')
             {
-                if (selectedFiles.length === 0) { playSfx('error'); return show({ ok: false, error: 'No files selected' }); }
+                if (!selectedFiles.length) { playSfx('error'); return show({ ok: false, error: 'No files selected' }); }
                 const sourceFile = selectedFiles[0];
-                const saveRes = await window.crp56.pickSaveFile({ title: 'Save Encrypted File', defaultPath: toCrp56Name(baseName(sourceFile)), filters: [{ name: 'CRP56 Encrypted', extensions: ['crp56'] }] });
+                const saveRes = await window.crp56.pickSaveFile({
+                    title:       'Save Encrypted File',
+                    defaultPath: toCrp56Name(baseName(sourceFile)),
+                    filters:     [{ name: 'CRP56 Encrypted', extensions: ['crp56'] }],
+                });
                 if (saveRes.canceled || !saveRes.filePath) return;
-                const outputFile = ensureCrp56Extension(saveRes.filePath);
-                await runAction('encrypt_file', () => window.crp56.encryptFile(passphrase, sourceFile, outputFile));
+                await runAction('encrypt_file', () => window.crp56.encryptFile(passphrase, sourceFile, ensureCrp56Extension(saveRes.filePath)));
             }
             else if (activeTab === 'folder')
             {
                 if (!selectedEncryptedFolder) { playSfx('error'); return show({ ok: false, error: 'No folder selected' }); }
-                const saveRes = await window.crp56.pickFolder({ title: 'Select Output Folder for the Encrypted Archive', properties: ['openDirectory', 'createDirectory'] });
+                const saveRes = await window.crp56.pickFolder({
+                    title:      'Select Output Folder for the Encrypted Archive',
+                    properties: ['openDirectory', 'createDirectory'],
+                });
                 if (saveRes.canceled) return;
                 selectedFolderOutput = saveRes.filePaths[0];
                 await runAction('encrypt_folder', () => window.crp56.encryptFolder(passphrase, selectedEncryptedFolder, selectedFolderOutput));
@@ -458,24 +449,30 @@ function bindPageActions()
             const passphrase = passphraseInput.value;
             if (!passphrase) { playSfx('error'); return show({ ok: false, error: 'Passphrase is required' }); }
             const activeTab = document.querySelector('.tab-pill.active')?.dataset.tabTarget;
+
             if (activeTab === 'text' && plainTextInput)
             {
-                const text = plainTextInput.value;
-                const result = await runAction('decrypt_text', () => window.crp56.decryptText(passphrase, text));
+                const result = await runAction('decrypt_text', () => window.crp56.decryptText(passphrase, plainTextInput.value));
                 if (result?.ok && result.result) plainTextInput.value = result.result;
             }
             else if (activeTab === 'file')
             {
-                if (selectedFiles.length === 0) { playSfx('error'); return show({ ok: false, error: 'No files selected' }); }
+                if (!selectedFiles.length) { playSfx('error'); return show({ ok: false, error: 'No files selected' }); }
                 const sourceFile = selectedFiles[0];
-                const destRes = await window.crp56.pickFolder({ title: 'Select Destination Folder for Decrypted File', properties: ['openDirectory', 'createDirectory'] });
+                const destRes = await window.crp56.pickFolder({
+                    title:      'Select Destination Folder for Decrypted File',
+                    properties: ['openDirectory', 'createDirectory'],
+                });
                 if (destRes.canceled) return;
                 await runAction('decrypt_file', () => window.crp56.decryptFile(passphrase, sourceFile, destRes.filePaths[0]));
             }
             else if (activeTab === 'folder')
             {
                 if (!selectedEncryptedFolder) { playSfx('error'); return show({ ok: false, error: 'No encrypted archive (.crp56) selected' }); }
-                const saveRes = await window.crp56.pickFolder({ title: 'Select Output Folder to Extract Into', properties: ['openDirectory', 'createDirectory'] });
+                const saveRes = await window.crp56.pickFolder({
+                    title:      'Select Output Folder to Extract Into',
+                    properties: ['openDirectory', 'createDirectory'],
+                });
                 if (saveRes.canceled) return;
                 selectedFolderOutput = saveRes.filePaths[0];
                 await runAction('decrypt_folder', () => window.crp56.decryptFolder(passphrase, selectedEncryptedFolder, selectedFolderOutput));
@@ -497,7 +494,7 @@ function bindRailAudio()
     document.querySelectorAll('.nav-btn').forEach((el) =>
     {
         el.addEventListener('mouseenter', () => { if (!el.classList.contains('active')) playSfx('cursor'); });
-        el.addEventListener('click', () => { if (!el.classList.contains('active')) playSfx('confirm'); });
+        el.addEventListener('click',      () => { if (!el.classList.contains('active')) playSfx('confirm'); });
     });
 }
 
@@ -512,16 +509,18 @@ function bindDataSfx()
     });
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Music & output devices
+   ─────────────────────────────────────────────────────────────────────────── */
 async function bindMusicTrackSelect()
 {
-    const select = document.getElementById('musicTrackSelect');
+    const select  = document.getElementById('musicTrackSelect');
     const playBtn = document.getElementById('musicTrackPlay');
     if (!select || !playBtn || !window.sfx?.listMusic || !window.sfx?.playMusic)
     {
         console.log('[CRP56 renderer] music UI missing or bridge missing');
         return;
     }
-
     if (musicUiBound) return;
     musicUiBound = true;
 
@@ -533,16 +532,15 @@ async function bindMusicTrackSelect()
         console.log('[CRP56 renderer] music list loaded:', tracks);
 
         select.innerHTML = '';
-
         const autoOpt = document.createElement('option');
-        autoOpt.value = '';
+        autoOpt.value       = '';
         autoOpt.textContent = 'Auto';
         select.appendChild(autoOpt);
 
         for (const track of tracks)
         {
             const opt = document.createElement('option');
-            opt.value = track;
+            opt.value       = track;
             opt.textContent = track;
             select.appendChild(opt);
         }
@@ -553,12 +551,7 @@ async function bindMusicTrackSelect()
         playBtn.addEventListener('click', () =>
         {
             const track = select.value || (tracks.length ? tracks[Math.floor(Math.random() * tracks.length)] : '');
-            if (!track)
-            {
-                console.log('[CRP56 renderer] no tracks available to play');
-                return;
-            }
-
+            if (!track) { console.log('[CRP56 renderer] no tracks available to play'); return; }
             console.log('[CRP56 renderer] sending music:play ->', track);
             bgMusicStarted = true;
             localStorage.setItem('crp56-music-track', track);
@@ -575,20 +568,10 @@ async function bindMusicTrackSelect()
 
 async function bindOutputDeviceSelect()
 {
-    const select = document.getElementById('outputDeviceSelect');
+    const select   = document.getElementById('outputDeviceSelect');
     const applyBtn = document.getElementById('outputDeviceApply');
-
-    if (!select || !applyBtn)
-    {
-        console.log('[CRP56 renderer] output device UI missing');
-        return;
-    }
-
-    if (!window.sfx?.listOutputDevices || !window.sfx?.setOutputDevice)
-    {
-        console.log('[CRP56 renderer] output device bridge missing');
-        return;
-    }
+    if (!select || !applyBtn) { console.log('[CRP56 renderer] output device UI missing'); return; }
+    if (!window.sfx?.listOutputDevices || !window.sfx?.setOutputDevice) { console.log('[CRP56 renderer] output device bridge missing'); return; }
 
     try
     {
@@ -597,35 +580,30 @@ async function bindOutputDeviceSelect()
         console.log('[CRP56 renderer] output devices returned:', devices);
 
         select.innerHTML = '';
-
-        if (!Array.isArray(devices) || devices.length === 0)
+        if (!Array.isArray(devices) || !devices.length)
         {
             const opt = document.createElement('option');
-            opt.value = '';
+            opt.value       = '';
             opt.textContent = 'No output devices found';
             select.appendChild(opt);
-            select.disabled = true;
-            applyBtn.disabled = true;
+            select.disabled    = true;
+            applyBtn.disabled  = true;
             return;
         }
 
         for (const dev of devices)
         {
-            console.log('[CRP56 renderer] device:', dev);
             const opt = document.createElement('option');
-            opt.value = String(dev.id);
+            opt.value       = String(dev.id);
             opt.textContent = dev.name + (dev.isDefault ? ' (system default)' : '');
             select.appendChild(opt);
         }
 
-        select.disabled = false;
+        select.disabled   = false;
         applyBtn.disabled = false;
 
         const saved = localStorage.getItem('crp56-output-device');
-        if (saved && devices.some(d => String(d.id) === saved))
-        {
-            select.value = saved;
-        }
+        if (saved && devices.some(d => String(d.id) === saved)) select.value = saved;
 
         applyBtn.addEventListener('click', async () =>
         {
@@ -633,7 +611,6 @@ async function bindOutputDeviceSelect()
             if (!raw) return;
             const id = Number(raw);
             console.log('[CRP56 renderer] set output device ->', id);
-
             try
             {
                 await window.sfx.setOutputDevice(id);
@@ -647,25 +624,35 @@ async function bindOutputDeviceSelect()
             }
         });
     }
-    catch (e)
-    {
-        console.error('[CRP56 renderer] failed to load output devices:', e);
-    }
+    catch (e) { console.error('[CRP56 renderer] failed to load output devices:', e); }
 }
 
 async function startBackgroundMusicOnce()
 {
     if (bgMusicStarted) return;
-    if (!window.sfx?.listMusic || !window.sfx?.playMusic) return;
+    if (!window.sfx?.listMusic || !window.sfx?.playMusic)
+    {
+        console.warn('[CRP56 renderer] music bridge missing at startup', {hasSfx: !!window.sfx, listMusic: typeof window.sfx?.listMusic, playMusic: typeof window.sfx?.playMusic});
+        return;
+    }
 
     try
     {
+        console.log('[CRP56 renderer] requesting startup music list...');
         const tracks = await window.sfx.listMusic();
-        loadedMusicTracks = tracks.slice();
-        if (!tracks.length) return;
+        console.log('[CRP56 renderer] startup music list returned:', tracks);
+
+        loadedMusicTracks = Array.isArray(tracks) ? tracks.slice() : [];
+        if (!loadedMusicTracks.length)
+        {
+            console.warn('[CRP56 renderer] no startup music tracks found');
+            return;
+        }
 
         const saved = localStorage.getItem('crp56-music-track');
-        const pick = saved && tracks.includes(saved) ? saved : tracks[Math.floor(Math.random() * tracks.length)];
+        const pick  = saved && loadedMusicTracks.includes(saved) ? saved : loadedMusicTracks[Math.floor(Math.random() * loadedMusicTracks.length)];
+
+        console.log('[CRP56 renderer] startup music pick ->', pick);
 
         bgMusicStarted = true;
         localStorage.setItem('crp56-music-track', pick);
@@ -674,34 +661,26 @@ async function startBackgroundMusicOnce()
     }
     catch (e)
     {
+        bgMusicStarted = false;
         console.error('[CRP56] BG music start failed:', e);
     }
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Particles
+   ─────────────────────────────────────────────────────────────────────────── */
 function setParticlesEnabled(enabled, { persist = true } = {})
 {
     particlesEnabled = !!enabled;
-
-    if (persist)
-    {
-        try { localStorage.setItem(PARTICLE_STORAGE_KEY, particlesEnabled ? 'on' : 'off'); } catch (_) {}
-    }
+    if (persist) { try { localStorage.setItem(PARTICLE_STORAGE_KEY, particlesEnabled ? 'on' : 'off'); } catch (_) {} }
 
     const toggle = document.getElementById('particleToggle');
     const status = document.getElementById('particleStatus');
-
     if (toggle) toggle.textContent = particlesEnabled ? 'Disable particles' : 'Enable particles';
     if (status) status.textContent = particlesEnabled ? 'On' : 'Off';
 
-    if (window.ParticleFX?.setEnabled)
-    {
-        window.ParticleFX.setEnabled(particlesEnabled);
-    }
-
-    if (window.ParticleFX?.blackHoleEnabled !== undefined)
-    {
-        window.ParticleFX.blackHoleEnabled = particlesEnabled;
-    }
+    if (window.ParticleFX?.setEnabled) window.ParticleFX.setEnabled(particlesEnabled);
+    if (window.ParticleFX?.blackHoleEnabled !== undefined) window.ParticleFX.blackHoleEnabled = particlesEnabled;
 
     if (window.ParticleFX)
     {
@@ -709,10 +688,8 @@ function setParticlesEnabled(enabled, { persist = true } = {})
         {
             if (window.ParticleFX.blackHole)
             {
-                const mark = document.getElementById('blackHoleMark');
-                const rail = document.getElementById('blackHoleRail');
-                if (mark) window.ParticleFX.blackHole('blackHoleMark', 52, 28);
-                if (rail) window.ParticleFX.blackHole('blackHoleRail', 54, 28);
+                if (document.getElementById('blackHoleMark')) window.ParticleFX.blackHole('blackHoleMark', 52, 28);
+                if (document.getElementById('blackHoleRail'))  window.ParticleFX.blackHole('blackHoleRail', 54, 28);
             }
         }
         else
@@ -728,14 +705,7 @@ function setParticlesEnabled(enabled, { persist = true } = {})
 
 function savedParticlesEnabled()
 {
-    try
-    {
-        return localStorage.getItem(PARTICLE_STORAGE_KEY) !== 'off';
-    }
-    catch (_)
-    {
-        return true;
-    }
+    try { return localStorage.getItem(PARTICLE_STORAGE_KEY) !== 'off'; } catch (_) { return true; }
 }
 
 function bindParticleToggle()
@@ -747,17 +717,17 @@ function bindParticleToggle()
 
 function bindVolumeSliders()
 {
-    const sfxSlider = document.getElementById('sfxVolume');
-    const sfxLabel = document.getElementById('sfxVolumeLabel');
+    const sfxSlider   = document.getElementById('sfxVolume');
+    const sfxLabel    = document.getElementById('sfxVolumeLabel');
     const musicSlider = document.getElementById('musicVolume');
-    const musicLabel = document.getElementById('musicVolumeLabel');
-    const savedSfx = Number(localStorage.getItem(SFX_VOL_STORAGE_KEY) ?? 80);
-    const savedMusic = Number(localStorage.getItem(MUSIC_VOL_STORAGE_KEY) ?? 60);
+    const musicLabel  = document.getElementById('musicVolumeLabel');
+    const savedSfx    = Number(localStorage.getItem(SFX_VOL_STORAGE_KEY)   ?? 80);
+    const savedMusic  = Number(localStorage.getItem(MUSIC_VOL_STORAGE_KEY) ?? 60);
 
     const sync = (slider, label, pct) =>
     {
         if (slider) slider.value = String(pct);
-        if (label) label.textContent = `${pct}%`;
+        if (label)  label.textContent = `${pct}%`;
     };
 
     if (sfxSlider)
@@ -790,75 +760,104 @@ function bindVolumeSliders()
 
 function applySavedVolumes()
 {
-    const sfxSlider = document.getElementById('sfxVolume');
-    const sfxLabel = document.getElementById('sfxVolumeLabel');
+    const sfxSlider   = document.getElementById('sfxVolume');
+    const sfxLabel    = document.getElementById('sfxVolumeLabel');
     const musicSlider = document.getElementById('musicVolume');
-    const musicLabel = document.getElementById('musicVolumeLabel');
+    const musicLabel  = document.getElementById('musicVolumeLabel');
     const masterSlider = document.getElementById('masterVolume');
-    const masterLabel = document.getElementById('masterVolumeLabel');
+    const masterLabel  = document.getElementById('masterVolumeLabel');
 
-    const readVol = (key, fb) =>
-    {
-        const raw = localStorage.getItem(key);
-        const n = Number(raw);
-        return Number.isFinite(n) ? n : fb;
-    };
+    const readVol = (key, fb) => { const n = Number(localStorage.getItem(key)); return Number.isFinite(n) ? n : fb; };
 
-    const master = readVol(MASTER_VOL_STORAGE_KEY, 100);
-    const sfxVol = readVol(SFX_VOL_STORAGE_KEY, 80);
-    const musicVol = readVol(MUSIC_VOL_STORAGE_KEY, 60);
+    const master   = readVol(MASTER_VOL_STORAGE_KEY, 100);
+    const sfxVol   = readVol(SFX_VOL_STORAGE_KEY,   80);
+    const musicVol = readVol(MUSIC_VOL_STORAGE_KEY,  60);
 
     if (masterSlider) masterSlider.value = String(master);
-    if (masterLabel) masterLabel.textContent = `${master}%`;
-
-    if (sfxSlider) sfxSlider.value = String(sfxVol);
-    if (sfxLabel) sfxLabel.textContent = `${sfxVol}%`;
-
-    if (musicSlider) musicSlider.value = String(musicVol);
-    if (musicLabel) musicLabel.textContent = `${musicVol}%`;
+    if (masterLabel)  masterLabel.textContent  = `${master}%`;
+    if (sfxSlider)    sfxSlider.value    = String(sfxVol);
+    if (sfxLabel)     sfxLabel.textContent     = `${sfxVol}%`;
+    if (musicSlider)  musicSlider.value  = String(musicVol);
+    if (musicLabel)   musicLabel.textContent   = `${musicVol}%`;
 
     if (!window.sfx) return;
-
     console.log('[CRP56 renderer] applying saved volumes', { master, sfxVol, musicVol });
-
-    if (window.sfx.setMasterVolume) window.sfx.setMasterVolume(master / 100);
-    if (window.sfx.setSfxVolume) window.sfx.setSfxVolume(sfxVol / 100);
-    if (window.sfx.setMusicVolume) window.sfx.setMusicVolume(musicVol / 100);
+    if (window.sfx.setMasterVolume) window.sfx.setMasterVolume(master   / 100);
+    if (window.sfx.setSfxVolume)    window.sfx.setSfxVolume(sfxVol      / 100);
+    if (window.sfx.setMusicVolume)  window.sfx.setMusicVolume(musicVol  / 100);
 
     const muted = localStorage.getItem(MUTE_STORAGE_KEY) === 'on';
     if (window.sfx.setMuteAll) window.sfx.setMuteAll(muted);
 }
 
-// PARTICLE EFFECTS SYSTEM INTEGRATION
-
+/* ─────────────────────────────────────────────────────────────────────────────
+   Particle canvas init
+   ─────────────────────────────────────────────────────────────────────────── */
 function initParticles()
 {
-    if (!window.ParticleFX)
-    {
-        console.warn('[CRP56 renderer] ParticleFX missing');
-        return;
-    }
-
+    if (!window.ParticleFX) { console.warn('[CRP56 renderer] ParticleFX missing'); return; }
     const ok = window.ParticleFX.initCanvas('particles');
-    if (!ok)
-    {
-        console.warn('[CRP56 renderer] particle canvas missing or unusable');
-        return;
-    }
-
+    if (!ok) { console.warn('[CRP56 renderer] particle canvas missing or unusable'); return; }
     window.ParticleFX.attach();
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Re-attach to any in-flight Ruby operation after a tab switch.
+   The Ruby process (and collapseRun) never stop — only the renderer's
+   progress listener was lost on navigation. This restores it.
+   ─────────────────────────────────────────────────────────────────────────── */
+function tryReattachActiveJob()
+{
+    if (!window.crp56) return;
+
+    window.crp56.activeJob().then((job) =>
+    {
+        if (!job) return;
+        // Gravity Collapse re-attaches inside gravitional_collapse.js
+        if (job.type === 'collapse') return;
+
+        const LABELS = {
+            encrypt_folder: 'Encrypting folder…',
+            decrypt_folder: 'Decrypting folder…',
+            encrypt_file:   'Encrypting file…',
+            decrypt_file:   'Decrypting file…',
+        };
+
+        console.log('[CRP56 renderer] Re-attaching to in-flight job:', job);
+
+        // Snap the UI to in-progress state immediately
+        showProgressUI(LABELS[job.type] ?? 'Operation in progress…');
+
+        // If main cached a progress tick, render it right away
+        if (job.lastProgress) handleProgressUpdate(job.lastProgress);
+
+        // Re-subscribe — self-cleaning when the operation finishes
+        reattachUnsub = window.crp56.onProgress((p) =>
+        {
+            handleProgressUpdate(p);
+
+            // Clean up once done
+            if (p.pct != null && p.pct >= 100)
+            {
+                finishProgress();
+                if (reattachUnsub) { reattachUnsub(); reattachUnsub = null; }
+            }
+        });
+
+    }).catch(() => {});
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DOMContentLoaded
+   ─────────────────────────────────────────────────────────────────────────── */
 window.addEventListener('DOMContentLoaded', async () =>
 {
     console.log('[CRP56 renderer] DOMContentLoaded');
 
     const currentPage = document.body?.dataset?.page;
 
-    // Gravity Collapse is self-contained: it has its own CSS, its own
-    // renderer (gravitional_collapse.js) and its own inline black-hole init.
-    // Run ONLY the shared particle field + SFX, then stop — do NOT swap the
-    // theme stylesheet or wire encryption/settings UI that isn't on this page.
+    // Gravity Collapse is self-contained — run only shared particle/SFX wiring,
+    // then bail. Do NOT swap the theme stylesheet or wire encryption UI here.
     if (currentPage === 'gravity-collapse')
     {
         initParticles();
@@ -881,16 +880,9 @@ window.addEventListener('DOMContentLoaded', async () =>
     bindMasterAndMusic();
     bindRailAudio();
     bindDataSfx();
-
-
-
-
-
     applySavedVolumes();
 
-    const page = body?.dataset?.page;
-
-    if (page === 'settings')
+    if (currentPage === 'settings')
     {
         console.log('[CRP56 renderer] binding settings-only audio UI');
         await bindMusicTrackSelect();
@@ -898,21 +890,25 @@ window.addEventListener('DOMContentLoaded', async () =>
     }
     else
     {
-        console.log('[CRP56 renderer] skipping settings-only audio UI on page:', page);
+        console.log('[CRP56 renderer] skipping settings-only audio UI on page:', currentPage);
     }
 
-    setTimeout(async () =>
+    try
     {
-        try
+        await startBackgroundMusicOnce();
+    }
+    catch (e)
+    {
+        console.error('[CRP56] Immediate BG music start failed:', e);
+    }
+
+    setTimeout(() =>
+    {
+        startBackgroundMusicOnce().catch((e) =>
         {
-            console.log('[CRP56 renderer] delayed autoplay firing');
-            await startBackgroundMusicOnce();
-        }
-        catch (e)
-        {
-            console.error('[CRP56] Delayed BG music start failed:', e);
-        }
-    }, 500);
+            console.error('[CRP56] Fallback BG music start failed:', e);
+        });
+    }, 1200);
 
     if (!window.crp56)
     {
@@ -924,5 +920,21 @@ window.addEventListener('DOMContentLoaded', async () =>
     bindPageActions();
     bindProgressEvents();
 
-    if (page) show({ ok: true, status: `${page.charAt(0).toUpperCase() + page.slice(1)} page ready.` });
+    // Re-attach to any operation that was running when the user last left this page
+    tryReattachActiveJob();
+
+    if (currentPage)
+    {
+        show({ ok: true, status: `${currentPage.charAt(0).toUpperCase() + currentPage.slice(1)} page ready.` });
+    }
+});
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Cleanup on unload
+   ─────────────────────────────────────────────────────────────────────────── */
+window.addEventListener('beforeunload', () =>
+{
+    if (bgTimerId) { clearInterval(bgTimerId); bgTimerId = null; }
+    if (progressResetTimer) { clearTimeout(progressResetTimer); progressResetTimer = null; }
+    if (reattachUnsub) { reattachUnsub(); reattachUnsub = null; }
 });

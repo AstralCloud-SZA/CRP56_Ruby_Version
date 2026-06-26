@@ -14,6 +14,8 @@ let mainWindow = null;
 let rubyProcess = null;
 const pendingRequests = new Map();
 let requestCounter = 0;
+let activeJob = null;
+
 
 const COMMAND_TIMEOUTS = {
     encrypt_folder: 600000,
@@ -566,7 +568,7 @@ ipcMain.handle('collapse:confirm-destroy', async (_event, { path: targetPath, mo
     const guard = collapseEvaluateGuard(targetPath);
     if (guard.blocked)
     {
-        collapseLog.record({ path: targetPath, mode, status: 'blocked', error: guard.reason });
+        await collapseLog.record({path: targetPath, mode, status: 'blocked', error: guard.reason});
         await dialog.showMessageBox(mainWindow, {type: 'error', title: 'Collapse blocked', message: 'Gravity guard blocked this target.', detail: guard.reason,});
         return false;
     }
@@ -598,8 +600,21 @@ ipcMain.handle('collapse:run', async (event, job) =>
         return { ok: false, error: msg };
     }
 
+    // Register the active job so the renderer can re-attach after a tab switch.
+    activeJob = {
+        type:         'collapse',
+        path:         job && job.path,
+        mode:         job && job.mode,
+        startedAt:    Date.now(),
+        lastProgress: null,
+    };
+
     const send = (p) =>
     {
+        // Cache last progress tick — a re-attaching renderer will read this
+        // via crp56:active-job and immediately snap the UI back into sync.
+        if (activeJob) activeJob.lastProgress = p;
+
         try
         {
             if (mainWindow && !mainWindow.isDestroyed())
@@ -609,28 +624,58 @@ ipcMain.handle('collapse:run', async (event, job) =>
         }
         catch (_) {}
     };
-    const startedAt = Date.now();
+
+    const startedAt = activeJob.startedAt;
+
     try
     {
         const result = await collapseRun(job, send);
         collapseLog.record({
-            path: job && job.path, type: job && job.type, mode: job && job.mode,
-            status: 'completed', files: result.files, dirs: result.dirs,
+            path:       job && job.path,
+            type:       job && job.type,
+            mode:       job && job.mode,
+            status:     'completed',
+            files:      result.files,
+            dirs:       result.dirs,
             durationMs: Date.now() - startedAt,
         });
+        activeJob = null;
         return result;
     }
     catch (err)
     {
         console.error('[collapse:run failed]', err);
-        const aborted = /abort/i.test(err && err.message || '');
+        const aborted = /abort/i.test((err && err.message) || '');
         collapseLog.record({
-            path: job && job.path, type: job && job.type, mode: job && job.mode,
-            status: aborted ? 'aborted' : 'failed', error: `${err.name}: ${err.message}`,
+            path:       job && job.path,
+            type:       job && job.type,
+            mode:       job && job.mode,
+            status:     aborted ? 'aborted' : 'failed',
+            error:      `${err.name}: ${err.message}`,
             durationMs: Date.now() - startedAt,
         });
+        activeJob = null;
         return { ok: false, error: `${err.name}: ${err.message}` };
     }
+});
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   crp56:active-job  — renderer calls this on every page load/tab return.
+   Returns the cached job + last progress so the UI can re-attach mid-run,
+   or null if nothing is running.
+   ─────────────────────────────────────────────────────────────────────────── */
+ipcMain.handle('crp56:active-job', () =>
+{
+    if (activeJob) return { ...activeJob };
+
+    // Also surface any in-flight Ruby requests (encrypt/decrypt folder etc.)
+    if (pendingRequests.size > 0)
+    {
+        const [id, pending] = pendingRequests.entries().next().value;
+        return { type: pending.command, id, inFlight: true, lastProgress: null };
+    }
+
+    return null;
 });
 
 ipcMain.handle('collapse:abort', () => { collapseAborted = true; return true; });

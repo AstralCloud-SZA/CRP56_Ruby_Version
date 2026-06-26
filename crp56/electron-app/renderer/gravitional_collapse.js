@@ -897,39 +897,97 @@
     }
 
     /* ============================================================
-       WIRE EVENTS
-       ============================================================ */
-    pickFolderBtn && pickFolderBtn.addEventListener("click", () => pickTarget("folder"));
-    pickDriveBtn  && pickDriveBtn.addEventListener("click", () => pickTarget("drive"));
-    clearBtn      && clearBtn.addEventListener("click", () => {state.target = null; state.armed = false; renderTarget();});
+     WIRE EVENTS
+     ============================================================ */
+    pickFolderBtn && pickFolderBtn.addEventListener('click', () => pickTarget('folder'));
+    pickDriveBtn  && pickDriveBtn.addEventListener('click',  () => pickTarget('drive'));
+    clearBtn      && clearBtn.addEventListener('click', () =>
+    {
+        state.target = null;
+        state.armed  = false;
+        renderTarget();
+    });
 
-    pwInput && pwInput.addEventListener("input", () => {state.armed = false; armChip.dataset.armed = "false"; scheduleVerify();});
-    confirmInput && confirmInput.addEventListener("input", () => {state.armed = false; armChip.dataset.armed = "false"; updateLockUI();});
-    wipeMode && wipeMode.addEventListener("change", updateLockUI);
+    pwInput      && pwInput.addEventListener('input',      () => { state.armed = false; armChip.dataset.armed = 'false'; scheduleVerify(); });
+    confirmInput && confirmInput.addEventListener('input',  () => { state.armed = false; armChip.dataset.armed = 'false'; updateLockUI(); });
+    wipeMode     && wipeMode.addEventListener('change',     updateLockUI);
 
-    armBtn     && armBtn.addEventListener("click", arm);
-    executeBtn && executeBtn.addEventListener("click", execute);
-    abortBtn   && abortBtn.addEventListener("click", abort);
+    armBtn     && armBtn.addEventListener('click',    arm);
+    executeBtn && executeBtn.addEventListener('click', execute);
+    abortBtn   && abortBtn.addEventListener('click',   abort);
 
     if (HAS_API && window.collapseAPI.guardStatus)
     {
         window.collapseAPI.guardStatus().then((on) =>
         {
-            guardChip.textContent  = "System guard: " + (on ? "ON" : "OFF");
-            guardChip.dataset.guard = on ? "on" : "off";
+            guardChip.textContent   = 'System guard: ' + (on ? 'ON' : 'OFF');
+            guardChip.dataset.guard = on ? 'on' : 'off';
         }).catch(() => {});
-    } else
+    }
+    else
     {
-        guardChip.textContent   = HAS_API ? "System guard: ON" : "Demo mode (no IPC)";
-        if (!HAS_API) guardChip.dataset.guard = "off";
+        guardChip.textContent   = HAS_API ? 'System guard: ON' : 'Demo mode (no IPC)';
+        if (!HAS_API) guardChip.dataset.guard = 'off';
     }
 
     renderTarget();
-    window.addEventListener("beforeunload", () =>
+
+    /* ----------------------------------------------------------
+       Re-attach to an in-flight collapse if the user navigated
+       away mid-operation and came back.
+       ---------------------------------------------------------- */
+    let reattachUnsub = null; // kept so beforeunload can clean it up
+
+    if (HAS_API)
+    {
+        window.crp56.activeJob().then((job) =>
+        {
+            if (!job || job.type !== 'collapse') return;
+
+            console.log('[Gravity] Re-attaching to in-flight collapse:', job);
+
+            // Restore machine + visual state
+            state.collapsing       = true;
+            abortBtn.hidden        = false;
+            progressWrap.hidden    = false;
+            setStageState('collapsing');
+            setReadout('COLLAPSING', 'Re-attached — field collapse in progress…');
+
+            // Snap progress bar to last known position immediately
+            if (job.lastProgress) onProgress(job.lastProgress);
+
+            // Re-subscribe — listener cleans itself up on completion
+            reattachUnsub = window.collapseAPI.onProgress((p) =>
+            {
+                onProgress(p);
+
+                if (p.phase === 'Complete' || (p.pct != null && p.pct >= 100))
+                {
+                    if (reattachUnsub)
+                    {
+                        reattachUnsub();
+                        reattachUnsub = null;
+                    }
+                }
+            });
+        }).catch(() => {});
+    }
+
+    /* ----------------------------------------------------------
+       Cleanup on page unload
+       ---------------------------------------------------------- */
+    window.addEventListener('beforeunload', () =>
     {
         if (raf) cancelAnimationFrame(raf);
-        if (ro) ro.disconnect();
-        window.removeEventListener("resize", resize);
+        if (ro)  ro.disconnect();
+        window.removeEventListener('resize', resize);
+
+        // Remove re-attach listener if still subscribed
+        if (reattachUnsub)
+        {
+            reattachUnsub();
+            reattachUnsub = null;
+        }
     });
 
 })();
