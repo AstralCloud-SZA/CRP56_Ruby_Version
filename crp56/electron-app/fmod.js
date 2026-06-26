@@ -620,15 +620,6 @@ function clamp01(v)
 function setMasterVolume(v)
 {
     const n = clamp01(v);
-
-    if (n === 0)
-    {
-        warn('setMasterVolume received 0; coercing to 1 temporarily for debugging');
-        if (masterGroup) check(FMOD_ChannelGroup_SetVolume(masterGroup, 1.0), 'SetVolume(master debug override)');
-        dumpMixerState('after setMasterVolume(debug override)');
-        return;
-    }
-
     log('setMasterVolume ->', n);
     if (masterGroup) check(FMOD_ChannelGroup_SetVolume(masterGroup, n), 'SetVolume(master)');
     dumpMixerState('after setMasterVolume');

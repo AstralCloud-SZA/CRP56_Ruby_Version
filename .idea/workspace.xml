@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="version updated to 3.1.4">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="background process fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/fmod.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/fmod.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/logs/gravity_collapse.txt" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/logs/gravity_collapse.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/preload.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/preload.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/gravitional_collapse.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/gravitional_collapse.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -255,15 +249,7 @@
       <workItem from="1782380257793" duration="960000" />
       <workItem from="1782394921163" duration="643000" />
       <workItem from="1782408506565" duration="7629000" />
-      <workItem from="1782494232623" duration="8585000" />
-    </task>
-    <task id="LOCAL-00052" summary=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM">
-      <option name="closed" value="true" />
-      <created>1781721427811</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1781721427811</updated>
+      <workItem from="1782494232623" duration="9744000" />
     </task>
     <task id="LOCAL-00053" summary=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM 2">
       <option name="closed" value="true" />
@@ -649,7 +635,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782501258453</updated>
     </task>
-    <option name="localTasksCounter" value="101" />
+    <task id="LOCAL-00101" summary="background process fixes">
+      <option name="closed" value="true" />
+      <created>1782504400974</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1782504400975</updated>
+    </task>
+    <option name="localTasksCounter" value="102" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -722,7 +716,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="git publishing integration work 3" />
     <MESSAGE value="git publishing integration work 4" />
     <MESSAGE value="git publishing integration work 5" />
     <MESSAGE value="git publishing integration work 6" />
@@ -747,6 +740,7 @@
     <MESSAGE value="top bar custom work 2" />
     <MESSAGE value="top bar custom work 2 and gravity logger rework" />
     <MESSAGE value="version updated to 3.1.4" />
-    <option name="LAST_COMMIT_MESSAGE" value="version updated to 3.1.4" />
+    <MESSAGE value="background process fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="background process fixes" />
   </component>
 </project>

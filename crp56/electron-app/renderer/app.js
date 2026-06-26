@@ -1,5 +1,3 @@
-
-
 const output          = document.getElementById('output');
 const themeStylesheet = document.getElementById('themeStylesheet');
 const themeName       = document.getElementById('themeName');
@@ -9,7 +7,6 @@ const progressFill    = document.querySelector('.progress-fill');
 const html            = document.documentElement;
 const body            = document.body;
 
-
 const ENCRYPTED_EXTENSION    = '.crp56';
 const THEME_STORAGE_KEY      = 'crp56-theme';
 const PARTICLE_STORAGE_KEY   = 'crp56-particles';
@@ -18,6 +15,13 @@ const MUSIC_VOL_STORAGE_KEY  = 'crp56-music-volume';
 const MASTER_VOL_STORAGE_KEY = 'crp56-master-volume';
 const MUTE_STORAGE_KEY       = 'crp56-muted';
 
+const AUDIO_DEFAULTS =
+    {
+    master: 100,
+    sfx: 80,
+    music: 60,
+    muted: false,
+};
 
 let selectedFiles            = [];
 let selectedEncryptedFolder  = null;
@@ -52,62 +56,215 @@ function playSfx(category)
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Master volume + mute
+   Audio settings persistence
    ─────────────────────────────────────────────────────────────────────────── */
-function bindMasterAndMusic()
+function clampPercent(value, fallback = 100)
+{
+    const n = Number(value);
+    if (!Number.isFinite(n)) return fallback;
+    return Math.max(0, Math.min(100, Math.round(n)));
+}
+
+function readStoredPercent(key, fallback)
+{
+    try
+    {
+        const raw = localStorage.getItem(key);
+        if (raw == null || raw === '') return fallback;
+        return clampPercent(raw, fallback);
+    }
+    catch (_)
+    {
+        return fallback;
+    }
+}
+
+function readStoredMuted()
+{
+    try
+    {
+        return localStorage.getItem(MUTE_STORAGE_KEY) === 'on';
+    }
+    catch (_)
+    {
+        return false;
+    }
+}
+
+function getAudioSettings()
+{
+    return {
+        master: readStoredPercent(MASTER_VOL_STORAGE_KEY, AUDIO_DEFAULTS.master),
+        sfx:    readStoredPercent(SFX_VOL_STORAGE_KEY,    AUDIO_DEFAULTS.sfx),
+        music:  readStoredPercent(MUSIC_VOL_STORAGE_KEY,  AUDIO_DEFAULTS.music),
+        muted:  readStoredMuted(),
+    };
+}
+
+function saveAudioSettings(settings)
+{
+    const next = {
+        master: clampPercent(settings?.master, AUDIO_DEFAULTS.master),
+        sfx:    clampPercent(settings?.sfx,    AUDIO_DEFAULTS.sfx),
+        music:  clampPercent(settings?.music,  AUDIO_DEFAULTS.music),
+        muted:  !!settings?.muted,
+    };
+
+    try
+    {
+        localStorage.setItem(MASTER_VOL_STORAGE_KEY, String(next.master));
+        localStorage.setItem(SFX_VOL_STORAGE_KEY,    String(next.sfx));
+        localStorage.setItem(MUSIC_VOL_STORAGE_KEY,  String(next.music));
+        localStorage.setItem(MUTE_STORAGE_KEY,       next.muted ? 'on' : 'off');
+    }
+    catch (_) {}
+
+    return next;
+}
+
+function repairAudioSettings()
+{
+    const current = getAudioSettings();
+    return saveAudioSettings({
+        master: current.master,
+        sfx:    current.sfx,
+        music:  current.music,
+        muted:  current.muted,
+    });
+}
+
+function applyAudioSettingsToUI(settings)
 {
     const masterSlider = document.getElementById('masterVolume');
     const masterLabel  = document.getElementById('masterVolumeLabel');
+    const sfxSlider    = document.getElementById('sfxVolume');
+    const sfxLabel     = document.getElementById('sfxVolumeLabel');
+    const musicSlider  = document.getElementById('musicVolume');
+    const musicLabel   = document.getElementById('musicVolumeLabel');
+    const muteBtn      = document.getElementById('muteToggle');
+    const muteStatus   = document.getElementById('muteStatus');
+
+    if (masterSlider) masterSlider.value = String(settings.master);
+    if (masterLabel)  masterLabel.textContent = `${settings.master}%`;
+
+    if (sfxSlider) sfxSlider.value = String(settings.sfx);
+    if (sfxLabel)  sfxLabel.textContent = `${settings.sfx}%`;
+
+    if (musicSlider) musicSlider.value = String(settings.music);
+    if (musicLabel)  musicLabel.textContent = `${settings.music}%`;
+
+    if (muteBtn)
+    {
+        muteBtn.textContent = settings.muted ? 'Unmute' : 'Mute all';
+        muteBtn.setAttribute('aria-pressed', settings.muted ? 'true' : 'false');
+        muteBtn.title = settings.muted ? 'Click to unmute all audio' : 'Click to mute all audio';
+    }
+
+    if (muteStatus) muteStatus.textContent = settings.muted ? 'Muted' : 'Unmuted';
+}
+
+function applyAudioSettingsToEngine(settings)
+{
+    if (!window.sfx) return;
+
+    console.log('[CRP56 renderer] applying audio settings ->', settings);
+
+    if (window.sfx.setMasterVolume) window.sfx.setMasterVolume(settings.master / 100);
+    if (window.sfx.setSfxVolume)    window.sfx.setSfxVolume(settings.sfx / 100);
+    if (window.sfx.setMusicVolume)  window.sfx.setMusicVolume(settings.music / 100);
+    if (window.sfx.setMuteAll)      window.sfx.setMuteAll(settings.muted);
+}
+
+function loadAndApplyAudioSettings()
+{
+    const settings = repairAudioSettings();
+    applyAudioSettingsToUI(settings);
+    applyAudioSettingsToEngine(settings);
+    return settings;
+}
+
+function collectAudioSettingsFromUI()
+{
+    const masterSlider = document.getElementById('masterVolume');
+    const sfxSlider    = document.getElementById('sfxVolume');
+    const musicSlider  = document.getElementById('musicVolume');
+    const muteBtn      = document.getElementById('muteToggle');
+
+    const current = getAudioSettings();
+
+    return {
+        master: masterSlider ? masterSlider.value : current.master,
+        sfx:    sfxSlider ? sfxSlider.value : current.sfx,
+        music:  musicSlider ? musicSlider.value : current.music,
+        muted:  muteBtn ? muteBtn.getAttribute('aria-pressed') === 'true' : current.muted,
+    };
+}
+
+function commitAudioSettings(partial = {})
+{
+    const merged = {
+        ...getAudioSettings(),
+        ...collectAudioSettingsFromUI(),
+        ...partial,
+    };
+
+    const saved = saveAudioSettings(merged);
+    applyAudioSettingsToUI(saved);
+    applyAudioSettingsToEngine(saved);
+    return saved;
+}
+
+function bindAudioControls()
+{
+    const masterSlider = document.getElementById('masterVolume');
+    const sfxSlider    = document.getElementById('sfxVolume');
+    const musicSlider  = document.getElementById('musicVolume');
+    const muteBtn      = document.getElementById('muteToggle');
 
     if (masterSlider)
     {
         masterSlider.disabled = false;
-
-        const savedMaster = Number(localStorage.getItem(MASTER_VOL_STORAGE_KEY) ?? 100);
-        const masterValue = Number.isFinite(savedMaster) ? Math.max(0, Math.min(100, savedMaster)) : 100;
-
-        masterSlider.value = String(masterValue);
-        if (masterLabel) masterLabel.textContent = `${masterValue}%`;
-
         masterSlider.addEventListener('input', () =>
         {
-            const pct     = Number(masterSlider.value);
-            const clamped = Number.isFinite(pct) ? Math.max(0, Math.min(100, pct)) : 100;
-            if (masterLabel) masterLabel.textContent = `${clamped}%`;
-            console.log('[CRP56 renderer] master volume input ->', clamped);
-            if (window.sfx?.setMasterVolume) window.sfx.setMasterVolume(clamped / 100);
-            try { localStorage.setItem(MASTER_VOL_STORAGE_KEY, String(clamped)); } catch (_) {}
+            const pct = clampPercent(masterSlider.value, AUDIO_DEFAULTS.master);
+            console.log('[CRP56 renderer] master volume input ->', pct);
+            commitAudioSettings({ master: pct });
         });
-
         masterSlider.addEventListener('change', () => playSfx('cursor'));
     }
 
-    const muteBtn    = document.getElementById('muteToggle');
-    const muteStatus = document.getElementById('muteStatus');
+    if (sfxSlider)
+    {
+        sfxSlider.disabled = false;
+        sfxSlider.addEventListener('input', () =>
+        {
+            const pct = clampPercent(sfxSlider.value, AUDIO_DEFAULTS.sfx);
+            console.log('[CRP56 renderer] sfx volume input ->', pct);
+            commitAudioSettings({ sfx: pct });
+        });
+        sfxSlider.addEventListener('change', () => playSfx('cursor'));
+    }
+
+    if (musicSlider)
+    {
+        musicSlider.disabled = false;
+        musicSlider.addEventListener('input', () =>
+        {
+            const pct = clampPercent(musicSlider.value, AUDIO_DEFAULTS.music);
+            console.log('[CRP56 renderer] music volume input ->', pct);
+            commitAudioSettings({ music: pct });
+        });
+        musicSlider.addEventListener('change', () => playSfx('cursor'));
+    }
 
     if (muteBtn)
     {
-        let muted = localStorage.getItem(MUTE_STORAGE_KEY) === 'on';
-
-        const render = () =>
-        {
-            muteBtn.textContent = muted ? 'Unmute' : 'Mute all';
-            if (muteStatus) muteStatus.textContent = muted ? 'Muted' : 'Unmuted';
-            muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
-            muteBtn.title = muted ? 'Click to unmute all audio' : 'Click to mute all audio';
-        };
-
-        render();
-        if (window.sfx?.setMuteAll) window.sfx.setMuteAll(muted);
-
         muteBtn.addEventListener('click', () =>
         {
-            muted = !muted;
-            console.log('[CRP56 renderer] mute toggle ->', muted);
-            if (window.sfx?.setMuteAll) window.sfx.setMuteAll(muted);
-            try { localStorage.setItem(MUTE_STORAGE_KEY, muted ? 'on' : 'off'); } catch (_) {}
-            render();
-            if (!muted) playSfx('confirm');
+            const nextMuted = !(getAudioSettings().muted);
+            console.log('[CRP56 renderer] mute toggle ->', nextMuted);
+            commitAudioSettings({ muted: nextMuted });
+            if (!nextMuted) playSfx('confirm');
         });
     }
 }
@@ -167,7 +324,6 @@ function startBackgroundLoop(theme)
 
 function setTheme(theme)
 {
-    // Gravity Collapse owns its own stylesheet — never let app.js swap it out.
     if (document.body?.dataset?.page === 'gravity-collapse') return;
     if (!THEMES[theme]) return;
     html.dataset.theme = theme;
@@ -253,7 +409,6 @@ function handleProgressUpdate(msg)
     show({ status: `${msg.stage}: ${msg.current}/${msg.total} (${percent}%)${detail}` });
 }
 
-/* Show the progress bar in a running state — extracted for re-attach use */
 function showProgressUI(label)
 {
     startProgress(label);
@@ -297,15 +452,17 @@ async function runAction(label, fn)
 /* ─────────────────────────────────────────────────────────────────────────────
    UI bindings
    ─────────────────────────────────────────────────────────────────────────── */
-
 function bindThemeToggle()
 {
     if (!themeToggle) return;
     themeToggle.addEventListener('click', () =>
     {
         console.log('[CRP56 renderer] theme toggle');
-        ParticleFX.blackHole('blackHoleMark', 52, 28);
-        ParticleFX.blackHole('blackHoleRail', 54, 28);
+        if (window.ParticleFX?.blackHole)
+        {
+            window.ParticleFX.blackHole('blackHoleMark', 52, 28);
+            window.ParticleFX.blackHole('blackHoleRail', 54, 28);
+        }
         playSfx('confirm');
         const next = html.dataset.theme === 'primordial-gold' ? 'hellflare-gold' : 'primordial-gold';
         setTheme(next);
@@ -341,7 +498,10 @@ function bindSelectionZones()
             const options = { properties: ['openFile', 'multiSelections'] };
             if (isDecryptPage)
             {
-                options.filters = [{ name: 'CRP56 Encrypted', extensions: ['crp56'] }, { name: 'All Files', extensions: ['*']  },];
+                options.filters = [
+                    { name: 'CRP56 Encrypted', extensions: ['crp56'] },
+                    { name: 'All Files', extensions: ['*'] },
+                ];
             }
             const result = await window.crp56.pickFile(options);
             if (result.canceled) return;
@@ -366,9 +526,9 @@ function bindSelectionZones()
                 result = await window.crp56.pickFile({
                     title:      'Select Encrypted Archive to Extract',
                     properties: ['openFile'],
-                    filters:    [
+                    filters: [
                         { name: 'CRP56 Encrypted Archive', extensions: ['crp56'] },
-                        { name: 'All Files',               extensions: ['*']     },
+                        { name: 'All Files', extensions: ['*'] },
                     ],
                 });
             }
@@ -393,14 +553,14 @@ function bindSelectionZones()
 
 function bindPageActions()
 {
-    const btnPing        = document.getElementById('btn-ping');
-    const btnVersion     = document.getElementById('btn-version');
-    const btnEncrypt     = document.getElementById('btn-encrypt');
-    const btnDecrypt     = document.getElementById('btn-decrypt');
+    const btnPing         = document.getElementById('btn-ping');
+    const btnVersion      = document.getElementById('btn-version');
+    const btnEncrypt      = document.getElementById('btn-encrypt');
+    const btnDecrypt      = document.getElementById('btn-decrypt');
     const passphraseInput = document.getElementById('passphrase');
     const plainTextInput  = document.getElementById('plain-text');
 
-    if (btnPing)    btnPing.addEventListener('click',    async () => { await runAction('ping',    () => window.crp56.ping()); });
+    if (btnPing)    btnPing.addEventListener('click', async () => { await runAction('ping',    () => window.crp56.ping()); });
     if (btnVersion) btnVersion.addEventListener('click', async () => { await runAction('version', () => window.crp56.version()); });
 
     if (btnEncrypt && passphraseInput)
@@ -533,14 +693,14 @@ async function bindMusicTrackSelect()
 
         select.innerHTML = '';
         const autoOpt = document.createElement('option');
-        autoOpt.value       = '';
+        autoOpt.value = '';
         autoOpt.textContent = 'Auto';
         select.appendChild(autoOpt);
 
         for (const track of tracks)
         {
             const opt = document.createElement('option');
-            opt.value       = track;
+            opt.value = track;
             opt.textContent = track;
             select.appendChild(opt);
         }
@@ -583,18 +743,18 @@ async function bindOutputDeviceSelect()
         if (!Array.isArray(devices) || !devices.length)
         {
             const opt = document.createElement('option');
-            opt.value       = '';
+            opt.value = '';
             opt.textContent = 'No output devices found';
             select.appendChild(opt);
-            select.disabled    = true;
-            applyBtn.disabled  = true;
+            select.disabled   = true;
+            applyBtn.disabled = true;
             return;
         }
 
         for (const dev of devices)
         {
             const opt = document.createElement('option');
-            opt.value       = String(dev.id);
+            opt.value = String(dev.id);
             opt.textContent = dev.name + (dev.isDefault ? ' (system default)' : '');
             select.appendChild(opt);
         }
@@ -624,7 +784,10 @@ async function bindOutputDeviceSelect()
             }
         });
     }
-    catch (e) { console.error('[CRP56 renderer] failed to load output devices:', e); }
+    catch (e)
+    {
+        console.error('[CRP56 renderer] failed to load output devices:', e);
+    }
 }
 
 async function startBackgroundMusicOnce()
@@ -632,7 +795,11 @@ async function startBackgroundMusicOnce()
     if (bgMusicStarted) return;
     if (!window.sfx?.listMusic || !window.sfx?.playMusic)
     {
-        console.warn('[CRP56 renderer] music bridge missing at startup', {hasSfx: !!window.sfx, listMusic: typeof window.sfx?.listMusic, playMusic: typeof window.sfx?.playMusic});
+        console.warn('[CRP56 renderer] music bridge missing at startup', {
+            hasSfx: !!window.sfx,
+            listMusic: typeof window.sfx?.listMusic,
+            playMusic: typeof window.sfx?.playMusic
+        });
         return;
     }
 
@@ -650,7 +817,9 @@ async function startBackgroundMusicOnce()
         }
 
         const saved = localStorage.getItem('crp56-music-track');
-        const pick  = saved && loadedMusicTracks.includes(saved) ? saved : loadedMusicTracks[Math.floor(Math.random() * loadedMusicTracks.length)];
+        const pick  = saved && loadedMusicTracks.includes(saved)
+            ? saved
+            : loadedMusicTracks[Math.floor(Math.random() * loadedMusicTracks.length)];
 
         console.log('[CRP56 renderer] startup music pick ->', pick);
 
@@ -672,7 +841,10 @@ async function startBackgroundMusicOnce()
 function setParticlesEnabled(enabled, { persist = true } = {})
 {
     particlesEnabled = !!enabled;
-    if (persist) { try { localStorage.setItem(PARTICLE_STORAGE_KEY, particlesEnabled ? 'on' : 'off'); } catch (_) {} }
+    if (persist)
+    {
+        try { localStorage.setItem(PARTICLE_STORAGE_KEY, particlesEnabled ? 'on' : 'off'); } catch (_) {}
+    }
 
     const toggle = document.getElementById('particleToggle');
     const status = document.getElementById('particleStatus');
@@ -715,81 +887,6 @@ function bindParticleToggle()
     toggle.addEventListener('click', () => { playSfx('cursor'); setParticlesEnabled(!particlesEnabled); });
 }
 
-function bindVolumeSliders()
-{
-    const sfxSlider   = document.getElementById('sfxVolume');
-    const sfxLabel    = document.getElementById('sfxVolumeLabel');
-    const musicSlider = document.getElementById('musicVolume');
-    const musicLabel  = document.getElementById('musicVolumeLabel');
-    const savedSfx    = Number(localStorage.getItem(SFX_VOL_STORAGE_KEY)   ?? 80);
-    const savedMusic  = Number(localStorage.getItem(MUSIC_VOL_STORAGE_KEY) ?? 60);
-
-    const sync = (slider, label, pct) =>
-    {
-        if (slider) slider.value = String(pct);
-        if (label)  label.textContent = `${pct}%`;
-    };
-
-    if (sfxSlider)
-    {
-        sync(sfxSlider, sfxLabel, savedSfx);
-        sfxSlider.addEventListener('input', () =>
-        {
-            const pct = Number(sfxSlider.value);
-            sync(sfxSlider, sfxLabel, pct);
-            console.log('[CRP56 renderer] sfx volume input ->', pct);
-            if (window.sfx?.setSfxVolume) window.sfx.setSfxVolume(pct / 100);
-            try { localStorage.setItem(SFX_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
-        });
-        sfxSlider.addEventListener('change', () => playSfx('cursor'));
-    }
-
-    if (musicSlider)
-    {
-        sync(musicSlider, musicLabel, savedMusic);
-        musicSlider.addEventListener('input', () =>
-        {
-            const pct = Number(musicSlider.value);
-            sync(musicSlider, musicLabel, pct);
-            console.log('[CRP56 renderer] music volume input ->', pct);
-            if (window.sfx?.setMusicVolume) window.sfx.setMusicVolume(pct / 100);
-            try { localStorage.setItem(MUSIC_VOL_STORAGE_KEY, String(pct)); } catch (_) {}
-        });
-    }
-}
-
-function applySavedVolumes()
-{
-    const sfxSlider   = document.getElementById('sfxVolume');
-    const sfxLabel    = document.getElementById('sfxVolumeLabel');
-    const musicSlider = document.getElementById('musicVolume');
-    const musicLabel  = document.getElementById('musicVolumeLabel');
-    const masterSlider = document.getElementById('masterVolume');
-    const masterLabel  = document.getElementById('masterVolumeLabel');
-
-    const readVol = (key, fb) => { const n = Number(localStorage.getItem(key)); return Number.isFinite(n) ? n : fb; };
-
-    const master   = readVol(MASTER_VOL_STORAGE_KEY, 100);
-    const sfxVol   = readVol(SFX_VOL_STORAGE_KEY,   80);
-    const musicVol = readVol(MUSIC_VOL_STORAGE_KEY,  60);
-
-    if (masterSlider) masterSlider.value = String(master);
-    if (masterLabel)  masterLabel.textContent  = `${master}%`;
-    if (sfxSlider)    sfxSlider.value    = String(sfxVol);
-    if (sfxLabel)     sfxLabel.textContent     = `${sfxVol}%`;
-    if (musicSlider)  musicSlider.value  = String(musicVol);
-    if (musicLabel)   musicLabel.textContent   = `${musicVol}%`;
-
-    if (!window.sfx) return;
-    console.log('[CRP56 renderer] applying saved volumes', { master, sfxVol, musicVol });
-    if (window.sfx.setMasterVolume) window.sfx.setMasterVolume(master   / 100);
-    if (window.sfx.setSfxVolume)    window.sfx.setSfxVolume(sfxVol      / 100);
-    if (window.sfx.setMusicVolume)  window.sfx.setMusicVolume(musicVol  / 100);
-
-    const muted = localStorage.getItem(MUTE_STORAGE_KEY) === 'on';
-    if (window.sfx.setMuteAll) window.sfx.setMuteAll(muted);
-}
-
 /* ─────────────────────────────────────────────────────────────────────────────
    Particle canvas init
    ─────────────────────────────────────────────────────────────────────────── */
@@ -803,17 +900,14 @@ function initParticles()
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Re-attach to any in-flight Ruby operation after a tab switch.
-   The Ruby process (and collapseRun) never stop — only the renderer's
-   progress listener was lost on navigation. This restores it.
    ─────────────────────────────────────────────────────────────────────────── */
 function tryReattachActiveJob()
 {
-    if (!window.crp56) return;
+    if (!window.crp56 || typeof window.crp56.activeJob !== 'function') return;
 
     window.crp56.activeJob().then((job) =>
     {
         if (!job) return;
-        // Gravity Collapse re-attaches inside gravitional_collapse.js
         if (job.type === 'collapse') return;
 
         const LABELS = {
@@ -825,18 +919,13 @@ function tryReattachActiveJob()
 
         console.log('[CRP56 renderer] Re-attaching to in-flight job:', job);
 
-        // Snap the UI to in-progress state immediately
         showProgressUI(LABELS[job.type] ?? 'Operation in progress…');
 
-        // If main cached a progress tick, render it right away
         if (job.lastProgress) handleProgressUpdate(job.lastProgress);
 
-        // Re-subscribe — self-cleaning when the operation finishes
         reattachUnsub = window.crp56.onProgress((p) =>
         {
             handleProgressUpdate(p);
-
-            // Clean up once done
             if (p.pct != null && p.pct >= 100)
             {
                 finishProgress();
@@ -856,8 +945,6 @@ window.addEventListener('DOMContentLoaded', async () =>
 
     const currentPage = document.body?.dataset?.page;
 
-    // Gravity Collapse is self-contained — run only shared particle/SFX wiring,
-    // then bail. Do NOT swap the theme stylesheet or wire encryption UI here.
     if (currentPage === 'gravity-collapse')
     {
         initParticles();
@@ -876,11 +963,10 @@ window.addEventListener('DOMContentLoaded', async () =>
     bindThemeButtons();
     bindTabButtons();
     bindParticleToggle();
-    bindVolumeSliders();
-    bindMasterAndMusic();
+    bindAudioControls();
     bindRailAudio();
     bindDataSfx();
-    applySavedVolumes();
+    loadAndApplyAudioSettings();
 
     if (currentPage === 'settings')
     {
@@ -919,8 +1005,6 @@ window.addEventListener('DOMContentLoaded', async () =>
     bindSelectionZones();
     bindPageActions();
     bindProgressEvents();
-
-    // Re-attach to any operation that was running when the user last left this page
     tryReattachActiveJob();
 
     if (currentPage)
