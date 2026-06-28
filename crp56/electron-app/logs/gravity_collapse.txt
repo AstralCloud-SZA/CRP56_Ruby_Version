@@ -31,5 +31,27 @@
     "files": 18213,
     "dirs": 462,
     "durationMs": 63085
+  },
+  {
+    "id": 4,
+    "timestamp": "2026-06-27T19:48:20.087Z",
+    "path": "C:\\Users\\devyg\\Desktop\\CodeSampleUnity6 - Copy_Decrypted",
+    "type": "folder",
+    "mode": "single",
+    "status": "completed",
+    "files": 19,
+    "dirs": 7,
+    "durationMs": 45
+  },
+  {
+    "id": 5,
+    "timestamp": "2026-06-27T19:50:20.907Z",
+    "path": "C:\\Users\\devyg\\Desktop\\CodeSampleUnity6 - Copy",
+    "type": "folder",
+    "mode": "gutmann",
+    "status": "completed",
+    "files": 19,
+    "dirs": 7,
+    "durationMs": 186
   }
 ]

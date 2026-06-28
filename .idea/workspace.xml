@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="background process fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/logs/gravity_collapse.txt" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/logs/gravity_collapse.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -249,15 +249,8 @@
       <workItem from="1782380257793" duration="960000" />
       <workItem from="1782394921163" duration="643000" />
       <workItem from="1782408506565" duration="7629000" />
-      <workItem from="1782494232623" duration="9744000" />
-    </task>
-    <task id="LOCAL-00053" summary=" hopefully fixed the bg music system. &#10; with a new FMOD_FUNCTION SYSTEM 2">
-      <option name="closed" value="true" />
-      <created>1781721681547</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1781721681547</updated>
+      <workItem from="1782494232623" duration="11839000" />
+      <workItem from="1782589524756" duration="1528000" />
     </task>
     <task id="LOCAL-00054" summary="FMOD File rearrangement">
       <option name="closed" value="true" />
@@ -643,7 +636,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782504400975</updated>
     </task>
-    <option name="localTasksCounter" value="102" />
+    <task id="LOCAL-00102" summary="background process fixes">
+      <option name="closed" value="true" />
+      <created>1782505524769</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1782505524769</updated>
+    </task>
+    <option name="localTasksCounter" value="103" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
