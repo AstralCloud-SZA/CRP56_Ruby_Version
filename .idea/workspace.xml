@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="background process fixes">
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="2325436545645464764697467r7r769r6r6v7ro76ro764r7o6uyro6uyr4iytrtlukgkjhbughjcg/i'hg;ku,gfjydgrjszx4wtjgcdvtrvjyfhbhjn">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_revert_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_revert__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/logs/gravity_collapse.txt" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/logs/gravity_collapse.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -251,14 +252,8 @@
       <workItem from="1782408506565" duration="7629000" />
       <workItem from="1782494232623" duration="11839000" />
       <workItem from="1782589524756" duration="1528000" />
-    </task>
-    <task id="LOCAL-00054" summary="FMOD File rearrangement">
-      <option name="closed" value="true" />
-      <created>1781724227998</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1781724227999</updated>
+      <workItem from="1782648673807" duration="51000" />
+      <workItem from="1783018951733" duration="895000" />
     </task>
     <task id="LOCAL-00055" summary="bg music fixes and adjustments 7">
       <option name="closed" value="true" />
@@ -644,7 +639,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782505524769</updated>
     </task>
-    <option name="localTasksCounter" value="103" />
+    <task id="LOCAL-00103" summary="2325436545645464764697467r7r769r6r6v7ro76ro764r7o6uyro6uyr4iytrtlukgkjhbughjcg/i'hg;ku,gfjydgrjszx4wtjgcdvtrvjyfhbhjn">
+      <option name="closed" value="true" />
+      <created>1782648699391</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1782648699392</updated>
+    </task>
+    <option name="localTasksCounter" value="104" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -717,7 +720,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="git publishing integration work 4" />
     <MESSAGE value="git publishing integration work 5" />
     <MESSAGE value="git publishing integration work 6" />
     <MESSAGE value="git publishing integration work 7" />
@@ -742,6 +744,7 @@
     <MESSAGE value="top bar custom work 2 and gravity logger rework" />
     <MESSAGE value="version updated to 3.1.4" />
     <MESSAGE value="background process fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="background process fixes" />
+    <MESSAGE value="2325436545645464764697467r7r769r6r6v7ro76ro764r7o6uyro6uyr4iytrtlukgkjhbughjcg/i'hg;ku,gfjydgrjszx4wtjgcdvtrvjyfhbhjn" />
+    <option name="LAST_COMMIT_MESSAGE" value="2325436545645464764697467r7r769r6r6v7ro76ro764r7o6uyro6uyr4iytrtlukgkjhbughjcg/i'hg;ku,gfjydgrjszx4wtjgcdvtrvjyfhbhjn" />
   </component>
 </project>
