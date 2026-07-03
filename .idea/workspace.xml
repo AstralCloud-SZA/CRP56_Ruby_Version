@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="2325436545645464764697467r7r769r6r6v7ro76ro764r7o6uyro6uyr4iytrtlukgkjhbughjcg/i'hg;ku,gfjydgrjszx4wtjgcdvtrvjyfhbhjn">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_revert_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_revert__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/gravity_collapse.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/gravity_collapse.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -254,6 +252,7 @@
       <workItem from="1782589524756" duration="1528000" />
       <workItem from="1782648673807" duration="51000" />
       <workItem from="1783018951733" duration="895000" />
+      <workItem from="1783105103053" duration="443000" />
     </task>
     <task id="LOCAL-00055" summary="bg music fixes and adjustments 7">
       <option name="closed" value="true" />

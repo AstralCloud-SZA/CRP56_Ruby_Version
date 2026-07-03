@@ -53,5 +53,16 @@
     "files": 19,
     "dirs": 7,
     "durationMs": 186
+  },
+  {
+    "id": 6,
+    "timestamp": "2026-07-03T19:04:58.935Z",
+    "path": "D:\\tron - Copy",
+    "type": "folder",
+    "mode": "gutmann",
+    "status": "completed",
+    "files": 65,
+    "dirs": 19,
+    "durationMs": 27353
   }
 ]
