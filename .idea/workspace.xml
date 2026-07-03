@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="2325436545645464764697467r7r769r6r6v7ro76ro764r7o6uyro6uyr4iytrtlukgkjhbughjcg/i'hg;ku,gfjydgrjszx4wtjgcdvtrvjyfhbhjn">
-      <change beforePath="$PROJECT_DIR$/crp56/electron-app/renderer/gravity_collapse.html" beforeDir="false" afterPath="$PROJECT_DIR$/crp56/electron-app/renderer/gravity_collapse.html" afterDir="false" />
-    </list>
+    <list default="true" id="608d3977-2612-435a-9b41-fc0cd77e5de7" name="Changes" comment="minor text tweaks" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -252,15 +250,7 @@
       <workItem from="1782589524756" duration="1528000" />
       <workItem from="1782648673807" duration="51000" />
       <workItem from="1783018951733" duration="895000" />
-      <workItem from="1783105103053" duration="443000" />
-    </task>
-    <task id="LOCAL-00055" summary="bg music fixes and adjustments 7">
-      <option name="closed" value="true" />
-      <created>1781725630205</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1781725630205</updated>
+      <workItem from="1783105103053" duration="627000" />
     </task>
     <task id="LOCAL-00056" summary="bg music fixes and adjustments 7">
       <option name="closed" value="true" />
@@ -646,7 +636,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782648699392</updated>
     </task>
-    <option name="localTasksCounter" value="104" />
+    <task id="LOCAL-00104" summary="minor text tweaks">
+      <option name="closed" value="true" />
+      <created>1783105711869</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1783105711869</updated>
+    </task>
+    <option name="localTasksCounter" value="105" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -719,7 +717,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="git publishing integration work 5" />
     <MESSAGE value="git publishing integration work 6" />
     <MESSAGE value="git publishing integration work 7" />
     <MESSAGE value="git publishing integration work 8" />
@@ -744,6 +741,7 @@
     <MESSAGE value="version updated to 3.1.4" />
     <MESSAGE value="background process fixes" />
     <MESSAGE value="2325436545645464764697467r7r769r6r6v7ro76ro764r7o6uyro6uyr4iytrtlukgkjhbughjcg/i'hg;ku,gfjydgrjszx4wtjgcdvtrvjyfhbhjn" />
-    <option name="LAST_COMMIT_MESSAGE" value="2325436545645464764697467r7r769r6r6v7ro76ro764r7o6uyro6uyr4iytrtlukgkjhbughjcg/i'hg;ku,gfjydgrjszx4wtjgcdvtrvjyfhbhjn" />
+    <MESSAGE value="minor text tweaks" />
+    <option name="LAST_COMMIT_MESSAGE" value="minor text tweaks" />
   </component>
 </project>
